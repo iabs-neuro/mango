@@ -22,7 +22,7 @@ Software product for analysis of activations and specialization in artificial ne
 
 4. Install dependencies:
     ```bash
-    pip install teneva==0.12.8 ttopt==0.5.0 torch torchvision matplotlib PyYAML jupyterlab
+    pip install teneva==0.12.8 ttopt==0.5.0 torch torchvision scikit-image matplotlib PyYAML jupyterlab
     ```
 
 5. Delete virtual environment at the end of the work (optional):
@@ -35,9 +35,11 @@ Software product for analysis of activations and specialization in artificial ne
 
 1. Perform the steps from `Installation` section
 
-2. Run `python demo.py am`, then see the outputs in the terminal and the `result` folder with the result for simple Activation Maximization (AM)
+2. Run `python demo_ttopt.py`, then see the outputs in the terminal
 
-3. Run `python demo_ttopt.py`, then see the outputs in the terminal
+3. Run `python demo.py am`, then see the outputs in the terminal and the `result` folder with the result for simple Activation Maximization (AM)
+
+4. Run `python demo.py gan`, then see the outputs in the terminal and the `result` folder with the result for real test
 
 
 ## Usage with colab
