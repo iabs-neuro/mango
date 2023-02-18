@@ -1,105 +1,110 @@
 import numpy as np
 import random
-import sys
 from time import perf_counter as tpc
 import torch
-from ttopt import TTOpt
 
 
-from data import Data
-from gen_gan import GenGAN
-from image import Image
-from model import Model
-from model_wrapper import ModelWrapper
+from core import Data
+from core import Image
+from core import Model
+from core.utils import Log
+from core.utils import folder_ensure
+from core.utils import plot_image
+from core.utils import resize_and_pad
+from core.utils import sort_vector
+from gen import GenGAN
 from opt import opt_am
-from utils import folder_ensure
-from utils import plot_image
-from utils import resize_and_pad
-from utils import sort_vector
+from opt import opt_protes
+from opt import opt_ttopt
 
 
-def demo_opt(device):
+def demo(device, log, name='vgg16', layer=2, filter=10, evals=1.E+1):
+    # Note, combination (name, layer, filter) is tested only for 'vgg16'.
     _time = tpc()
 
-    if torch.cuda.is_available():
-        device = torch.device('cuda')
-    else:
-        device = torch.device('cpu')
+    data, model, gen, d = run_init(device, log, name, layer, filter)
+    image_demo = Image('demo_image.jpg', 'file')
+    image_rand = Image.rand(data.sz, data.ch, 50, 180)
+
+    run_predict(data, model, image_demo, '(demo image)')
+    run_predict(data, model, image_rand, '(random pixels)')
+
+    #run_opt_ttopt(model, gen, d, evals)
+
+    run_opt_am(model, image_rand, evals)
+
+
+def run_init(device, log, name, layer, filter):
+    """Prepare data, model and generator."""
+    _time = tpc()
+    log.prc('Prepare data, model and generator')
 
     data = Data('imagenet')
     data.load_labels()
 
     model = Model(device)
-    model.set(name='vgg16')
+    model.set(name=name)
     model.set_labels(data.labels, data.name)
     model.set_shape(data.sz, data.ch)
-    model.set_target(layer=2, filter=10)
+    model.set_target(layer, filter)
 
-    # Можно взять реальное изображение в качестве базового, либо случайное:
-    image_base = Image.rand(data.sz, data.ch, 50, 180)
-    # image_base = Image('demo/demo_image1.jpg', 'file')
-    z = image_base.to_tens(model.device, batch=True)
-    z = opt_am(model, z, iters=50)
-    image_am = Image(z, 'tens')
-    image_am.show('result/am.png')
-
-    print(f'\n\nDONE | Time: {tpc() - _time:-10.3f} sec.')
-
-
-def demo_predict(device):
-    """Запуск предсказания ИНС (просто для интереса)."""
-    _time = tpc()
-
-    if torch.cuda.is_available():
-        device = torch.device('cuda')
-    else:
-        device = torch.device('cpu')
-
-    data = Data('imagenet')
-    data.load_labels()
-
-    model = Model(device)
-    model.set(name='vgg16')
-    model.set_labels(data.labels, data.name)
-    model.set_shape(data.sz, data.ch)
-    model.set_target(layer=2, filter=10)
-
-    image = Image('demo/demo_image1.jpg', 'file')
-
-    y = model.run(image)
-    print(f'\n\n\n>>>ANN predictions for given image:')
-    for lbl in sort_vector(y)[:3]:
-        print(f'{lbl[1]*100:-5.1f}% : ', data.labels[lbl[0]])
-
-    print(f'\n\nDONE | Time: {tpc() - _time:-10.3f} sec.')
-
-
-def run_gan(evals=1.E+3, rank=4):
-    _time = tpc()
-
-    model = ModelWrapper('alexnet', device='cpu')
-    model.select_unit(('alexnet', '.classifier.Linear6', 1))
     gen = GenGAN(name='fc8')
     d = gen.codelen
+
+    log.res(tpc()-_time)
+
+    return data, model, gen, d
+
+
+def run_opt_ttopt(model, gen, d, evals, rank=4, comment=''):
+    """Run optimization with TTOpt."""
+    _time = tpc()
+    log.prc(f'Optimization with TTOpt {comment}')
 
     def func(X):
         imgs = gen.visualize_batch_np(X)
         imgs = resize_and_pad(imgs, (227, 227), (0, 0))
-        return model.score_tsr(imgs)
-
-    def callback(last):
-        if True: # Only for debug (plot every result improvement)
-            img = gen.render(tto.x_min.reshape((1, -1)), scale=1.0)[0]
-            plot_image(img, 'result/gan_ttopt.png')
+        return model.run_target(imgs)
 
     tto = TTOpt(func, d=d, a=0., b=1., p=2, q=5, evals=evals,
-        callback=callback, name='LATENT', with_cache=True, with_log=True)
+        name='LATENT', with_cache=True, with_log=True)
     tto.maximize(rank)
 
-    img = gen.render(tto.x_min.reshape((1, -1)), scale=1.0)[0]
-    plot_image(img, 'result/gan_ttopt.png')
+    image = gen.render(tto.x_min.reshape((1, -1)), scale=1.0)[0]
+    image.show('result/image/opt_ttopt.png')
 
-    print(f'\n\nDONE | Time: {tpc() - _time:-10.3f} sec.')
+    y = model.run(image)
+
+    print(f'Activation in target neuron : {model.hook.a:-14.8e}')
+    log.res(tpc() - _time)
+
+
+def run_opt_am(model, image, evals, comment=''):
+    """Run optimization with Activation Maximization (AM)."""
+    _time = tpc()
+    log.prc(f'Optimization with Activation Maximization {comment}')
+
+    x = image.to_tens(model.device, batch=True)
+    x = opt_am(model, x, evals=int(evals))
+
+    image = Image(x, 'tens')
+    image.show('result/image/opt_am.png')
+
+    print(f'Activation in target neuron : {model.hook.a:-14.8e}')
+    log.res(tpc() - _time)
+
+
+def run_predict(data, model, image, comment=''):
+    """Run model prediction."""
+    _time = tpc()
+    log.prc(f'Simple ANN prediction for given input {comment}')
+
+    y = model.run(image)
+    for lbl in sort_vector(y)[:3]:
+        log(f'    {lbl[1]*100:-5.1f}% : {data.labels[lbl[0]]}')
+
+    print(f'Activation in target neuron : {model.hook.a:-14.8e}')
+    log.res(tpc() - _time)
 
 
 if __name__ == '__main__':
@@ -108,20 +113,16 @@ if __name__ == '__main__':
     random.seed(seed)
     torch.manual_seed(seed)
 
+    folder_ensure('result')
+    folder_ensure('result/image')
+    folder_ensure('result/log')
+
     if torch.cuda.is_available():
         device = torch.device('cuda')
     else:
         device = torch.device('cpu')
 
-    folder_ensure('result')
-    folder_ensure('result/gan')
-    folder_ensure('result/logs')
+    log = Log('result/log/demo.txt')
+    log.title(f'Demo computations (device "{device}").')
 
-    mode = sys.argv[1] if len(sys.argv) > 1 else 'opt'
-
-    if mode == 'predict':
-        demo_predict(device)
-    elif mode == 'opt':
-        demo_opt(device)
-    else:
-        raise ValueError(f'Invalid computation mode "{mode}"')
+    demo(device, log)

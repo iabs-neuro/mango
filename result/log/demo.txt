@@ -1,0 +1,21 @@
+[2023-02-18 15-18-01] Demo computations (device "cpu").
+===================== ---------------------------------
+
+
+.... Prepare data, model and generator
+DONE (     2.21 sec.) 
+
+.... Simple ANN prediction for given input (demo image)
+     80.4% : Persian cat
+      6.1% : great grey owl, great gray owl, Strix nebulosa
+      5.1% : guenon, guenon monkey
+DONE (     0.45 sec.) 
+
+.... Simple ANN prediction for given input (random pixels)
+     11.2% : jellyfish
+      8.0% : nematode, nematode worm, roundworm
+      5.9% : volcano
+DONE (     0.42 sec.) 
+
+.... Optimization with Activation Maximization 
+DONE (     4.83 sec.) 
