@@ -1,16 +1,12 @@
 import torch
 
 
-from image import Image
-
-
-def am(model, img, lr=0.1, iters=30, eps=1.E-7):
+def opt_am(model, x, lr=0.1, iters=30, eps=1.E-7):
     """Метод анализа активации Activation Maximization (AM).
 
     Args:
         model (Model): нейронная сеть.
-        img (Image): экземпляр класса графического изображения, подаваемый
-            на вход ИНС (начальное приближение).
+        x (torch.tensor): начальное приближение (вход для ИНС).
         lr (float): параметр скорости обучения.
         iters (int): количество итераций градиентного метода.
         eps (float): параметр шума.
@@ -19,7 +15,6 @@ def am(model, img, lr=0.1, iters=30, eps=1.E-7):
         Image: входное изображение для ИНС, максимизирующее активацию.
 
     """
-    x = img.to_tens(model.device, batch=True)
     x = x.detach().clone().to(model.device)
     x.requires_grad = True
 
@@ -53,4 +48,4 @@ def am(model, img, lr=0.1, iters=30, eps=1.E-7):
     br = 0.8
     v = v.sub(m).div(s).mul(sat).add(br).clamp(0., 1.)
 
-    return Image(v.squeeze(0), 'tens')
+    return v.squeeze(0)
