@@ -1,0 +1,41 @@
+[2023-02-19 00-09-41] Demo computations (device "cpu").
+===================== ---------------------------------
+
+
+.... Prepare data, model and generator
+Model is loaded ("vgg16")
+GEN   is loaded ("fc8"). Latent dimension: 1000
+DONE (     2.67 sec.) 
+
+.... Simple ANN prediction for given input (Base image)
+     44.0% : Persian cat
+     20.0% : great grey owl, great gray owl, Strix nebulosa
+     10.7% : lynx, catamount
+Activation in target neuron : 7.03849614e-01
+DONE (     0.73 sec.) 
+
+.... Simple ANN prediction for given input (Rand image)
+     24.5% : stole
+     11.1% : poncho
+      6.7% : coral reef
+Activation in target neuron : -2.36461687e+00
+DONE (     0.54 sec.) 
+
+.... Simple GEN->ANN prediction for random latent input
+     12.8% : window screen
+      3.0% : freight car
+      2.0% : fire screen, fireguard
+Activation in target neuron : 5.51560260e-02
+DONE (     0.68 sec.) 
+
+.... Optimization with PROTES
+Activation in target neuron : 1.11019599e+00
+DONE (   388.38 sec.) 
+
+.... Optimization with TTOpt
+Activation in target neuron : -2.69058156e+00
+DONE (   385.59 sec.) 
+
+.... Optimization with Activation Maximization 
+Activation in target neuron : -2.32340291e-01
+DONE (   428.85 sec.) 
