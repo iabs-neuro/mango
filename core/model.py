@@ -22,6 +22,11 @@ class Model:
 
         self.rmv_target(is_init=True)
 
+    def get_a(self):
+        # Return activation of target neuron as a number
+        a = self.hook.a_mean.detach().to('cpu').numpy()
+        return float(a)
+
     def img_load(self, fpath):
         img = Image.open(fpath)
         return self.img_to_tensor(img)
@@ -42,7 +47,7 @@ class Model:
         else:
             plt.savefig(fpath, bbox_inches='tight')
 
-    def tensor_to_plot(x):
+    def tensor_to_plot(self, x):
         x = x.detach().to('cpu').numpy()
         x = x.transpose((1, 2, 0))
         m = np.array([0.4451, 0.4262, 0.3959])
@@ -117,4 +122,4 @@ class AmHook():
 
     def forward(self, module, inp, out):
         self.a = torch.mean(out[:, self.filter, :, :], dim=(1, 2))
-        self.a_mean = torch.mean(self.a)
+        self.a_mean = torch.mean(out[:, self.filter, :, :])

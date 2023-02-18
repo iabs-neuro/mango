@@ -7,7 +7,7 @@ def opt_am(model, x, lr=1.E-4, evals=30, eps=1.E-7):
     x.requires_grad = True
 
     for i in range(evals):
-        model.ann(x)
+        model.ann(x[None])
         a = model.hook.a_mean
         G = (torch.autograd.grad(a, x))[0]
         G /= torch.sqrt(torch.mean(torch.mul(G, G))) + eps

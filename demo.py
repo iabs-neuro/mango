@@ -5,12 +5,9 @@ import torch
 
 
 from core import Data
-from core import Image
 from core import Model
 from core.utils import Log
 from core.utils import folder_ensure
-from core.utils import plot_image
-from core.utils import resize_and_pad
 from core.utils import sort_vector
 from gen import GenGAN
 from opt import opt_am
@@ -18,23 +15,22 @@ from opt import opt_protes
 from opt import opt_ttopt
 
 
-def demo(device, log, name='vgg16', layer=2, filter=10, evals=1.E+1):
-    # Note, combination (name, layer, filter) is tested only for 'vgg16'.
-    _time = tpc()
+def demo(device, name='vgg16', layer=2, filter=10, evals=1.E+1):
+    model, gen = run_init(device, name, layer, filter)
 
-    data, model, gen, d = run_init(device, log, name, layer, filter)
-    image_demo = Image('demo_image.jpg', 'file')
-    image_rand = Image.rand(data.sz, data.ch, 50, 180)
+    x_base = model.img_load('demo_image.jpg')
+    x_rand = model.img_rand()
 
-    run_predict(data, model, image_demo, '(demo image)')
-    run_predict(data, model, image_rand, '(random pixels)')
+    run_predict(model, x_base)
+    run_predict(model, x_rand, is_rand=True)
 
-    #run_opt_ttopt(model, gen, d, evals)
+    run_predict_gen(model, gen)
 
-    run_opt_am(model, image_rand, evals)
+    run_opt_ttopt(model, gen, evals)
+    run_opt_am(model, x_rand, evals)
 
 
-def run_init(device, log, name, layer, filter):
+def run_init(device, name, layer, filter, name_gen='fc8'):
     """Prepare data, model and generator."""
     _time = tpc()
     log.prc('Prepare data, model and generator')
@@ -42,68 +38,95 @@ def run_init(device, log, name, layer, filter):
     data = Data('imagenet')
     data.load_labels()
 
-    model = Model(device)
-    model.set(name=name)
-    model.set_labels(data.labels, data.name)
-    model.set_shape(data.sz, data.ch)
+    model = Model(name, device, data.sz, data.ch, data.labels)
     model.set_target(layer, filter)
+    log(f'Model is loaded ("{name}")')
 
-    gen = GenGAN(name='fc8')
-    d = gen.codelen
+    gen = GenGAN(name_gen, device, model.sz)
+    log(f'GEN   is loaded ("{name_gen}"). Latent dimension: {gen.d:-3d}')
 
-    log.res(tpc()-_time)
+    log.res(tpc() - _time)
 
-    return data, model, gen, d
+    return model, gen
 
 
-def run_opt_ttopt(model, gen, d, evals, rank=4, comment=''):
+def run_opt_ttopt(model, gen, evals):
     """Run optimization with TTOpt."""
     _time = tpc()
-    log.prc(f'Optimization with TTOpt {comment}')
+    log.prc(f'Optimization with TTOpt')
 
-    def func(X):
-        imgs = gen.visualize_batch_np(X)
-        imgs = resize_and_pad(imgs, (227, 227), (0, 0))
-        return model.run_target(imgs)
+    z = opt_ttopt(model, gen, evals)
+    x = gen.run(z)
 
-    tto = TTOpt(func, d=d, a=0., b=1., p=2, q=5, evals=evals,
-        name='LATENT', with_cache=True, with_log=True)
-    tto.maximize(rank)
+    y = model.run(x)
+    a = model.get_a()
 
-    image = gen.render(tto.x_min.reshape((1, -1)), scale=1.0)[0]
-    image.show('result/image/opt_ttopt.png')
+    title = f'Activation {a:-9.2e} | Method TTOpt'
+    fpath = f'result/image/opt_ttopt.png'
+    model.img_show(x, title, fpath)
 
-    y = model.run(image)
-
-    print(f'Activation in target neuron : {model.hook.a:-14.8e}')
+    log(f'Activation in target neuron : {a:-14.8e}')
     log.res(tpc() - _time)
 
 
-def run_opt_am(model, image, evals, comment=''):
+def run_opt_am(model, x, evals, comment=''):
     """Run optimization with Activation Maximization (AM)."""
     _time = tpc()
     log.prc(f'Optimization with Activation Maximization {comment}')
 
-    x = image.to_tens(model.device, batch=True)
     x = opt_am(model, x, evals=int(evals))
 
-    image = Image(x, 'tens')
-    image.show('result/image/opt_am.png')
+    y = model.run(x)
+    a = model.get_a()
 
-    print(f'Activation in target neuron : {model.hook.a:-14.8e}')
+    title = f'Activation {a:-9.2e} | Method AM'
+    fpath = f'result/image/opt_am.png'
+    model.img_show(x, title, fpath)
+
+    log(f'Activation in target neuron : {a:-14.8e}')
     log.res(tpc() - _time)
 
 
-def run_predict(data, model, image, comment=''):
+def run_predict(model, x, is_rand=False):
     """Run model prediction."""
     _time = tpc()
-    log.prc(f'Simple ANN prediction for given input {comment}')
+    suf = ('Rand' if is_rand else 'Base') + ' image'
+    log.prc(f'Simple ANN prediction for given input ({suf})')
 
-    y = model.run(image)
+    y = model.run(x)
+    a = model.get_a()
+
     for lbl in sort_vector(y)[:3]:
-        log(f'    {lbl[1]*100:-5.1f}% : {data.labels[lbl[0]]}')
+        log(f'    {lbl[1]*100:-5.1f}% : {model.labels[lbl[0]]}')
 
-    print(f'Activation in target neuron : {model.hook.a:-14.8e}')
+    title = f'Activation {a:-9.2e} | {suf}'
+    fpath = f'result/image/ann_pred_{"rand" if is_rand else "base"}.png'
+    model.img_show(x, title, fpath)
+
+    log(f'Activation in target neuron : {a:-14.8e}')
+    log.res(tpc() - _time)
+
+
+def run_predict_gen(model, gen):
+    """Run model prediction with generator input."""
+    _time = tpc()
+    log.prc(f'Simple GEN->ANN prediction for random latent input')
+
+    z = torch.zeros(gen.d, device=model.device)
+
+    x = gen.run(z)
+
+    y = model.run(x)
+    a = model.get_a()
+
+    for lbl in sort_vector(y)[:3]:
+        log(f'    {lbl[1]*100:-5.1f}% : {model.labels[lbl[0]]}')
+
+    title = f'Activation {a:-9.2e} | Random generated image'
+    fpath = f'result/image/gen_pred_rand.png'
+    model.img_show(x, title, fpath)
+
+    log(f'Activation in target neuron : {a:-14.8e}')
     log.res(tpc() - _time)
 
 
@@ -125,4 +148,4 @@ if __name__ == '__main__':
     log = Log('result/log/demo.txt')
     log.title(f'Demo computations (device "{device}").')
 
-    demo(device, log)
+    demo(device)
