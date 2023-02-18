@@ -33,13 +33,9 @@ Software product for analysis of activations and specialization in artificial ne
 
 ## Usage
 
-1. Perform the steps from `Installation` section
+Run `python demo.py`, then see the outputs in the terminal and results in the `result` folder (`log` and `image` subfolders).
 
-2. Run `python demo_ttopt.py`, then see the outputs in the terminal
-
-3. Run `python demo.py am`, then see the outputs in the terminal and the `result` folder with the result for simple Activation Maximization (AM)
-
-4. Run `python demo.py gan`, then see the outputs in the terminal and the `result` folder with the result for real test
+> Before starting the next calculation, you can completely delete or rename the `result` folder. A new `result` folder will be created automatically in this case.
 
 
 ## Usage with colab
