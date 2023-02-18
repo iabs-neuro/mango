@@ -6,19 +6,48 @@ import torch
 from ttopt import TTOpt
 
 
-from am import am
 from data import Data
 from gen_gan import GenGAN
 from image import Image
 from model import Model
 from model_wrapper import ModelWrapper
+from opt import opt_am
 from utils import folder_ensure
 from utils import plot_image
 from utils import resize_and_pad
 from utils import sort_vector
 
 
-def run_am():
+def demo_opt(device):
+    _time = tpc()
+
+    if torch.cuda.is_available():
+        device = torch.device('cuda')
+    else:
+        device = torch.device('cpu')
+
+    data = Data('imagenet')
+    data.load_labels()
+
+    model = Model(device)
+    model.set(name='vgg16')
+    model.set_labels(data.labels, data.name)
+    model.set_shape(data.sz, data.ch)
+    model.set_target(layer=2, filter=10)
+
+    # Можно взять реальное изображение в качестве базового, либо случайное:
+    image_base = Image.rand(data.sz, data.ch, 50, 180)
+    # image_base = Image('demo/demo_image1.jpg', 'file')
+    z = image_base.to_tens(model.device, batch=True)
+    z = opt_am(model, z, iters=50)
+    image_am = Image(z, 'tens')
+    image_am.show('result/am.png')
+
+    print(f'\n\nDONE | Time: {tpc() - _time:-10.3f} sec.')
+
+
+def demo_predict(device):
+    """Запуск предсказания ИНС (просто для интереса)."""
     _time = tpc()
 
     if torch.cuda.is_available():
@@ -37,18 +66,10 @@ def run_am():
 
     image = Image('demo/demo_image1.jpg', 'file')
 
-    # Запуск предсказания ИНС (просто для интереса):
     y = model.run(image)
     print(f'\n\n\n>>>ANN predictions for given image:')
     for lbl in sort_vector(y)[:3]:
         print(f'{lbl[1]*100:-5.1f}% : ', data.labels[lbl[0]])
-
-    # Можно взять реальное изображение в качестве базового, либо случайное:
-    # image_base = Image.rand(data.sz, data.ch, 50, 180)
-    image_base = image
-
-    image_am = am(model, image_base, iters=50)
-    image_am.show('result/am.png')
 
     print(f'\n\nDONE | Time: {tpc() - _time:-10.3f} sec.')
 
@@ -87,15 +108,20 @@ if __name__ == '__main__':
     random.seed(seed)
     torch.manual_seed(seed)
 
+    if torch.cuda.is_available():
+        device = torch.device('cuda')
+    else:
+        device = torch.device('cpu')
+
     folder_ensure('result')
     folder_ensure('result/gan')
     folder_ensure('result/logs')
 
-    mode = sys.argv[1] if len(sys.argv) > 1 else 'am'
+    mode = sys.argv[1] if len(sys.argv) > 1 else 'opt'
 
-    if mode == 'am':
-        run_am()
-    elif mode == 'gan':
-        run_gan()
+    if mode == 'predict':
+        demo_predict(device)
+    elif mode == 'opt':
+        demo_opt(device)
     else:
         raise ValueError(f'Invalid computation mode "{mode}"')
