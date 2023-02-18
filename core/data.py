@@ -9,19 +9,12 @@ import yaml
 
 class Data:
     def __init__(self, name):
-        """Класс-обертка для работы с данными для ИНС.
-
-        Args:
-            name (str): имя набора данных.
-
-        """
         self.name = name
 
         self.load_shape()
 
     @property
     def func(self):
-        """Pytorch-функция для загрузки набора данных."""
         if self.name == 'mnist':
             return torchvision.datasets.MNIST
 
@@ -29,7 +22,7 @@ class Data:
             return torchvision.datasets.FashionMNIST
 
         if self.name == 'imagenet':
-            return None # torchvision.datasets.ImageNet
+            return None
 
         raise ValuerError('Invalid data name')
 
@@ -45,7 +38,6 @@ class Data:
         return X, c
 
     def load(self, fpath='result/_data', batch_size=64):
-        """Загрузка обучающего и проверочного наборов данных."""
         if not self.func:
             return
 
@@ -63,7 +55,6 @@ class Data:
             shuffle=True)
 
     def load_labels(self):
-        """Загрузка меток классов набора данных."""
         self.labels = {}
 
         if self.name == 'mnist':

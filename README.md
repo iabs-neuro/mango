@@ -38,11 +38,6 @@ Run `python demo.py`, then see the outputs in the terminal and results in the `r
 > Before starting the next calculation, you can completely delete or rename the `result` folder. A new `result` folder will be created automatically in this case.
 
 
-## Usage with colab
-
-TODO: сделать загрузку приватного репозитория в COLAB и демонстрационный код с запуском основных методов (перспективно, т.к. в colab есть GPU)
-
-
 ## Authors
 
 - [Andrei Chertkov](https://github.com/AndreiChertkov)
