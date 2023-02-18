@@ -3,7 +3,7 @@ from time import perf_counter as tpc
 import torch
 
 
-from image import Image
+from .image import Image
 
 
 class Model:
@@ -22,7 +22,22 @@ class Model:
 
         self.probs = torch.nn.Softmax(dim=1)
 
-    def run(self, img=None, X=None):
+        self.layer = None    # Target layer, neuron and related hook
+        self.filter = None
+        self.hook = None
+        self.hook_hand = []
+
+    def rmv_target(self):
+        """Удаление целевого нейрона в ИНС для исследования."""
+        while len(self.handlers) > 0:
+            self.handlers.pop().remove()
+
+        self.layer = None
+        self.filter = None
+        self.hook = None
+        self.hook_hand = []
+
+    def run(self, img=None, X=None, X_tor=None):
         """Вычисление предсказания ИНС.
 
         Args:
@@ -56,6 +71,17 @@ class Model:
             y = y.to('cpu').numpy()
 
         return y
+
+    def run_target(self, X_tor):
+        """Вычисление активации ИНС в целевом нейроне.
+
+        См. описание аргументов методе "run".
+
+        """
+        self.hook.init()
+        self.run(X_tor=X)
+        return np.array(self.hook.a_all)
+
 
     def set(self, model=None, name=None):
         """Задание модели ИНС.
@@ -118,3 +144,20 @@ class Model:
         self.filter = filter
         if self.filter < 0 or self.filter >= self.layer.out_channels:
             raise ValueError('Указан несуществующий номер фильтра')
+
+        self.hook = AmHook(self.filter)
+        self.hook_hand = [self.layer.register_forward_hook(self.hook.forward)]
+
+
+class AmHook():
+    def __init__(self, filter):
+        self.filter = filter
+        self.init()
+
+    def init(self):
+        self.a = None
+        self.a_all = []
+
+    def forward(self, module, inp, out):
+        self.a = torch.mean(out[:, self.filter, :, :])
+        self.a_all.append(self.a.detach().cpu())
