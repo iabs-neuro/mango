@@ -22,7 +22,7 @@ Software product for analysis of activations and specialization in artificial ne
 
 4. Install dependencies:
     ```bash
-    pip install teneva==0.13.0 ttopt==0.5.0 protes==0.1.2 torch torchvision scikit-image matplotlib PyYAML jupyterlab
+    pip install teneva==0.13.0 ttopt==0.5.0 protes==0.1.2 torch torchvision scikit-image matplotlib PyYAML jupyterlab "jax[cpu]==0.4.3" optax
     ```
 
 5. Delete virtual environment at the end of the work (optional):

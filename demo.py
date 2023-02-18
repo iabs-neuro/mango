@@ -15,7 +15,7 @@ from opt import opt_protes
 from opt import opt_ttopt
 
 
-def demo(device, name='vgg16', layer=2, filter=10, evals=1.E+1):
+def demo(device, name='vgg16', layer=5, filter=20, evals=1.E+3):
     model, gen = run_init(device, name, layer, filter)
 
     x_base = model.img_load('demo_image.jpg')
@@ -26,6 +26,7 @@ def demo(device, name='vgg16', layer=2, filter=10, evals=1.E+1):
 
     run_predict_gen(model, gen)
 
+    run_opt_protes(model, gen, evals)
     run_opt_ttopt(model, gen, evals)
     run_opt_am(model, x_rand, evals)
 
@@ -48,6 +49,25 @@ def run_init(device, name, layer, filter, name_gen='fc8'):
     log.res(tpc() - _time)
 
     return model, gen
+
+
+def run_opt_protes(model, gen, evals):
+    """Run optimization with PROTES."""
+    _time = tpc()
+    log.prc(f'Optimization with PROTES')
+
+    z = opt_protes(model, gen, evals)
+    x = gen.run(z)
+
+    y = model.run(x)
+    a = model.get_a()
+
+    title = f'Activation {a:-9.2e} | Method PROTES'
+    fpath = f'result/image/opt_protes.png'
+    model.img_show(x, title, fpath)
+
+    log(f'Activation in target neuron : {a:-14.8e}')
+    log.res(tpc() - _time)
 
 
 def run_opt_ttopt(model, gen, evals):
