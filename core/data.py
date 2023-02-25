@@ -24,6 +24,9 @@ class Data:
         if self.name == 'imagenet':
             return None
 
+        if self.name == 'cifar10':
+            return
+
         raise ValuerError('Invalid data name')
 
     def get(self, i=None, tst=False):
