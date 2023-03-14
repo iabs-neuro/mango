@@ -28,11 +28,4 @@ def opt_am(model, x, lr=1.E-4, evals=30, eps=1.E-7):
             text += ' <<< DONE' if i == evals-1 else ''
             print(text)
 
-    x = x.detach().cpu()
-    # m = x.mean()
-    # s = x.std() or 1.E-8
-    # sat = 0.2
-    # br = 0.8
-    # x = x.sub(m).div(s).mul(sat).add(br).clamp(0., 1.)
-
-    return x
+    return x.detach().clone().to(model.device)
