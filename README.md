@@ -3,7 +3,7 @@
 
 ## Description
 
-Software product for analysis of activations and specialization in artificial neural networks (ANN) with the tensor train (TT) decomposition.
+Software product for analysis of activations and specialization in artificial neural networks (ANN), including spike neural networks (SNN), with the tensor train (TT) decomposition.
 
 
 ## Installation
@@ -22,7 +22,7 @@ Software product for analysis of activations and specialization in artificial ne
 
 4. Install dependencies:
     ```bash
-    pip install teneva==0.13.0 ttopt==0.5.0 protes==0.1.2 torch torchvision snntorch scikit-image matplotlib PyYAML jupyterlab "jax[cpu]==0.4.3" optax
+    pip install jupyterlab "jax[cpu]==0.4.3" optax teneva==0.13.2 ttopt==0.5.0 protes==0.1.3 torch torchvision snntorch scikit-image matplotlib PyYAML
     ```
 
 5. Delete virtual environment at the end of the work (optional):
