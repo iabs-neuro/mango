@@ -4,6 +4,11 @@ from PIL import Image
 from time import perf_counter as tpc
 import torch
 import torchvision
+import warnings
+
+
+# To remove the warning of torchvision:
+warnings.filterwarnings("ignore", category=UserWarning)
 
 
 class Model:
@@ -15,7 +20,7 @@ class Model:
         self.ch = ch
         self.labels = labels
 
-        self.ann = torch.hub.load('pytorch/vision', name, weights=True)
+        self.ann = torch.hub.load('pytorch/vision:v0.10.0', name, weights=True)
         self.ann.to(self.device)
 
         self.probs = torch.nn.Softmax(dim=1)
