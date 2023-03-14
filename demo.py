@@ -15,7 +15,7 @@ from opt import opt_protes
 from opt import opt_ttopt
 
 
-def demo(device, name='vgg16', layer=5, filter=20, evals=1.E+3):
+def demo(device, name='vgg16', layer=10, filter=42, evals=1.E+3):
     model, gen = run_init(device, name, layer, filter)
 
     x_base = model.img_load('demo_image.jpg')
