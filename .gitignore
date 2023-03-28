@@ -12,3 +12,4 @@ dist/
 data/_data
 snn/data/*
 _tmp/
+model/data/densenet161.pt
