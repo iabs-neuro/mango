@@ -50,21 +50,24 @@ class Data:
 
         if self.name == 'mnist':
             func = torchvision.datasets.MNIST
+            load = not os.path.isdir(os.path.join(fpath, 'MNIST'))
 
         if self.name == 'mnistf':
             func = torchvision.datasets.FashionMNIST
+            load = not os.path.isdir(os.path.join(fpath, 'FashionMNIST'))
 
         if self.name == 'cifar10':
             func = torchvision.datasets.CIFAR10
+            load = not os.path.isdir(os.path.join(fpath, 'cifar-10-batches-py'))
 
         if self.name == 'imagenet':
             func = None
 
         if func:
-            self.data_trn = func(root=fpath, train=True, download=True,
+            self.data_trn = func(root=fpath, train=True, download=load,
                 transform=self.transform)
 
-            self.data_tst = func(root=fpath, train=False, download=True,
+            self.data_tst = func(root=fpath, train=False, download=load,
                 transform=self.transform)
 
             self.dataloader_trn = DataLoader(self.data_trn,
