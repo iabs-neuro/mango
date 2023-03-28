@@ -1,4 +1,5 @@
 from PIL import Image
+from matplotlib.animation import FuncAnimation
 import matplotlib.pyplot as plt
 import numpy as np
 import os
@@ -24,6 +25,36 @@ class Data:
         self.load_labels()
         self.load_transform()
         self.load_data()
+
+    def animate(self, X, titles, fpath=None):
+        if self.name != 'cifar10':
+            raise NotImplementedError('It works only for cifar10')
+
+        def prep_x(x):
+            x = x.detach().to('cpu')
+            x = torchvision.utils.make_grid(x, nrow=1, normalize=True)
+            x = x.transpose(0, 2).transpose(0, 1)
+            x = x.numpy()
+            return x
+
+        fig = plt.figure(figsize=(4, 4))
+        ax = fig.add_subplot(111)
+        ax.axis('off')
+
+        img = ax.imshow(prep_x(X[0]))
+
+        def update(k, *args):
+            ax.set_title(titles[k], fontsize=10)
+            img.set_data(prep_x(X[k]))
+            return (img,)
+
+        anim = FuncAnimation(fig, update, interval=10,
+            frames=len(X), blit=True, repeat=False)
+
+        if fpath:
+            anim.save(fpath, writer='pillow', fps=0.7)
+        else:
+            anim.show()
 
     def get(self, i=None, tst=False):
         data = self.data_tst if tst else self.data_trn
