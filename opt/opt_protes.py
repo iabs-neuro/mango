@@ -4,22 +4,26 @@ import torch
 from ttopt import TTOpt
 
 
-def opt_protes(model, gen, evals, n=10):
+def opt_protes(model, gen, evals, n=10, lim=3., with_score=False):
     """Activation Maximization with PROTES."""
 
-    lim_a = -1. # Grid lower bound
-    lim_b = +1. # Grid upper bound
+    lim_a = -lim # Grid lower bound
+    lim_b = +lim # Grid upper bound
 
-    def func(z_index):
+    def ind_to_poi(z_index):
         z_index = np.array(z_index) # From jax to numpy
         z = z_index / (n - 1) * (lim_b - lim_a) + lim_a
         z = torch.tensor(z, dtype=torch.float32, device=model.device)
-        x = gen.run(z)
-        a = model.run_target(x)
-        a = a.detach().to('cpu').numpy()
-        return a
+        return z
 
-    z_index = protes(func, [n]*gen.d, evals, is_max=True, log=True)[0]
-    z_index = np.array(z_index) # From jax to numpy
-    z = z_index / (n - 1) * (lim_b - lim_a) + lim_a
-    return torch.tensor(z, dtype=torch.float32, device=model.device)
+    def func(z_index):
+        z = ind_to_poi(z_index)
+        x = gen.run(z)
+        s = gen.score(x).detach().to('cpu').numpy() if with_score else 0.
+        a = model.run_target(x).detach().to('cpu').numpy()
+        return a + 0.1 * s
+
+    info = {}
+    z_index = protes(func, gen.d, n, int(evals), is_max=True, log=True,
+        info=info, with_info_i_opt_list=True)[0]
+    return ind_to_poi(z_index), info
