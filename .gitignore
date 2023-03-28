@@ -9,5 +9,6 @@
 __pycache__/
 build/
 dist/
+data/_data
 snn/data/*
 _tmp/
