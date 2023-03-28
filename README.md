@@ -22,7 +22,7 @@ Software product for analysis of activations and specialization in artificial ne
 
 4. Install dependencies:
     ```bash
-    pip install jupyterlab "jax[cpu]==0.4.3" optax teneva==0.13.2 ttopt==0.5.0 protes==0.1.3 torch torchvision snntorch scikit-image matplotlib PyYAML
+    pip install jupyterlab "jax[cpu]==0.4.3" optax teneva==0.13.2 ttopt==0.5.0 protes==0.2.0 torch torchvision snntorch scikit-image matplotlib PyYAML nevergrad
     ```
 
 5. Delete virtual environment at the end of the work (optional):
@@ -32,6 +32,8 @@ Software product for analysis of activations and specialization in artificial ne
 
 
 ## Usage
+
+TODO: update
 
 Run `python demo.py`, then see the outputs in the terminal and results in the `result` folder (`log` and `image` subfolders).
 
