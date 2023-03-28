@@ -1,1 +1,1 @@
-from .gen_gan import GenGAN
+from .gen import Gen

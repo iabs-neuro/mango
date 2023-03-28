@@ -6,34 +6,74 @@ import torch.nn as nn
 import torchvision
 
 
-class GenGAN:
-    def __init__(self, name, device, sz):
-        super().__init__()
+from .gen_gan_sn import GenGANSn
+from .gen_gan_sn import GenGANSnDsc
 
+
+# TODO: mode build_* functions and View class into separate modules
+
+
+NAMES = ['gan-sn', 'gan-fc6', 'gan-fc7', 'gan-fc8', 'gan-fc6', 'gan-pool5']
+
+
+class Gen:
+    def __init__(self, name='gan-sn', device='cpu', sz=32):
+        if not name in NAMES:
+            raise ValueError(f'Gen name "{name}" is not supported')
         self.name = name
+
         self.device = device
         self.sz = sz
 
-        if name == 'fc6':
+        root = os.path.dirname(__file__) + '/data'
+
+        self.gen = None
+        self.dsc = None
+
+        if name == 'gan-sn':
+            self.gen = GenGANSn()
+            self.gen.load_state_dict(torch.load(f'{root}/gen_gan_sn.pkl',
+                map_location='cpu'))
+
+            self.dsc = GenGANSnDsc()
+            self.dsc.load_state_dict(torch.load(f'{root}/gen_gan_sn_dsc.pkl',
+                map_location='cpu'))
+
+            self.d = 128
+
+        if name == 'gan-fc6':
             self.gen, self.d = build_fc6()
-        elif name == 'fc7':
+
+        if name == 'gan-fc7':
             self.gen, self.d = build_fc7()
-        elif name == 'fc8':
+
+        if name == 'gan-fc8':
             self.gen, self.d = build_fc8()
-        elif name == 'pool5':
+
+        if name == 'gan-pool5':
             self.gen, self.d = build_pool5()
-        else:
-            raise NotImplementedError(f'Model "{name}" is not supported')
 
-        self.gen.to(self.device)
+        if self.gen is not None:
+            self.gen.to(self.device)
+            self.gen.eval()
 
-    def run(self, z):
+        if self.dsc is not None:
+            self.dsc.to(self.device)
+            self.dsc.eval()
+
+    def run(self, z, with_grad=False):
         is_batch = len(z.shape) == 2
         if not is_batch:
             z = z[None]
 
-        with torch.no_grad():
+        if with_grad:
             x = self.gen(z)
+        else:
+            with torch.no_grad():
+                x = self.gen(z)
+
+        if self.name == 'gan-sn':
+            return x if is_batch else x[0]
 
         # TODO: check that the mapping below is correct!
 
@@ -54,6 +94,22 @@ class GenGAN:
     def run_back(self, x):
         # return z
         raise NotImplementedError('TOOD')
+
+    def score(self, x, with_grad=False):
+        if self.dsc is None:
+            raise ValueError('Descriminator is not available')
+
+        is_batch = len(x.shape) == 4
+        if not is_batch:
+            x = x[None]
+
+        if with_grad:
+            y = self.dsc(x).ravel()
+        else:
+            with torch.no_grad():
+                y = self.dsc(x).ravel()
+
+        return y if is_batch else y[0]
 
 
 class View(nn.Module):
