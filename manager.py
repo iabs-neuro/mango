@@ -18,7 +18,10 @@ from opt import opt_ttopt
 from utils import Log
 
 
-NAMES = ['data_check', 'densenet_check', 'densenet_out', 'gan_sn_inv']
+NAMES = [
+    'data_check',
+    'densenet_check', 'densenet_out',
+    'gan_sn_check', 'gan_sn_inv']
 
 
 OPTS = {
@@ -96,6 +99,23 @@ class Manager:
             self.model = Model('densenet', self.data, self.device)
             self.log.res(tpc()-tm)
 
+            tm = self.log.prc(f'Loading "gan_sn" generator')
+            self.gen = Gen('gan_sn', self.device)
+            self.log.res(tpc()-tm)
+
+        if self.name in ['gan_sn_check']:
+            tm = self.log.prc(f'Loading "cifar10" dataset')
+            self.data = Data('cifar10')
+            self.log.res(tpc()-tm)
+
+            tm = self.log.prc(f'Loading "densenet" model')
+            self.model = Model('densenet', self.data, self.device)
+            self.log.res(tpc()-tm)
+
+            tm = self.log.prc(f'Loading "gan_sn" generator')
+            self.gen = Gen('gan_sn', self.device)
+            self.log.res(tpc()-tm)
+
         if self.name in ['gan_sn_inv']:
             tm = self.log.prc(f'Loading "cifar10" dataset')
             self.data = Data('cifar10')
@@ -105,7 +125,7 @@ class Manager:
             self.gen = Gen('gan_sn', self.device)
             self.log.res(tpc()-tm)
 
-        self.log()
+        self.log('')
 
     def run_data_check(self):
         for name_data in ['mnist', 'mnistf', 'cifar10', 'imagenet']:
@@ -135,41 +155,60 @@ class Manager:
             text += f' | time = {t:-10.2f} sec'
             self.log(text)
 
-    def run_densenet_out(self, evals=1.E+4):
-        X, titles = [], []
-        for cl in np.arange(10):
-            print(f'\n>>> Optimize class {cl} ({self.data.labels[cl]}) : ')
-            self.model.set_target(cl=cl)
+    def run_densenet_out(self, m=1.E+4):
+        for meth, opt in OPTS.items():
+            tm = self.log.prc(f'Start optimization with "{meth}"')
 
-            info = {}
-            z_index = protes(self.func, self.gen.d, self.n, int(evals),
-                is_max=True, log=True, info=info, with_info_i_opt_list=True,
-                k=10, k_top=2)[0]
-            z = self.ind_to_poi(z_index)
+            X, titles = [], []
+            for cl in np.arange(10):
+                self.log.prc(f'Optimize class {cl} ({self.data.labels[cl]}) : ')
+                self.model.set_target(cl=cl)
+
+                t = tpc()
+                z_index, e, hist = opt(self.func_ind, self.gen.d, self.n, m,
+                    is_max=True)
+                t = tpc() - t
+                z = self.ind_to_poi(z_index)
+                x = self.gen.run(z)
+                y = self.model.run_target(x)
+
+                self.log(f'Prob  : {e:-8.1e}')
+                self.log(f'Iters : {m:-8.1e}')
+                self.log(f'Time  : {t:-8.1e}')
+
+                title = f'{self.data.labels[cl]} ({y:-9.3e})'
+                X.append(x)
+                titles.append(title)
+
+                X_opt, titles_opt = [], []
+                for (m_opt, z_index_opt, e_opt) in zip(*hist):
+                    z_opt = self.ind_to_poi(z_index_opt)
+                    x_opt = self.gen.run(z_opt)
+                    title_opt = f'GAN (p={e_opt:-9.3e}; m={m_opt:-7.1e})'
+                    X_opt.append(x_opt)
+                    titles_opt.append(title_opt)
+
+                fname = f'gif/gan_max_cl{cl}_{meth}.gif'
+                self.data.animate(X_opt, titles_opt, fpath=self.get_path(fname))
+
+            self.data.plot_many(X, titles, cols=5, rows=2,
+                fpath=self.get_path(f'img/gan_max_cl{cl}_{meth}.png'))
+
+            self.log.res(tpc()-tm)
+
+    def run_gan_sn_check(self):
+        for i in range(5):
+            z = torch.randn(16, self.gen.d)
             x = self.gen.run(z)
-            y = self.model.run_target(x)
-            title = f'y={y:-8.2e} : {self.data.labels[cl]}'
-            self.data.plot(x, title,
-                fpath=self.get_path(f'img/out_max_protes_class{cl}.png'))
-            X.append(x)
-            titles.append(title)
+            y = self.model.run(x).detach().to('cpu').numpy()
+            c = np.argmax(y, axis=1)
+            p = [y[i, c_cur] for i, c_cur in enumerate(c)]
+            l = [self.data.labels[c_cur] for c_cur in c]
+            titles = [f'{v_l} ({v_p:-7.1e})' for (v_p, v_l) in zip(p, l)]
+            self.data.plot_many(x, titles, cols=4, rows=4,
+                fpath=self.get_path(f'img/gan_sample_rand_{i+1}.png'))
 
-            X_opt, titles_opt = [], []
-            for (m, z_index_opt) in zip(info['m_opt_list'], info['i_opt_list']):
-                z_opt = self.ind_to_poi(z_index_opt)
-                x_opt = self.gen.run(z_opt)
-                y_opt = self.model.run_target(x_opt)
-                title_opt = f'y = {y_opt:-10.4e} | m = {m:-7.1e}'
-                X_opt.append(x_opt)
-                titles_opt.append(title_opt)
-
-            self.data.animate(X_opt, titles_opt,
-                fpath=self.get_path(f'gif/out_max_protes_class{cl}.gif'))
-
-        self.data.plot_many(X, titles, cols=5, rows=2,
-            fpath=self.get_path('img/out_max_protes_all.png'))
-
-    def run_gan_sn_inv(self, m=1.E+3, i_list=[99]):
+    def run_gan_sn_inv(self, m=1.E+6, i_list=[1, 42, 99, 100, 700]):
         loss_img = torch.nn.MSELoss()
 
         for i in i_list:
@@ -246,31 +285,6 @@ class Manager:
         np.random.seed(seed)
         random.seed(seed)
         torch.manual_seed(seed)
-
-    def tmp1(self):
-        #model = Model('vgg16', data)
-        data = Data('imagenet')
-        x = data.img_load('demo_image.jpg')
-        print(x.shape)
-        data.plot(x, 'Transformed', fpath=f'tmp.png')
-
-    def tmp2(self):
-        data = Data('cifar10')
-        x, c = data.get(42)
-        data.plot(x, fpath='tmp.jpg')
-        x = data.img_load('demo_image.jpg')
-        data.plot(x, 'Transformed', fpath=f'tmp.jpg')
-
-    def tmp3(self):
-        samples = 25
-        z = torch.randn(samples, gen.d).to(device)
-        x = gen.run(z)
-        y = model.run(x)
-        p = torch.argmax(y, axis=1).detach().to('cpu').numpy()
-        l = [data.labels[p_cur] for p_cur in p]
-        print(l)
-
-        data.plot_many(x, l, cols=5, rows=5, fpath=f'result_tmp/gen_random.png')
 
 
 if __name__ == '__main__':
