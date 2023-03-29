@@ -1,4 +1,3 @@
-from datetime import datetime
 import numpy as np
 import os
 import random
@@ -11,16 +10,17 @@ from data import Data
 from gen import Gen
 from model import Model
 from opt import opt_protes
+from utils import Log
 
 
 from protes import protes
 
 
-NAMES = ['densenet_out']
+NAMES = ['data', 'densenet_out']
 
 
 class Manager:
-    def __init__(self, name, n=10, lim_a=-4., lim_b=+4., device=None):
+    def __init__(self, name, n=64, lim_a=-4., lim_b=+4., device=None):
         if not name in NAMES:
             raise ValueError(f'Manager name "{name}" is not supported')
 
@@ -32,7 +32,9 @@ class Manager:
         self.set_rand()
         self.set_device(device)
         self.set_path()
+        self.set_log()
         self.load()
+        eval('self.run_' + self.name + '()')
 
     def func(self, z_index, with_score=False):
         z = self.ind_to_poi(z_index)
@@ -54,12 +56,19 @@ class Manager:
         return z
 
     def load(self):
+        if self.name in ['data']:
+            self.data = {}
+            for name_data in ['mnist', 'mnistf', 'cifar10', 'imagenet']:
+                tm = self.log.prc(f'Loading "{name_data}" dataset')
+                self.data[name_data] = Data(name_data)
+                self.log.res(tpc()-tm)
+
         if self.name in ['densenet_out']:
             self.data = Data('cifar10')
             self.model = Model('densenet161', self.data, self.device)
             self.gen = Gen('gan-sn', self.device)
 
-    def run(self, evals=1.E+4):
+    def run_densenet_out(self, evals=1.E+4):
         X, titles = [], []
         for cl in np.arange(10):
             print(f'\n>>> Optimize class {cl} ({self.data.labels[cl]}) : ')
@@ -83,7 +92,7 @@ class Manager:
                 z_opt = self.ind_to_poi(z_index_opt)
                 x_opt = self.gen.run(z_opt)
                 y_opt = self.model.run_target(x_opt)
-                title_opt = f'y = {y_opt:-8.2e} | m = {m:-7.1e}'
+                title_opt = f'y = {y_opt:-10.4e} | m = {m:-7.1e}'
                 X_opt.append(x_opt)
                 titles_opt.append(title_opt)
 
@@ -93,19 +102,19 @@ class Manager:
         self.data.plot_many(X, titles, cols=5, rows=2,
             fpath=self.get_path('img/out_max_protes_all.png'))
 
-    def run_check(self, trn=False, tst=True):
-        for mod in ['trn', 'tst']:
-            if mod == 'trn' and not trn or mod == 'tst' and not tst:
-                continue
-
-            t = tpc()
-            n, m = self.model.check(tst=mod == 'tst')
-            t = tpc() - t
-
-            text = f'Accuracy {mod}'
-            text += f' : {float(m)/n*100:.2f}% ({m:-8d} / {n:-8d})'
-            text += f' | time = {t:-10.2f} sec'
-            print(text)
+    def run_data(self):
+        for name_data in ['mnist', 'mnistf', 'cifar10', 'imagenet']:
+            tm = self.log.prc(f'Check "{name_data}" dataset')
+            data = self.data[name_data]
+            v = len(data.labels)
+            self.log(f'Number of classes   : {v:-10d}')
+            if name_data != 'imagenet':
+                v = len(data.data_trn)
+                self.log(f'Size of trn dataset : {v:-10d}')
+                v = len(data.data_tst)
+                self.log(f'Size of tst dataset : {v:-10d}')
+                data.plot_many(fpath=self.get_path(f'img/{name_data}.png'))
+            self.log.res(tpc()-tm)
 
     def set_device(self, device=None):
         if device is None:
@@ -116,6 +125,10 @@ class Manager:
         else:
             self.device = device
 
+    def set_log(self):
+        self.log = Log(self.get_path(f'log_{self.name}.txt'))
+        self.log.title(f'Start "{self.name}" task (device "{self.device}").')
+
     def set_path(self, root_result='result'):
         self.path_root = os.path.dirname(__file__)
         self.path_result = os.path.join(self.path_root, root_result)
@@ -125,8 +138,8 @@ class Manager:
         os.makedirs(self.path_result, exist_ok=True)
         os.makedirs(os.path.join(self.path_result, 'gif'), exist_ok=True)
         os.makedirs(os.path.join(self.path_result, 'img'), exist_ok=True)
-        os.makedirs(os.path.join(self.path_result, 'log'), exist_ok=True)
-        os.makedirs(os.path.join(self.path_result, 'dat'), exist_ok=True)
+        # os.makedirs(os.path.join(self.path_result, 'log'), exist_ok=True)
+        # os.makedirs(os.path.join(self.path_result, 'dat'), exist_ok=True)
 
     def set_rand(self, seed=42):
         np.random.seed(seed)
@@ -158,32 +171,21 @@ class Manager:
 
         data.plot_many(x, l, cols=5, rows=5, fpath=f'result_tmp/gen_random.png')
 
+    def tmp4(self, trn=False, tst=True):
+        for mod in ['trn', 'tst']:
+            if mod == 'trn' and not trn or mod == 'tst' and not tst:
+                continue
 
-class Log:
-    def __init__(self, fpath=None):
-        self.fpath = fpath
-        self.is_new = True
-        self.len_pref = 10
+            t = tpc()
+            n, m = self.model.check(tst=mod == 'tst')
+            t = tpc() - t
 
-    def __call__(self, text):
-        print(text)
-        if self.fpath:
-            with open(self.fpath, 'w' if self.is_new else 'a') as f:
-                f.write(text + '\n')
-        self.is_new = False
-
-    def prc(self, content=''):
-        self(f'\n.... {content}')
-
-    def res(self, t, content=''):
-        self(f'DONE ({t:-9.2f} sec.) {content}')
-
-    def title(self, content):
-        dt = datetime.now().strftime('%Y-%m-%d %H-%M-%S')
-        text = f'[{dt}] {content}'
-        text += '\n' + '=' * 21 + ' ' + '-' * len(content) + '\n'
-        self(text)
+            text = f'Accuracy {mod}'
+            text += f' : {float(m)/n*100:.2f}% ({m:-8d} / {n:-8d})'
+            text += f' | time = {t:-10.2f} sec'
+            print(text)
 
 
-def sort_vector(a, asc=True):
-    return sorted(zip(range(len(a)), a), key=lambda item: item[1], reverse=asc)
+if __name__ == '__main__':
+    name = sys.argv[1] if len(sys.argv) > 1 else NAMES[0]
+    man = Manager(name)

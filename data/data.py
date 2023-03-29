@@ -18,6 +18,7 @@ class Data:
         if not name in NAMES:
             raise ValueError(f'Dataset name "{name}" is not supported')
         self.name = name
+
         self.batch_trn = batch_trn
         self.batch_tst = batch_tst
 
@@ -28,33 +29,35 @@ class Data:
 
     def animate(self, X, titles, fpath=None):
         if self.name != 'cifar10':
-            raise NotImplementedError('It works only for cifar10')
+            raise NotImplementedError('It works now only for cifar10')
 
-        def prep_x(x):
+        if X is None or len(X) == 0 or len(X) != len(titles):
+            print('WRN: invalid data for animation')
+            return
+
+        def prep(x):
             x = x.detach().to('cpu')
             x = torchvision.utils.make_grid(x, nrow=1, normalize=True)
             x = x.transpose(0, 2).transpose(0, 1)
             x = x.numpy()
             return x
 
-        fig = plt.figure(figsize=(4, 4))
+        fig = plt.figure(figsize=(3, 3))
         ax = fig.add_subplot(111)
         ax.axis('off')
 
-        img = ax.imshow(prep_x(X[0]))
+        img = ax.imshow(prep(X[0]))
 
         def update(k, *args):
             ax.set_title(titles[k], fontsize=10)
-            img.set_data(prep_x(X[k]))
+            img.set_data(prep(X[k]))
             return (img,)
 
         anim = FuncAnimation(fig, update, interval=10,
             frames=len(X), blit=True, repeat=False)
 
-        if fpath:
-            anim.save(fpath, writer='pillow', fps=0.7)
-        else:
-            anim.show()
+        anim.save(fpath, writer='pillow', fps=0.7) if fpath else anim.show()
+        plt.close(fig)
 
     def get(self, i=None, tst=False):
         data = self.data_tst if tst else self.data_trn
@@ -65,16 +68,20 @@ class Data:
             i = min(i, len(data)-1)
 
         x, c = data[i]
-        return x, c
+        l = self.labels.get(c)
 
-    def img_load(self, fpath, device='cpu'):
+        return x, c, l
+
+    def img_load(self, fpath, device='cpu', wo_norm=False):
         img = Image.open(fpath)
-        return self.transform(img).to(device)
+        transform = self.transform_wo_norm if wo_norm else self.transform
+        return transform(img).to(device)
 
-    def img_rand(self, device='cpu'):
+    def img_rand(self, device='cpu', wo_norm=False):
         pix = np.random.rand(self.sz, self.sz, self.ch) * 255
         img = Image.fromarray(pix.astype('uint8')).convert('RGB')
-        return self.transform(img).to(device)
+        transform = self.transform_wo_norm if wo_norm else self.transform
+        return transform(img).to(device)
 
     def load_data(self):
         fpath = os.path.dirname(__file__) + '/_data'
@@ -132,16 +139,16 @@ class Data:
 
         if self.name == 'mnistf':
             self.labels = {
-                0: 'T-Shirt',
-                1: 'Trouser',
-                2: 'Pullover',
-                3: 'Dress',
-                4: 'Coat',
-                5: 'Sandal',
-                6: 'Shirt',
-                7: 'Sneaker',
-                8: 'Bag',
-                9: 'Ankle Boot',
+                0: 't-shirt',
+                1: 'trouser',
+                2: 'pullover',
+                3: 'dress',
+                4: 'coat',
+                5: 'sandal',
+                6: 'shirt',
+                7: 'sneaker',
+                8: 'bag',
+                9: 'ankle boot',
             }
 
         if self.name == 'cifar10':
@@ -197,12 +204,15 @@ class Data:
 
         if self.name == 'cifar10':
             # TODO: add support for SNN selection (0.5)
+            # (the current m/v are for densenet)
             m = (0.4914, 0.4822, 0.4465)
             v = (0.2471, 0.2435, 0.2616)
             self.transform = torchvision.transforms.Compose([
                 torchvision.transforms.ToTensor(),
                 torchvision.transforms.Normalize(m, v),
             ])
+
+        self.transform_wo_norm = torchvision.transforms.ToTensor()
 
         if self.name == 'imagenet':
             m = [0.485, 0.456, 0.406]
@@ -214,69 +224,68 @@ class Data:
                 torchvision.transforms.Normalize(m, v),
                 # torchvision.transforms.Lambda(lambda x: x[None]),
             ])
+            self.transform_wo_norm = torchvision.transforms.Compose([
+                torchvision.transforms.CenterCrop(self.sz),
+                torchvision.transforms.ToTensor(),
+            ])
 
-    def plot(self, x, title='', fpath=None):
-        x = x.detach().to('cpu')
+    def plot(self, x, title='', fpath=None, is_new=True):
         size = 8 if self.name == 'imagenet' else 3
+        cmap = 'hot' if self.name in ['mnist', 'mnistf'] else None
 
-        fig = plt.figure(figsize=(size, size))
+        if self.name in ['cifar10']:
+            x = self.tensor_to_plot_cifar10(x)
+        if self.name in ['imagenet']:
+            x = self.tensor_to_plot_imagenet(x)
 
-        if self.ch == 1:
-            img = x.squeeze()
-            plt.imshow(img, cmap='gray')
+        return self.plot_base(x, title, size, cmap, fpath, is_new)
 
-        elif self.name == 'imagenet':
-            img = self.tensor_to_plot(x)
-            plt.imshow(img)
+    def plot_base(self, x, title, size=3, cmap='hot', fpath=None, is_new=True):
+        if not torch.is_tensor(x):
+            x = torch.tensor(x)
+        x = x.detach().to('cpu').squeeze()
 
-        else:
-            img = torchvision.utils.make_grid(x, nrow=1, normalize=True)
-            img = img.transpose(0, 2).transpose(0, 1)
-            plt.imshow(img)
+        if is_new:
+            fig = plt.figure(figsize=(size, size))
 
+        plt.imshow(x, cmap=cmap)
         plt.title(title)
         plt.axis('off')
 
         if fpath:
             plt.savefig(fpath, bbox_inches='tight')
-        else:
+        elif is_new:
             plt.show()
+            plt.close(fig)
 
-    def plot_many(self, X=None, titles=None, cols=3, rows=3, fpath=None):
-        fig = plt.figure(figsize=(3*cols, 3*rows))
+    def plot_many(self, X=None, titles=None, cols=3, rows=3, size=3, fpath=None):
+        fig = plt.figure(figsize=(size*cols, size*rows))
 
         for j in range(1, cols * rows + 1):
             if X is None:
                 i = torch.randint(len(self.data_trn), size=(1,)).item()
-                x, c = self.data_trn[i]
-                title = self.labels.get(c, '')
+                x, c, l = self.get(i)
+                title = l
             else:
                 x = X[j-1].detach().to('cpu')
                 title = titles[j-1] if titles else ''
 
             fig.add_subplot(rows, cols, j)
-            plt.title(title)
-            plt.axis('off')
+            self.plot(x, title, is_new=False)
 
-            if self.ch == 1:
-                img = x.squeeze()
-                plt.imshow(img, cmap='gray')
+        plt.savefig(fpath, bbox_inches='tight') if fpath else plt.show()
+        plt.close(fig)
 
-            elif self.name == 'imagenet':
-                img = self.tensor_to_plot(x)
-                plt.imshow(img)
+    def tensor_to_plot_cifar10(self, x):
+        """Transform tensor to image for cifar10-like data."""
+        if not torch.is_tensor(x):
+            x = torch.tensor(x)
+        x = x.detach().to('cpu')
+        x = torchvision.utils.make_grid(x, nrow=1, normalize=True)
+        x = x.transpose(0, 2).transpose(0, 1)
+        return x
 
-            else:
-                img = torchvision.utils.make_grid(x, nrow=1, normalize=True)
-                img = img.transpose(0, 2).transpose(0, 1)
-                plt.imshow(img)
-
-        if fpath:
-            plt.savefig(fpath, bbox_inches='tight')
-        else:
-            plt.show()
-
-    def tensor_to_plot(self, x):
+    def tensor_to_plot_imagenet(self, x):
         """Transform tensor to image for imagenet-like data."""
         if torch.is_tensor(x):
             x = x.detach().to('cpu').numpy()
@@ -285,4 +294,4 @@ class Data:
         s = np.array([0.2411, 0.2403, 0.2466])
         x = s * x + m
         x = np.clip(x, 0, 1)
-        return x
+        return torch.tensor(x)

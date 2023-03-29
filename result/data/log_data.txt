@@ -1,0 +1,37 @@
+[2023-03-29 20-35-41] Start "data" task (device "cpu").
+===================== ---------------------------------
+
+
+.... Loading "mnist" dataset
+DONE (     5.45 sec.) 
+
+.... Loading "mnistf" dataset
+DONE (     5.79 sec.) 
+
+.... Loading "cifar10" dataset
+DONE (    73.04 sec.) 
+
+.... Loading "imagenet" dataset
+DONE (     0.46 sec.) 
+
+.... Check "mnist" dataset
+Number of classes   :         10
+Size of trn dataset :      60000
+Size of tst dataset :      10000
+DONE (     0.54 sec.) 
+
+.... Check "mnistf" dataset
+Number of classes   :         10
+Size of trn dataset :      60000
+Size of tst dataset :      10000
+DONE (     0.51 sec.) 
+
+.... Check "cifar10" dataset
+Number of classes   :         10
+Size of trn dataset :      50000
+Size of tst dataset :      10000
+DONE (     0.44 sec.) 
+
+.... Check "imagenet" dataset
+Number of classes   :       1000
+DONE (     0.00 sec.) 
