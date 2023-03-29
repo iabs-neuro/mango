@@ -15,6 +15,13 @@ class Log:
                 f.write(text + '\n')
         self.is_new = False
 
+    def end(self):
+        dt = datetime.now().strftime('%Y-%m-%d %H-%M-%S')
+        content = f'Work is finished ({tpc()-self.tm:-.2f} sec. total)'
+        text = '\n\n' + '=' * 21 + ' ' + '-' * len(content) + '\n'
+        text += f'[{dt}] {content}'
+        self(text)
+
     def prc(self, content=''):
         self(f'\n.... {content}')
         return tpc()
@@ -23,6 +30,7 @@ class Log:
         self(f'DONE ({t:-9.2f} sec.) {content}')
 
     def title(self, content):
+        self.tm = tpc()
         dt = datetime.now().strftime('%Y-%m-%d %H-%M-%S')
         text = f'[{dt}] {content}'
         text += '\n' + '=' * 21 + ' ' + '-' * len(content) + '\n'

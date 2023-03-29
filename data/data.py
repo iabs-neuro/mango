@@ -49,11 +49,11 @@ class Data:
         img = ax.imshow(prep(X[0]))
 
         def update(k, *args):
-            ax.set_title(titles[k], fontsize=10)
+            ax.set_title(titles[k], fontsize=9)
             img.set_data(prep(X[k]))
             return (img,)
 
-        anim = FuncAnimation(fig, update, interval=10,
+        anim = FuncAnimation(fig, update, interval=6,
             frames=len(X), blit=True, repeat=False)
 
         anim.save(fpath, writer='pillow', fps=0.7) if fpath else anim.show()
@@ -249,7 +249,7 @@ class Data:
             fig = plt.figure(figsize=(size, size))
 
         plt.imshow(x, cmap=cmap)
-        plt.title(title)
+        plt.title(title, fontsize=9)
         plt.axis('off')
 
         if fpath:

@@ -9,14 +9,26 @@ import torch
 from data import Data
 from gen import Gen
 from model import Model
+from opt import opt_ng_opo
+from opt import opt_ng_portfolio
+from opt import opt_ng_pso
+from opt import opt_ng_spsa
 from opt import opt_protes
+from opt import opt_ttopt
 from utils import Log
 
 
-from protes import protes
+NAMES = ['data_check', 'densenet_check', 'densenet_out', 'gan_sn_inv']
 
 
-NAMES = ['data', 'densenet_out']
+OPTS = {
+    'NG-OPO': opt_ng_opo,
+    'NG-Portfolio': opt_ng_portfolio,
+    'NG-PSO': opt_ng_pso,
+    'NG-SPSA': opt_ng_spsa,
+    'PROTES': opt_protes,
+    'TTOpt': opt_ttopt,
+}
 
 
 class Manager:
@@ -35,9 +47,12 @@ class Manager:
         self.set_log()
         self.load()
         eval('self.run_' + self.name + '()')
+        self.end()
 
-    def func(self, z_index, with_score=False):
-        z = self.ind_to_poi(z_index)
+    def end(self):
+        self.log.end()
+
+    def func(self, z, with_score=False):
         x = self.gen.run(z)
         s = self.gen.score(x).detach().to('cpu').numpy() if with_score else 0.
         a = self.model.run_target(x).detach().to('cpu').numpy()
@@ -56,17 +71,69 @@ class Manager:
         return z
 
     def load(self):
-        if self.name in ['data']:
+        if self.name in ['data_check']:
             self.data = {}
             for name_data in ['mnist', 'mnistf', 'cifar10', 'imagenet']:
                 tm = self.log.prc(f'Loading "{name_data}" dataset')
                 self.data[name_data] = Data(name_data)
                 self.log.res(tpc()-tm)
 
-        if self.name in ['densenet_out']:
+        if self.name in ['densenet_check']:
+            tm = self.log.prc(f'Loading "cifar10" dataset')
             self.data = Data('cifar10')
-            self.model = Model('densenet161', self.data, self.device)
-            self.gen = Gen('gan-sn', self.device)
+            self.log.res(tpc()-tm)
+
+            tm = self.log.prc(f'Loading "densenet" model')
+            self.model = Model('densenet', self.data, self.device)
+            self.log.res(tpc()-tm)
+
+        if self.name in ['densenet_out']:
+            tm = self.log.prc(f'Loading "cifar10" dataset')
+            self.data = Data('cifar10')
+            self.log.res(tpc()-tm)
+
+            tm = self.log.prc(f'Loading "densenet" model')
+            self.model = Model('densenet', self.data, self.device)
+            self.log.res(tpc()-tm)
+
+        if self.name in ['gan_sn_inv']:
+            tm = self.log.prc(f'Loading "cifar10" dataset')
+            self.data = Data('cifar10')
+            self.log.res(tpc()-tm)
+
+            tm = self.log.prc(f'Loading "gan_sn" generator')
+            self.gen = Gen('gan_sn', self.device)
+            self.log.res(tpc()-tm)
+
+        self.log()
+
+    def run_data_check(self):
+        for name_data in ['mnist', 'mnistf', 'cifar10', 'imagenet']:
+            tm = self.log.prc(f'Check "{name_data}" dataset')
+            data = self.data[name_data]
+            v = len(data.labels)
+            self.log(f'Number of classes   : {v:-10d}')
+            if name_data != 'imagenet':
+                v = len(data.data_trn)
+                self.log(f'Size of trn dataset : {v:-10d}')
+                v = len(data.data_tst)
+                self.log(f'Size of tst dataset : {v:-10d}')
+                data.plot_many(fpath=self.get_path(f'img/{name_data}.png'))
+            self.log.res(tpc()-tm)
+
+    def run_densenet_check(self, trn=True, tst=True):
+        for mod in ['trn', 'tst']:
+            if mod == 'trn' and not trn or mod == 'tst' and not tst:
+                continue
+
+            t = tpc()
+            n, m = self.model.check(tst=(mod == 'tst'))
+            t = tpc() - t
+
+            text = f'Accuracy {mod}'
+            text += f' : {float(m)/n*100:.2f}% ({m:-9d} / {n:-9d})'
+            text += f' | time = {t:-10.2f} sec'
+            self.log(text)
 
     def run_densenet_out(self, evals=1.E+4):
         X, titles = [], []
@@ -102,19 +169,53 @@ class Manager:
         self.data.plot_many(X, titles, cols=5, rows=2,
             fpath=self.get_path('img/out_max_protes_all.png'))
 
-    def run_data(self):
-        for name_data in ['mnist', 'mnistf', 'cifar10', 'imagenet']:
-            tm = self.log.prc(f'Check "{name_data}" dataset')
-            data = self.data[name_data]
-            v = len(data.labels)
-            self.log(f'Number of classes   : {v:-10d}')
-            if name_data != 'imagenet':
-                v = len(data.data_trn)
-                self.log(f'Size of trn dataset : {v:-10d}')
-                v = len(data.data_tst)
-                self.log(f'Size of tst dataset : {v:-10d}')
-                data.plot_many(fpath=self.get_path(f'img/{name_data}.png'))
-            self.log.res(tpc()-tm)
+    def run_gan_sn_inv(self, m=1.E+3, i_list=[99]):
+        loss_img = torch.nn.MSELoss()
+
+        for i in i_list:
+            tm_out = self.log.prc(f'Start for trn image #{i:-6d}')
+            x_real, c_real, l_real = self.data.get(i)
+
+            def func(z):
+                x = self.gen.run(z)
+                e = [loss_img(x_cur, x_real) for x_cur in x]
+                return np.array(e)
+
+            def func_ind(z_index):
+                return func(self.ind_to_poi(z_index))
+
+            for meth, opt in OPTS.items():
+                tm = self.log.prc(f'Start optimization with "{meth}"')
+
+                t = tpc()
+                z_index, e, hist = opt(func_ind, self.gen.d, self.n, m,
+                    is_max=False)
+                t = tpc() - t
+                z = self.ind_to_poi(z_index)
+                x = self.gen.run(z)
+
+                self.log(f'Error : {e:-8.1e}')
+                self.log(f'Iters : {m:-8.1e}')
+                self.log(f'Time  : {t:-8.1e}')
+
+                fname = f'img/gan_inv_img{i}_{meth}.png'
+                self.data.plot_many(
+                    [x_real, x],
+                    [f'Target ({l_real})', f'GAN inv. (e={e:-9.3e})'],
+                    cols=2, rows=1, fpath=self.get_path(fname))
+
+                X_opt, titles_opt = [], []
+                for (m_opt, z_index_opt, e_opt) in zip(*hist):
+                    z_opt = self.ind_to_poi(z_index_opt)
+                    x_opt = self.gen.run(z_opt)
+                    title_opt = f'GAN (e={e_opt:-9.3e}; m={m_opt:-7.1e})'
+                    X_opt.append(x_opt)
+                    titles_opt.append(title_opt)
+
+                fname = f'gif/gan_inv_img{i}_{meth}.gif'
+                self.data.animate(X_opt, titles_opt, fpath=self.get_path(fname))
+
+                self.log.res(tpc()-tm)
 
     def set_device(self, device=None):
         if device is None:
@@ -127,7 +228,7 @@ class Manager:
 
     def set_log(self):
         self.log = Log(self.get_path(f'log_{self.name}.txt'))
-        self.log.title(f'Start "{self.name}" task (device "{self.device}").')
+        self.log.title(f'Start "{self.name}" ({self.device}).')
 
     def set_path(self, root_result='result'):
         self.path_root = os.path.dirname(__file__)
@@ -171,21 +272,8 @@ class Manager:
 
         data.plot_many(x, l, cols=5, rows=5, fpath=f'result_tmp/gen_random.png')
 
-    def tmp4(self, trn=False, tst=True):
-        for mod in ['trn', 'tst']:
-            if mod == 'trn' and not trn or mod == 'tst' and not tst:
-                continue
-
-            t = tpc()
-            n, m = self.model.check(tst=mod == 'tst')
-            t = tpc() - t
-
-            text = f'Accuracy {mod}'
-            text += f' : {float(m)/n*100:.2f}% ({m:-8d} / {n:-8d})'
-            text += f' | time = {t:-10.2f} sec'
-            print(text)
-
 
 if __name__ == '__main__':
-    name = sys.argv[1] if len(sys.argv) > 1 else NAMES[0]
-    man = Manager(name)
+    names = sys.argv[1:] if len(sys.argv) > 1 else NAMES
+    for name in names:
+        man = Manager(name)
