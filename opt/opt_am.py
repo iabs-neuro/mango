@@ -3,7 +3,7 @@ from time import perf_counter as tpc
 
 
 def opt_am(model, x, lr=1.E-4, evals=30, eps=1.E-7):
-    """Activation Maximization (AM) method."""
+    """Activation Maximization (AM) method. TODO: the code is outdated!!!"""
     t = tpc()
 
     x = x.detach().clone().to(model.device)
