@@ -197,7 +197,7 @@ class Manager:
                 self.data.animate(X_opt, titles_opt, fpath=self.get_path(fname))
 
             self.data.plot_many(X, titles, cols=5, rows=2,
-                fpath=self.get_path(f'img/gan_max_cl{cl}_{meth}.png'))
+                fpath=self.get_path(f'img/gan_max_{meth}.png'))
 
             self.log.res(tpc()-tm)
 
