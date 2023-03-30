@@ -1,0 +1,42 @@
+[2023-03-30 17-20-33] Start "data_check" (cuda).
+===================== --------------------------
+
+
+.... Loading "mnist" dataset
+DONE (     0.58 sec.) 
+
+.... Loading "mnistf" dataset
+DONE (     0.39 sec.) 
+
+.... Loading "cifar10" dataset
+DONE (     3.73 sec.) 
+
+.... Loading "imagenet" dataset
+DONE (     0.68 sec.) 
+
+
+.... Check "mnist" dataset
+Number of classes   :         10
+Size of trn dataset :      60000
+Size of tst dataset :      10000
+DONE (     1.38 sec.) 
+
+.... Check "mnistf" dataset
+Number of classes   :         10
+Size of trn dataset :      60000
+Size of tst dataset :      10000
+DONE (     0.68 sec.) 
+
+.... Check "cifar10" dataset
+Number of classes   :         10
+Size of trn dataset :      50000
+Size of tst dataset :      10000
+DONE (     0.79 sec.) 
+
+.... Check "imagenet" dataset
+Number of classes   :       1000
+DONE (     0.00 sec.) 
+
+
+===================== ----------------------------------
+[2023-03-30 17-20-41] Work is finished (8.25 sec. total)

@@ -1,0 +1,16 @@
+[2023-03-30 17-20-41] Start "densenet_check" (cuda).
+===================== ------------------------------
+
+
+.... Loading "cifar10" dataset
+DONE (     2.73 sec.) 
+
+.... Loading "densenet" model
+DONE (    19.91 sec.) 
+
+Accuracy trn : 99.94% (    49968 /     50000) | time =      56.44 sec
+Accuracy tst : 94.07% (     9407 /     10000) | time =       7.70 sec
+
+
+===================== -----------------------------------
+[2023-03-30 17-22-08] Work is finished (86.79 sec. total)

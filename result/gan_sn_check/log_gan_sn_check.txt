@@ -1,0 +1,13 @@
+[2023-03-30 22-13-55] Start "gan_sn_check" (cuda).
+===================== ----------------------------
+
+
+.... Loading "cifar10" dataset
+DONE (     3.19 sec.) 
+
+.... Loading "densenet" model
+DONE (     1.91 sec.) 
+
+.... Loading "gan_sn" generator
+DONE (     0.47 sec.) 
+
