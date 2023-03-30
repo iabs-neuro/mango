@@ -3,7 +3,7 @@
 #SBATCH --job-name=a.chertkov_ntt
 #SBATCH --nodes=1
 #SBATCH --gpus=3
-#SBATCH --time=0-40:00:00
+#SBATCH --time=0-20:00:00
 #SBATCH --partition gpu
 ##SBATCH --mem-per-cpu=1500MB
 ##SBATCH --mem=5GB
@@ -23,7 +23,7 @@ module rm *
 module load python/anaconda3
 module load gpu/cuda-12.0
 conda activate neural_tensor_train
-srun python3 manager.py
+srun python3 manager.py gan_sn_check gan_sn_inv
 
 exit 0
 
