@@ -221,7 +221,7 @@ class Manager:
             x_real, c_real, l_real = self.data.get(i)
 
             def func(z):
-                x = self.gen.run(z)
+                x = self.gen.run(z).to('cpu')
                 e = [loss_img(x_cur, x_real) for x_cur in x]
                 return np.array(e)
 

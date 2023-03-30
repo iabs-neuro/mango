@@ -95,6 +95,7 @@ class Model:
         is_batch = len(x.shape) == 4
         if not is_batch:
             x = x[None]
+        x = x.to(self.device)
 
         with torch.no_grad():
             y = self.net(x)

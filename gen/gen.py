@@ -49,6 +49,7 @@ class Gen:
         is_batch = len(z.shape) == 2
         if not is_batch:
             z = z[None]
+        z = z.to(self.device)
 
         if with_grad:
             x = self.gen(z)
@@ -65,6 +66,7 @@ class Gen:
         is_batch = len(x.shape) == 4
         if not is_batch:
             x = x[None]
+        x = x.to(self.device)
 
         if with_grad:
             y = self.dsc(x).ravel()
