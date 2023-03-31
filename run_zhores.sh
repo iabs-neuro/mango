@@ -2,7 +2,7 @@
 
 #SBATCH --job-name=a.chertkov_ntt
 #SBATCH --nodes=1
-#SBATCH --gpus=3
+#SBATCH --gpus=1
 #SBATCH --time=0-20:00:00
 #SBATCH --partition gpu
 ##SBATCH --mem-per-cpu=1500MB
