@@ -213,7 +213,7 @@ class Manager:
             self.data.plot_many(x, titles, cols=4, rows=4,
                 fpath=self.get_path(f'img/gan_sample_rand_{i+1}.png'))
 
-    def run_gan_sn_inv(self, m=1.E+6, i_list=[1, 42, 99, 100, 700]):
+    def run_gan_sn_inv(self, m=1.E+5, i_list=[1, 42, 99, 100, 700]):
         loss_img = torch.nn.MSELoss()
 
         for i in i_list:

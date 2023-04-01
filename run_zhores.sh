@@ -23,7 +23,7 @@ module rm *
 module load python/anaconda3
 module load gpu/cuda-12.0
 conda activate neural_tensor_train
-srun python3 manager.py gan_sn_check gan_sn_inv
+srun python3 manager.py gan_sn_inv
 
 exit 0
 
