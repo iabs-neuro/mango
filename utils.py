@@ -6,7 +6,6 @@ class Log:
     def __init__(self, fpath=None):
         self.fpath = fpath
         self.is_new = True
-        self.len_pref = 10
 
     def __call__(self, text):
         print(text)
@@ -19,7 +18,7 @@ class Log:
         dt = datetime.now().strftime('%Y-%m-%d %H-%M-%S')
         content = f'Work is finished ({tpc()-self.tm:-.2f} sec. total)'
         text = '\n\n' + '=' * 21 + ' ' + '-' * len(content) + '\n'
-        text += f'[{dt}] {content}'
+        text += f'[{dt}] {content}\n\n'
         self(text)
 
     def prc(self, content=''):
