@@ -6,8 +6,8 @@ from .stuff.modules.resblocks import GBlock
 from .stuff import sngan_base
 
 
-class GANSn(sngan_base.SNGANBaseGenerator):
-    """Generator for SNGAN."""
+class GANSnCifar10(sngan_base.SNGANBaseGenerator):
+    """Generator for SNGAN on cifar10."""
     def __init__(self):
         super().__init__(nz=128, ngf=256, bottom_width=4)
 

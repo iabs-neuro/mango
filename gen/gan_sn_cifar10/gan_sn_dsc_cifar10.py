@@ -8,8 +8,8 @@ from .stuff.modules.resblocks import DBlockOptimized
 from .stuff import sngan_base
 
 
-class GANSnDsc(sngan_base.SNGANBaseDiscriminator):
-    """Discriminator for SNGAN."""
+class GANSnDscCifar10(sngan_base.SNGANBaseDiscriminator):
+    """Discriminator for SNGAN on cifar10."""
     def __init__(self):
         super().__init__(ndf=128)
 
