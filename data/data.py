@@ -14,7 +14,7 @@ NAMES = ['mnist', 'mnistf', 'cifar10', 'imagenet']
 
 
 class Data:
-    def __init__(self, name, batch_trn=256, batch_tst=32):
+    def __init__(self, name, batch_trn=256, batch_tst=32, m=None, v=None):
         if not name in NAMES:
             raise ValueError(f'Dataset name "{name}" is not supported')
         self.name = name
@@ -24,7 +24,7 @@ class Data:
 
         self.load_shape()
         self.load_labels()
-        self.load_transform()
+        self.load_transform(m, v)
         self.load_data()
 
     def animate(self, X, titles, fpath=None):
@@ -64,8 +64,6 @@ class Data:
 
         if i is None:
             i = torch.randint(len(data), size=(1,)).item()
-        else:
-            i = min(i, len(data)-1)
 
         x, c = data[i]
         l = self.labels.get(c)
@@ -85,6 +83,12 @@ class Data:
 
     def load_data(self):
         fpath = os.path.dirname(__file__) + '/_data'
+
+        self.data_trn = None
+        self.data_tst = None
+
+        self.dataloader_trn = None
+        self.dataloader_tst = None
 
         if self.name == 'mnist':
             func = torchvision.datasets.MNIST
@@ -112,13 +116,6 @@ class Data:
                 batch_size=self.batch_trn, shuffle=True)
             self.dataloader_tst = DataLoader(self.data_tst,
                 batch_size=self.batch_tst, shuffle=True)
-
-        else:
-            self.data_trn = None
-            self.data_tst = None
-
-            self.dataloader_trn = None
-            self.dataloader_tst = None
 
     def load_labels(self):
         self.labels = {}
@@ -193,30 +190,23 @@ class Data:
             self.sz = 224
             self.ch = 3
 
-    def load_transform(self):
-        self.transform = None
-
-        if self.name == 'mnist':
-            self.transform = torchvision.transforms.ToTensor()
-
-        if self.name == 'mnistf':
-            self.transform = torchvision.transforms.ToTensor()
+    def load_transform(self, m=None, v=None):
+        self.transform = torchvision.transforms.ToTensor()
+        self.transform_wo_norm = torchvision.transforms.ToTensor()
 
         if self.name == 'cifar10':
             # TODO: add support for SNN selection (0.5)
             # (the current m/v are for densenet)
-            m = (0.4914, 0.4822, 0.4465)
-            v = (0.2471, 0.2435, 0.2616)
+            m = (0.4914, 0.4822, 0.4465) if m is None else m
+            v = (0.2471, 0.2435, 0.2616) if v is None else v
             self.transform = torchvision.transforms.Compose([
                 torchvision.transforms.ToTensor(),
                 torchvision.transforms.Normalize(m, v),
             ])
 
-        self.transform_wo_norm = torchvision.transforms.ToTensor()
-
         if self.name == 'imagenet':
-            m = [0.485, 0.456, 0.406]
-            v = [0.229, 0.224, 0.225]
+            m = [0.485, 0.456, 0.406] if m is None else m
+            v = [0.229, 0.224, 0.225] if v is None else v
             self.transform = torchvision.transforms.Compose([
                 # torchvision.transforms.Resize(256),
                 torchvision.transforms.CenterCrop(self.sz),
