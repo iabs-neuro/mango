@@ -1,5 +1,8 @@
 from datetime import datetime
+import matplotlib.pyplot as plt
+import requests
 from time import perf_counter as tpc
+from urllib.parse import urlencode
 
 
 class Log:
@@ -34,6 +37,25 @@ class Log:
         text = f'[{dt}] {content}'
         text += '\n' + '=' * 21 + ' ' + '-' * len(content) + '\n'
         self(text)
+
+
+def load_yandex(url, fpath):
+    link = 'https://cloud-api.yandex.net/v1/disk/public/resources/download?'
+    link += urlencode(dict(public_key=url))
+    link = requests.get(link).json()['href']
+    with open(fpath, 'wb') as f:
+        f.write(requests.get(link).content)
+
+
+def plot_hist_am(a, title='', fpath=None, size=6, bins=100):
+    fig = plt.figure(figsize=(size, size))
+    n, bins, patches = plt.hist(a, bins, density=False, facecolor='g')
+    plt.xlabel('Activations')
+    plt.ylabel('Counts')
+    plt.title(title)
+    plt.grid(True)
+    plt.savefig(fpath, bbox_inches='tight') if fpath else plt.show()
+    plt.close(fig)
 
 
 def sort_vector(a, asc=True):

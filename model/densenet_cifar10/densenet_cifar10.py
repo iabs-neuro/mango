@@ -5,8 +5,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-class DenseNet(nn.Module):
-    """Densenet (161) model.
+class DensenetCifar10(nn.Module):
+    """Densenet (161) model on Cifar10 dataset.
 
     Densenet-BC model class, based on the work "Densely Connected Convolutional
     Networks" (https://arxiv.org/pdf/1608.06993.pdf) and weights from the repo

@@ -1,11 +1,15 @@
+import numpy as np
 import os
-import requests
+import sys
 import torch
-from urllib.parse import urlencode
 import warnings
 
 
-from .densenet import DenseNet
+from .densenet_cifar10 import DensenetCifar10
+
+
+sys.path.append('..')
+from utils import load_yandex
 
 
 # To remove the warning of torchvision:
@@ -27,45 +31,73 @@ class Model:
         self.probs = torch.nn.Softmax(dim=1)
 
         self.load()
+
         self.rmv_target(is_init=True)
 
-    def check(self, tst=True):
+    def check(self, tst=True, only_one_batch=False, with_target=False):
+        data = self.data.dataloader_tst if tst else self.data.dataloader_trn
+        n, m, a = 0, 0, []
+
+        for x, l_real in data:
+            x = x.to(self.device)
+            y = self.run(x)
+            l = torch.argmax(y, axis=1).detach().to('cpu')
+            m += (l == l_real).sum()
+            n += len(l)
+
+            if with_target:
+                a_cur = self.run_target(x)
+                a.extend(list(a_cur.detach().to('cpu').numpy()))
+
+            if only_one_batch:
+                break
+
+        return (n, m, np.array(a)) if with_target else (n, m)
+
+    def check_target(self, tst=True, only_one_batch=False):
         data = self.data.dataloader_tst if tst else self.data.dataloader_trn
         n, m = 0, 0
 
         for x, l_real in data:
             x = x.to(self.device)
+            a = self.run_target(x)
             y = self.run(x)
-            l_pred = torch.argmax(y, axis=1).detach().to('cpu')
-            m += (l_pred == l_real).sum()
-            n += len(l_real)
+            l = torch.argmax(y, axis=1).detach().to('cpu')
+            m += (l == l_real).sum()
+            n += len(l)
+
+            if only_one_batch:
+                break
 
         return n, m
 
     def load(self):
-        self.net = None
-
-        root = os.path.dirname(__file__)
-
         fpath = os.path.dirname(__file__) + '/_data'
         os.makedirs(fpath, exist_ok=True)
 
+        self.net = None
+
         if self.name == 'densenet':
-            fpath += '/densenet.pt'
+            if self.data.name != 'cifar10':
+                msg = 'Model "densenet" is ready only for "cifar10"'
+                raise NotImplementedError(msg)
+
+            fpath += '/densenet_cifar10.pt'
 
             if not os.path.isfile(fpath):
-                url_data = 'https://disk.yandex.ru/d/ndE0NjV2G72skw'
-                url = 'https://cloud-api.yandex.net/v1/disk/public/resources/download?'
-                url += urlencode(dict(public_key=url_data))
-                url = requests.get(url).json()['href']
-                with open(fpath, 'wb') as f:
-                    f.write(requests.get(url).content)
+                load_yandex('https://disk.yandex.ru/d/ndE0NjV2G72skw', fpath)
 
-            self.net = DenseNet()
+            self.net = DensenetCifar10()
             state_dict = torch.load(fpath, map_location='cpu')
             self.net.load_state_dict(state_dict)
 
         if self.name == 'vgg16':
+            if self.data.name != 'imagenet':
+                msg = 'Model "vgg16" is ready only for "imagenet"'
+                raise NotImplementedError(msg)
+
+            # TODO: set path to data
+
             self.net = torch.hub.load('pytorch/vision:v0.10.0', self.name,
                 weights=True)
 
@@ -102,6 +134,18 @@ class Model:
             y = self.probs(y)
 
         return y if is_batch else y[0]
+
+    def run_pred(self, x):
+        is_batch = len(x.shape) == 4
+        if not is_batch:
+            x = x[None]
+        y = self.run(x).detach().to('cpu').numpy()
+
+        c = np.argmax(y, axis=1)
+        p = np.array([y[i, c_cur] for i, c_cur in enumerate(c)])
+        l = [self.data.labels[c_cur] for c_cur in c]
+
+        return (p, l) if is_batch else (p[0], l[0])
 
     def run_target(self, x):
         is_batch = len(x.shape) == 4
