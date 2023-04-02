@@ -28,16 +28,7 @@ from utils import Log
 from utils import plot_hist_am
 
 
-AM_TARGET = {'layer': None, 'filter': None, 'cl': 0}
-NAME_DATA = 'cifar10'
-NAME_MODEL = 'densenet'
-NAME_GEN = 'vae_vq' #  'gan_sn'
-TASKS = [
-    'check_data', 'check_gen', 'check_model',
-    'train_vae_vq_cifar10',
-]
-
-
+AM_TARGET = {'layer': None, 'filter': None, 'cl': 0} # TODO!
 OPTS = {
     'NG-OPO': opt_ng_opo,
     'NG-Portfolio': opt_ng_portfolio,
@@ -46,23 +37,36 @@ OPTS = {
     'PROTES': opt_protes,
     'TTOpt': opt_ttopt,
 }
+TASKS = [
+    'cifar10-vae_vq-densenet-check-data',
+    'cifar10-vae_vq-densenet-check-gen',
+    'cifar10-vae_vq-densenet-check-model',
+    'cifar10-vae_vq-densenet-train-gen',
+]
 
 
 class Manager:
     def __init__(self, name, device=None):
         if not name in TASKS:
-            raise ValueError(f'Manager name "{name}" is not supported')
+            raise ValueError(f'Manager task "{name}" is not supported')
 
         self.name = name
+        self.name_data = name.split('-')[0]
+        self.name_gen = name.split('-')[1]
+        self.name_model = name.split('-')[2]
+        self.task = name.split('-')[3]
+        self.kind = name.split('-')[4]
 
         self.set_rand()
         self.set_device(device)
         self.set_path()
         self.set_log()
 
-        self.load()
+        self.load_data()
+        self.load_gen()
+        self.load_model()
 
-        eval('self.run_' + self.name + '()')
+        eval(f'self.task_{self.task}_{self.kind}()')
 
         self.end()
 
@@ -82,43 +86,131 @@ class Manager:
         os.makedirs(os.path.dirname(fpath), exist_ok=True)
         return fpath
 
-    def load(self, data='cifar10', model='densenet'):
-        tm = self.log.prc(f'Loading "{NAME_DATA}" dataset')
-        self.data = Data(NAME_DATA)
-        self.log.res(tpc()-tm)
-
-        if not self.name.startswith('train'):
-            tm = self.log.prc(f'Loading "{NAME_MODEL}" model')
-            self.model = Model(NAME_MODEL, self.data, self.device)
-            self.model.set_target(**AM_TARGET)
+    def load_data(self, name=None):
+        name = name or self.name_data
+        tm = self.log.prc(f'Loading "{name}" dataset')
+        try:
+            self.data = Data(name)
             self.log.res(tpc()-tm)
-
-            tm = self.log.prc(f'Loading "{NAME_GEN}" generator')
-            self.gen = Gen(NAME_GEN, self.data, self.device)
-            self.log.res(tpc()-tm)
-
+        except Exception as e:
+            self.log.wrn('Can not load Data')
         self.log('')
 
-    def run_check_data(self):
-        name = self.data.name
+    def load_gen(self, name=None):
+        name = name or self.name_gen
+        tm = self.log.prc(f'Loading "{name}" generator')
+        try:
+            self.gen = Gen(name, self.data, self.device)
+            self.log.res(tpc()-tm)
+        except Exception as e:
+            self.log.wrn('Can not load Gen')
+        self.log('')
 
-        tm = self.log.prc(f'Check data for "{name}" dataset')
+    def load_model(self, name=None):
+        name = name or self.name_model
+        tm = self.log.prc(f'Loading "{name}" model')
+        try:
+            self.model = Model(name, self.data, self.device)
+            self.model.set_target(**AM_TARGET)
+            self.log.res(tpc()-tm)
+        except Exception as e:
+            self.log.wrn('Can not load Model')
+        self.log('')
 
-        v = len(self.data.labels)
-        self.log(f'Number of classes   : {v:-10d}')
+    def run_train_vae_vq_cifar10(self, lr=1.E-3, iters=15000, log_step=10):
+        from gen.vae_vq_cifar10 import VAEVqCifar10
+        tm = self.log.prc(f'Training "vae_vq_cifar10" model')
 
-        if name != 'imagenet':
-            v = len(self.data.data_trn)
-            self.log(f'Size of trn dataset : {v:-10d}')
+        vae = VAEVqCifar10()
+        vae.to(self.device)
 
-            v = len(self.data.data_tst)
-            self.log(f'Size of tst dataset : {v:-10d}')
+        optimizer = optim.Adam(vae.parameters(), lr=lr, amsgrad=False)
 
-            self.data.plot_many(fpath=self.get_path(f'img/{name}.png'))
+        data_variance = np.var(self.data.data_trn.data / 255.0)
+
+        train_res_recon_error = []
+        train_res_perplexity = []
+
+        vae.train()
+
+        x_real = torch.cat([self.data.get()[0][None] for _ in range(25)])
+        p, l = self.model.run_pred(x)
+        titles = [f'{v_l} ({v_p:-7.1e})' for (v_p, v_l) in zip(p, l)]
+        self.data.plot_many(x_real, titles, cols=5, rows=5,
+            fpath=self.get_path(f'img/imgs_real.png'))
+
+        for it in range(iters):
+            (data, _) = next(iter(self.data.dataloader_trn))
+            data = data.to(self.device)
+            optimizer.zero_grad()
+
+            vq_loss, data_recon, perplexity = vae(data)
+            recon_error = F.mse_loss(data_recon, data) / self.data.var_trn
+            loss = recon_error + vq_loss
+            loss.backward()
+
+            optimizer.step()
+
+            train_res_recon_error.append(recon_error.item())
+            train_res_perplexity.append(perplexity.item())
+
+            if (it+1) % log_step == 0 or it == 0 or it == iters-1:
+                fpath = 'gen/vae_vq_cifar10/data/vae_vq_cifar10.pt'
+                torch.save(vae.state_dict(), fpath)
+
+                e_recon = np.mean(train_res_recon_error[-log_step:])
+                e_perpl = np.mean(train_res_perplexity[-log_step:])
+
+                text = f'# {it+1:-8d} | '
+                text += f'time {tpc()-tm:-7.1e} sec | '
+                text += f'E recon = {e_recon:-9.3e} | '
+                text += f'Perplexity = {e_perpl:-9.3e} | '
+                self.log(text)
+
+                # Plot samples for the current model:
+                z = self.gen.enc(x_real)
+                x = self.gen.run(z)
+                p, l = self.model.run_pred(x)
+                titles = [f'{v_l} ({v_p:-7.1e})' for (v_p, v_l) in zip(p, l)]
+                self.data.plot_many(x, titles, cols=5, rows=5,
+                    fpath=self.get_path(f'img/it_{it+1}_gen.png'))
+
+            if it == 402:
+                break
 
         self.log.res(tpc()-tm)
 
-    def run_check_gen(self, m1=5, m2=5, rep=5):
+    def set_device(self, device=None):
+        if device is None:
+            if torch.cuda.is_available():
+                self.device = torch.device('cuda')
+            else:
+                self.device = torch.device('cpu')
+        else:
+            self.device = device
+
+    def set_log(self):
+        self.log = Log(self.get_path(f'log_{self.name}.txt'))
+        self.log.title(f'{self.name} ({self.device})')
+
+    def set_path(self, root_result='result'):
+        self.path_root = os.path.dirname(__file__)
+        self.path_result = os.path.join(self.path_root, root_result, self.name)
+
+    def set_rand(self, seed=42):
+        np.random.seed(seed)
+        random.seed(seed)
+        torch.manual_seed(seed)
+
+    def task_check_data(self):
+        name = self.data.name
+        tm = self.log.prc(f'Check data for "{name}" dataset')
+        self.log(self.data.info())
+        if name != 'imagenet':
+            self.data.plot_many(fpath=self.get_path(f'img/{name}.png'))
+        self.log.res(tpc()-tm)
+
+    def task_check_gen(self, m1=5, m2=5, rep=5):
         for i in range(rep):
             if self.gen.discrete:
                 z = teneva.sample_lhs([self.gen.n]*self.gen.d, m1*m2)
@@ -129,7 +221,7 @@ class Manager:
             x = self.gen.run(z)
             t = (tpc() - t) / len(x)
 
-            self.log(f'Gen {len(x)} random samples (time/sample {t:-9.6f} sec)')
+            self.log(f'Gen {len(x)} random samples (time/sample {t:-8.2e} sec)')
 
             p, l = self.model.run_pred(x)
             titles = [f'{v_l} ({v_p:-7.1e})' for (v_p, v_l) in zip(p, l)]
@@ -154,7 +246,7 @@ class Manager:
             z = self.gen.enc(x)
             t = (tpc() - t) / len(x)
 
-            self.log(f'Gen {len(x)} embeddings     (time/sample {t:-9.6f} sec)')
+            self.log(f'Gen {len(x)} embeddings     (time/sample {t:-8.2e} sec)')
 
             x = self.gen.run(z)
             p, l = self.model.run_pred(x)
@@ -163,7 +255,7 @@ class Manager:
             self.data.plot_many(x, titles, cols=m1, rows=m2,
                 fpath=self.get_path(f'img/{i+1}/gen_repr.png'))
 
-    def run_check_model(self, trn=True, tst=True):
+    def task_check_model(self, trn=True, tst=True):
         for mod in ['trn', 'tst']:
             if mod == 'trn' and not trn or mod == 'tst' and not tst:
                 continue
@@ -189,105 +281,15 @@ class Manager:
 
             self.log()
 
-    def enc_plot(self, m1=5, m2=5, rep=5, log=True):
-        for i in range(rep):
-            x = torch.cat([self.data.get()[0][None] for _ in range(m1*m2)])
-            p, l = self.model.run_pred(x)
-            titles = [f'{v_l} ({v_p:-7.1e})' for (v_p, v_l) in zip(p, l)]
+    def task_train_gen(self):
+        if self.name_gen == 'vae_vq':
+            if self.name_data == 'cifar10':
+                return self.run_train_vae_vq_cifar10()
 
-            self.data.plot_many(x, titles, cols=m1, rows=m2,
-                fpath=self.get_path(f'img/{i+1}/gen_real.png'))
-
-            t = tpc()
-            z = self.gen.enc(x)
-            t = (tpc() - t) / len(x)
-
-            if log:
-                self.log(
-                    f'Gen {len(x)} embeddings     (time/sample {t:-9.6f} sec)')
-
-            x = self.gen.run(z)
-            p, l = self.model.run_pred(x)
-            titles = [f'{v_l} ({v_p:-7.1e})' for (v_p, v_l) in zip(p, l)]
-
-            self.data.plot_many(x, titles, cols=m1, rows=m2,
-                fpath=self.get_path(f'img/{i+1}/gen_repr.png'))
-
-    def run_train_vae_vq_cifar10(self, lr=1.E-3, iters=15000, log_step=100):
-        from gen.vae_vq_cifar10 import VAEVqCifar10
-        tm = self.log.prc(f'Training "vae_vq_cifar10" model')
-
-        vae = VAEVqCifar10()
-        vae.to(self.device)
-
-        optimizer = optim.Adam(vae.parameters(), lr=lr, amsgrad=False)
-
-        data_variance = np.var(self.data.data_trn.data / 255.0)
-
-        train_res_recon_error = []
-        train_res_perplexity = []
-
-        vae.train()
-
-        for it in range(iters):
-            (data, _) = next(iter(self.data.dataloader_trn))
-            data = data.to(self.device)
-            optimizer.zero_grad()
-
-            vq_loss, data_recon, perplexity = vae(data)
-            recon_error = F.mse_loss(data_recon, data) / data_variance
-            loss = recon_error + vq_loss
-            loss.backward()
-
-            optimizer.step()
-
-            train_res_recon_error.append(recon_error.item())
-            train_res_perplexity.append(perplexity.item())
-
-            if (it+1) % log_step == 0 or it == 0 or it == iters-1:
-                e_recon = np.mean(train_res_recon_error[-log_step:])
-                e_perpl = np.mean(train_res_perplexity[-log_step:])
-
-                text = f'# {it+1:-8d} | '
-                text += f'time {tpc()-tm:-7.1e} sec | '
-                text += f'E recon = {e_recon:-9.3e} | '
-                text += f'Perplexity = {e_perpl:-9.3e} | '
-                self.log(text)
-
-
-
-            if it == 402:
-                break
-
-        fpath = 'gen/vae_vq_cifar10/data/vae_vq_cifar10.pt'
-        torch.save(vae.state_dict(), fpath)
-
-        self.log.res(tpc()-tm)
-
-    def set_device(self, device=None):
-        if device is None:
-            if torch.cuda.is_available():
-                self.device = torch.device('cuda')
-            else:
-                self.device = torch.device('cpu')
-        else:
-            self.device = device
-
-    def set_log(self):
-        self.log = Log(self.get_path(f'log_{self.name}.txt'))
-        self.log.title(f'Start "{self.name}" ({self.device}).')
-
-    def set_path(self, root_result='result'):
-        self.path_root = os.path.dirname(__file__)
-        self.path_result = os.path.join(self.path_root, root_result, self.name)
-
-    def set_rand(self, seed=42):
-        np.random.seed(seed)
-        random.seed(seed)
-        torch.manual_seed(seed)
+        raise NotImplementedError()
 
 
 if __name__ == '__main__':
-    names = sys.argv[1:] if len(sys.argv) > 1 else TASKS
-    for name in names:
-        man = Manager(name)
+    tasks = sys.argv[1:] if len(sys.argv) > 1 else TASKS
+    for task in tasks:
+        man = Manager(task)

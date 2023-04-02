@@ -38,6 +38,8 @@ class Log:
         text += '\n' + '=' * 21 + ' ' + '-' * len(content) + '\n'
         self(text)
 
+    def wrn(self, content=''):
+        self(f'WRN ! {content}')
 
 def load_yandex(url, fpath):
     link = 'https://cloud-api.yandex.net/v1/disk/public/resources/download?'
