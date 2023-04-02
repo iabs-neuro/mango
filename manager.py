@@ -18,10 +18,7 @@ os.environ['JAX_PLATFORM_NAME'] = 'cpu'
 from data import Data
 from gen import Gen
 from model import Model
-from opt import opt_ng_opo
 from opt import opt_ng_portfolio
-from opt import opt_ng_pso
-from opt import opt_ng_spsa
 from opt import opt_protes
 from opt import opt_ttopt
 from utils import Log
@@ -30,10 +27,7 @@ from utils import plot_hist_am
 
 AM_TARGET = {'layer': None, 'filter': None, 'cl': 0} # TODO!
 OPTS = {
-    'NG-OPO': opt_ng_opo,
-    'NG-Portfolio': opt_ng_portfolio,
-    'NG-PSO': opt_ng_pso,
-    'NG-SPSA': opt_ng_spsa,
+    'Portfolio': opt_ng_portfolio,
     'PROTES': opt_protes,
     'TTOpt': opt_ttopt,
 }
@@ -42,6 +36,7 @@ TASKS = [
     'cifar10-vae_vq-densenet-train-gen',
     'cifar10-vae_vq-densenet-check-gen',
     'cifar10-vae_vq-densenet-check-model',
+    'cifar10-vae_vq-densenet-am-cl',
 ]
 
 
@@ -209,6 +204,46 @@ class Manager:
         np.random.seed(seed)
         random.seed(seed)
         torch.manual_seed(seed)
+
+    def task_am_cl(self, m=1.E+4):
+        c = AM_TARGET['cl']
+        l = self.data.labels[c]
+        tm = self.log.prc(f'Run AM for out class "{c}" ({l})')
+
+        X, titles = [], []
+        for meth, opt in OPTS.items():
+            self.log(f'\nOptimization with "{meth}" method:')
+            self.model.set_target(cl=c)
+
+            t = tpc()
+            z_index, _, hist = opt(self.func_ind, self.gen.d, self.gen.n, m,
+                is_max=True)
+            t = tpc() - t
+            z = self.gen.ind_to_poi(z_index)
+            x = self.gen.run(z)
+            a = self.model.run_target(x)
+
+            self.log(f'Result: it {m:-7.1e}, t {t:-7.1e}, a {a:-7.1e}')
+
+            title = f'{meth} : p={a:-9.3e} ({l})'
+            X.append(x)
+            titles.append(title)
+
+            X_opt, titles_opt = [], []
+            for (m_opt, z_index_opt, e_opt) in zip(*hist):
+                z_opt = self.gen.ind_to_poi(z_index_opt)
+                x_opt = self.gen.run(z_opt)
+                title_opt = f'{meth} : p={e_opt:-9.3e}; m={m_opt:-7.1e}'
+                X_opt.append(x_opt)
+                titles_opt.append(title_opt)
+            fname = f'gif/am_cl{c}_{meth}.gif'
+            self.data.animate(X_opt, titles_opt, fpath=self.get_path(fname))
+
+        fname = f'img/am_cl{c}.png'
+        self.data.plot_many(X, titles, fpath=self.get_path(fname),
+            cols=len(X), rows=1)
+
+        self.log.res(tpc()-tm)
 
     def task_check_data(self):
         name = self.data.name
