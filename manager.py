@@ -5,6 +5,8 @@ import sys
 import teneva
 from time import perf_counter as tpc
 import torch
+import torch.nn.functional as F
+import torch.optim as optim
 
 
 # For faster and more accurate PROTES optimizer:
@@ -32,6 +34,7 @@ NAME_MODEL = 'densenet'
 NAME_GEN = 'vae_vq' #  'gan_sn'
 TASKS = [
     'check_data', 'check_gen', 'check_model',
+    'train_vae_vq_cifar10',
 ]
 
 
@@ -81,17 +84,18 @@ class Manager:
 
     def load(self, data='cifar10', model='densenet'):
         tm = self.log.prc(f'Loading "{NAME_DATA}" dataset')
-        self.data = Data(NAME_DATA) #, m=(0.5,0.5,0.5), v=(1.0,1.0,1.0))
+        self.data = Data(NAME_DATA)
         self.log.res(tpc()-tm)
 
-        tm = self.log.prc(f'Loading "{NAME_MODEL}" model')
-        self.model = Model(NAME_MODEL, self.data, self.device)
-        self.model.set_target(**AM_TARGET)
-        self.log.res(tpc()-tm)
+        if not self.name.startswith('train'):
+            tm = self.log.prc(f'Loading "{NAME_MODEL}" model')
+            self.model = Model(NAME_MODEL, self.data, self.device)
+            self.model.set_target(**AM_TARGET)
+            self.log.res(tpc()-tm)
 
-        tm = self.log.prc(f'Loading "{NAME_GEN}" generator')
-        self.gen = Gen(NAME_GEN, self.data, self.device)
-        self.log.res(tpc()-tm)
+            tm = self.log.prc(f'Loading "{NAME_GEN}" generator')
+            self.gen = Gen(NAME_GEN, self.data, self.device)
+            self.log.res(tpc()-tm)
 
         self.log('')
 
@@ -125,7 +129,7 @@ class Manager:
             x = self.gen.run(z)
             t = (tpc() - t) / len(x)
 
-            self.log(f'Gen {len(x)} random samples (time/sample {t:-8.5f} sec)')
+            self.log(f'Gen {len(x)} random samples (time/sample {t:-9.6f} sec)')
 
             p, l = self.model.run_pred(x)
             titles = [f'{v_l} ({v_p:-7.1e})' for (v_p, v_l) in zip(p, l)]
@@ -150,7 +154,7 @@ class Manager:
             z = self.gen.enc(x)
             t = (tpc() - t) / len(x)
 
-            self.log(f'Gen {len(x)} embeddings     (time/sample {t:-8.5f} sec)')
+            self.log(f'Gen {len(x)} embeddings     (time/sample {t:-9.6f} sec)')
 
             x = self.gen.run(z)
             p, l = self.model.run_pred(x)
@@ -184,6 +188,81 @@ class Manager:
             plot_hist_am(a, title, fpath)
 
             self.log()
+
+    def enc_plot(self, m1=5, m2=5, rep=5, log=True):
+        for i in range(rep):
+            x = torch.cat([self.data.get()[0][None] for _ in range(m1*m2)])
+            p, l = self.model.run_pred(x)
+            titles = [f'{v_l} ({v_p:-7.1e})' for (v_p, v_l) in zip(p, l)]
+
+            self.data.plot_many(x, titles, cols=m1, rows=m2,
+                fpath=self.get_path(f'img/{i+1}/gen_real.png'))
+
+            t = tpc()
+            z = self.gen.enc(x)
+            t = (tpc() - t) / len(x)
+
+            if log:
+                self.log(
+                    f'Gen {len(x)} embeddings     (time/sample {t:-9.6f} sec)')
+
+            x = self.gen.run(z)
+            p, l = self.model.run_pred(x)
+            titles = [f'{v_l} ({v_p:-7.1e})' for (v_p, v_l) in zip(p, l)]
+
+            self.data.plot_many(x, titles, cols=m1, rows=m2,
+                fpath=self.get_path(f'img/{i+1}/gen_repr.png'))
+
+    def run_train_vae_vq_cifar10(self, lr=1.E-3, iters=15000, log_step=100):
+        from gen.vae_vq_cifar10 import VAEVqCifar10
+        tm = self.log.prc(f'Training "vae_vq_cifar10" model')
+
+        vae = VAEVqCifar10()
+        vae.to(self.device)
+
+        optimizer = optim.Adam(vae.parameters(), lr=lr, amsgrad=False)
+
+        data_variance = np.var(self.data.data_trn.data / 255.0)
+
+        train_res_recon_error = []
+        train_res_perplexity = []
+
+        vae.train()
+
+        for it in range(iters):
+            (data, _) = next(iter(self.data.dataloader_trn))
+            data = data.to(self.device)
+            optimizer.zero_grad()
+
+            vq_loss, data_recon, perplexity = vae(data)
+            recon_error = F.mse_loss(data_recon, data) / data_variance
+            loss = recon_error + vq_loss
+            loss.backward()
+
+            optimizer.step()
+
+            train_res_recon_error.append(recon_error.item())
+            train_res_perplexity.append(perplexity.item())
+
+            if (it+1) % log_step == 0 or it == 0 or it == iters-1:
+                e_recon = np.mean(train_res_recon_error[-log_step:])
+                e_perpl = np.mean(train_res_perplexity[-log_step:])
+
+                text = f'# {it+1:-8d} | '
+                text += f'time {tpc()-tm:-7.1e} sec | '
+                text += f'E recon = {e_recon:-9.3e} | '
+                text += f'Perplexity = {e_perpl:-9.3e} | '
+                self.log(text)
+
+
+
+            if it == 402:
+                break
+
+        fpath = 'gen/vae_vq_cifar10/data/vae_vq_cifar10.pt'
+        torch.save(vae.state_dict(), fpath)
+
+        self.log.res(tpc()-tm)
 
     def set_device(self, device=None):
         if device is None:
