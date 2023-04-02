@@ -49,12 +49,6 @@ class Gen:
             self.load_vae_vq(fpath)
 
     def load_gan_sn(self, fpath):
-        self.d = 128
-        self.n = 64
-        self.lim_a = -4.
-        self.lim_b = +4.
-        self.discrete = False
-
         if self.data.name != 'cifar10':
             msg = 'Gen "gan_sn" is ready only for "cifar10"'
             raise NotImplementedError(msg)
@@ -75,13 +69,13 @@ class Gen:
         self.dsc.to(self.device)
         self.dsc.eval()
 
-    def load_vae_vq(self, fpath):
-        self.d = 64
-        self.n = 512
-        self.lim_a = None
-        self.lim_b = None
-        self.discrete = True
+        self.d = 128
+        self.n = 64
+        self.lim_a = -4.
+        self.lim_b = +4.
+        self.discrete = False
 
+    def load_vae_vq(self, fpath):
         if self.data.name != 'cifar10':
             msg = 'Gen "vae_vq" is ready only for "cifar10"'
             raise NotImplementedError(msg)
@@ -115,6 +109,15 @@ class Gen:
 
         self.gen = dec
         self.enc = enc
+
+        self.gen.eval()
+        self.enc.eval()
+
+        self.d = vae.embedding_dim
+        self.n = vae.num_embeddings
+        self.lim_a = None
+        self.lim_b = None
+        self.discrete = True
 
     def run(self, z, with_grad=False):
         if self.gen is None:
