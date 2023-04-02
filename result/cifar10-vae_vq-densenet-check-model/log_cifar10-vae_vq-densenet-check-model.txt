@@ -1,9 +1,9 @@
-[2023-04-02 14-54-18] cifar10-vae_vq-densenet-check-model (cuda)
+[2023-04-02 16-22-36] cifar10-vae_vq-densenet-check-model (cuda)
 ===================== ------------------------------------------
 
 
 .... Loading "cifar10" dataset
-DONE (     4.60 sec.) 
+DONE (     4.65 sec.) 
 
 
 .... Loading "vae_vq" generator
@@ -11,7 +11,7 @@ DONE (     0.06 sec.)
 
 
 .... Loading "densenet" model
-DONE (     2.08 sec.) 
+DONE (     1.84 sec.) 
 
-Accuracy   trn : 99.94% (    49968 /     50000) | time =      53.76 sec
+Accuracy   trn : 99.94% (    49968 /     50000) | time =      53.23 sec
 Activation trn : [5.0e-04, 9.8e-01] (avg: 1.0e-01)

@@ -1,128 +1,1190 @@
 srun: error: WARNING: switches lack access to 27 nodes: cn[51-70],gn[27-33]
-[2023-04-02 14-34-34] cifar10-vae_vq-densenet-check-data (cuda)
-===================== -----------------------------------------
+No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for more info.)
+[2023-04-02 15-16-09] cifar10-vae_vq-densenet-am-cl (cuda)
+===================== ------------------------------------
 
 
 .... Loading "cifar10" dataset
-DONE (     4.63 sec.) 
+DONE (     4.65 sec.) 
 
 
 .... Loading "vae_vq" generator
-DONE (     6.18 sec.) 
+DONE (     6.20 sec.) 
 
 
 .... Loading "densenet" model
-DONE (     2.04 sec.) 
+DONE (     2.06 sec.) 
 
 
-.... Check data for "cifar10" dataset
-Dataset             : cifar10
-Number of classes   :         10
-Size of trn dataset :      50000
-Size of tst dataset :      10000
-Var  of trn dataset : 6.3287e-02
-Var  of tst dataset : 6.3111e-02
+.... Run AM for out class "0" (airplane)
 
-DONE (     2.12 sec.) 
+Optimization with "Portfolio" method:
+portfolio > m 1.0e+00 | t 1.094e+01 | y  2.0763e-03
+portfolio > m 2.0e+00 | t 1.109e+01 | y  7.6419e-03
+portfolio > m 6.0e+00 | t 1.176e+01 | y  1.1845e-02
+portfolio > m 2.0e+01 | t 1.441e+01 | y  1.2431e-02
+portfolio > m 2.4e+01 | t 1.522e+01 | y  1.2466e-02
+portfolio > m 2.7e+01 | t 1.571e+01 | y  2.4334e-02
+portfolio > m 4.5e+01 | t 1.913e+01 | y  3.2830e-02
+portfolio > m 7.2e+01 | t 2.451e+01 | y  4.6569e-02
+portfolio > m 1.6e+02 | t 4.044e+01 | y  5.2574e-02
+portfolio > m 2.0e+02 | t 4.792e+01 | y  2.4328e-01
+portfolio > m 3.8e+02 | t 8.296e+01 | y  7.6367e-01
+portfolio > m 6.0e+02 | t 1.237e+02 | y  7.9952e-01
+portfolio > m 1.3e+03 | t 2.540e+02 | y  8.1543e-01
+portfolio > m 1.4e+03 | t 2.765e+02 | y  9.6672e-01
+portfolio > m 3.3e+03 | t 6.363e+02 | y  9.6993e-01
+portfolio > m 5.3e+03 | t 1.021e+03 | y  9.8075e-01
+portfolio > m 5.7e+03 | t 1.107e+03 | y  9.8132e-01
+portfolio > m 9.4e+03 | t 1.814e+03 | y  9.8276e-01
+portfolio > m 1.0e+04 | t 1.923e+03 | y  9.8276e-01 <<< DONE
+Result: it 1.0e+04, t 1.9e+03, a 9.8e-01
 
+Optimization with "PROTES" method:
+protes > m 1.0e+01 | t 1.368e+01 | y  1.9841e-02
+protes > m 2.0e+01 | t 1.571e+01 | y  1.0338e-01
+protes > m 7.0e+01 | t 2.576e+01 | y  1.1482e-01
+protes > m 1.7e+02 | t 4.584e+01 | y  4.9153e-01
+protes > m 2.8e+02 | t 6.800e+01 | y  5.3527e-01
+protes > m 8.0e+02 | t 1.725e+02 | y  8.1382e-01
+protes > m 1.1e+03 | t 2.348e+02 | y  9.0037e-01
+protes > m 1.2e+03 | t 2.529e+02 | y  9.7108e-01
+protes > m 1.0e+04 | t 2.017e+03 | y  9.7108e-01 <<< DONE
+Result: it 1.0e+04, t 2.0e+03, a 9.7e-01
 
-===================== -----------------------------------
-[2023-04-02 14-34-49] Work is finished (15.01 sec. total)
-
-
-[2023-04-02 14-34-49] cifar10-vae_vq-densenet-train-gen (cuda)
-===================== ----------------------------------------
-
-
-.... Loading "cifar10" dataset
-DONE (     4.69 sec.) 
-
-
-.... Loading "vae_vq" generator
-DONE (     0.05 sec.) 
-
-
-.... Loading "densenet" model
-DONE (     1.86 sec.) 
-
-
-.... Training "vae_vq_cifar10" model
-#        1 | time 1.4e+01 sec | E recon = 1.646e+01 | Perplexity = 1.008e+00 | 
-#      500 | time 5.0e+01 sec | E recon = 9.686e+00 | Perplexity = 1.690e+00 | 
-#     1000 | time 8.7e+01 sec | E recon = 7.283e+00 | Perplexity = 8.723e+00 | 
-#     1500 | time 1.2e+02 sec | E recon = 2.320e+00 | Perplexity = 2.656e+01 | 
-#     2000 | time 1.6e+02 sec | E recon = 1.835e+00 | Perplexity = 4.594e+01 | 
-#     2500 | time 2.0e+02 sec | E recon = 1.572e+00 | Perplexity = 8.050e+01 | 
-#     3000 | time 2.3e+02 sec | E recon = 1.430e+00 | Perplexity = 1.091e+02 | 
-#     3500 | time 2.7e+02 sec | E recon = 1.325e+00 | Perplexity = 1.393e+02 | 
-#     4000 | time 3.1e+02 sec | E recon = 1.229e+00 | Perplexity = 1.782e+02 | 
-#     4500 | time 3.4e+02 sec | E recon = 1.154e+00 | Perplexity = 2.220e+02 | 
-#     5000 | time 3.8e+02 sec | E recon = 1.100e+00 | Perplexity = 2.709e+02 | 
-#     5500 | time 4.2e+02 sec | E recon = 1.053e+00 | Perplexity = 3.186e+02 | 
-#     6000 | time 4.6e+02 sec | E recon = 1.009e+00 | Perplexity = 3.694e+02 | 
-#     6500 | time 4.9e+02 sec | E recon = 9.781e-01 | Perplexity = 4.004e+02 | 
-#     7000 | time 5.3e+02 sec | E recon = 9.577e-01 | Perplexity = 4.063e+02 | 
-#     7500 | time 5.7e+02 sec | E recon = 9.418e-01 | Perplexity = 4.072e+02 | 
-#     8000 | time 6.0e+02 sec | E recon = 9.311e-01 | Perplexity = 4.058e+02 | 
-#     8500 | time 6.4e+02 sec | E recon = 9.212e-01 | Perplexity = 4.050e+02 | 
-#     9000 | time 6.8e+02 sec | E recon = 9.148e-01 | Perplexity = 4.038e+02 | 
-#     9500 | time 7.1e+02 sec | E recon = 9.077e-01 | Perplexity = 4.034e+02 | 
-#    10000 | time 7.5e+02 sec | E recon = 8.976e-01 | Perplexity = 4.018e+02 | 
-#    10500 | time 7.9e+02 sec | E recon = 8.963e-01 | Perplexity = 4.023e+02 | 
-#    11000 | time 8.2e+02 sec | E recon = 8.882e-01 | Perplexity = 4.011e+02 | 
-#    11500 | time 8.6e+02 sec | E recon = 8.856e-01 | Perplexity = 4.009e+02 | 
-#    12000 | time 9.0e+02 sec | E recon = 8.806e-01 | Perplexity = 4.000e+02 | 
-#    12500 | time 9.4e+02 sec | E recon = 8.761e-01 | Perplexity = 4.001e+02 | 
-#    13000 | time 9.7e+02 sec | E recon = 8.732e-01 | Perplexity = 3.998e+02 | 
-#    13500 | time 1.0e+03 sec | E recon = 8.721e-01 | Perplexity = 3.998e+02 | 
-#    14000 | time 1.0e+03 sec | E recon = 8.679e-01 | Perplexity = 3.989e+02 | 
-#    14500 | time 1.1e+03 sec | E recon = 8.670e-01 | Perplexity = 3.994e+02 | 
-#    15000 | time 1.1e+03 sec | E recon = 8.659e-01 | Perplexity = 3.993e+02 | 
-DONE (  1119.87 sec.) 
+Optimization with "TTOpt" method:
+ttopt-64d  | evals=1.20e+01+6.00e+00 | t_cur=1.37e-01 | y= 2.391191e-03 
+ttopt-64d  | evals=2.10e+01+1.50e+01 | t_cur=2.67e-01 | y= 2.413778e-03 
+ttopt-64d  | evals=3.00e+01+2.40e+01 | t_cur=2.86e-01 | y= 2.476410e-03 
+ttopt-64d  | evals=3.90e+01+3.30e+01 | t_cur=3.05e-01 | y= 2.476410e-03 
+ttopt-64d  | evals=4.80e+01+4.20e+01 | t_cur=3.25e-01 | y= 2.476410e-03 
+ttopt-64d  | evals=5.70e+01+5.10e+01 | t_cur=3.44e-01 | y= 2.476410e-03 
+ttopt-64d  | evals=6.60e+01+6.00e+01 | t_cur=3.63e-01 | y= 2.476410e-03 
+ttopt-64d  | evals=7.50e+01+6.90e+01 | t_cur=3.82e-01 | y= 2.476410e-03 
+ttopt-64d  | evals=8.40e+01+7.80e+01 | t_cur=4.01e-01 | y= 2.620579e-03 
+ttopt-64d  | evals=9.30e+01+8.70e+01 | t_cur=4.20e-01 | y= 2.620579e-03 
+ttopt-64d  | evals=1.02e+02+9.60e+01 | t_cur=4.39e-01 | y= 2.620579e-03 
+ttopt-64d  | evals=1.11e+02+1.05e+02 | t_cur=4.58e-01 | y= 2.659169e-03 
+ttopt-64d  | evals=1.20e+02+1.14e+02 | t_cur=4.78e-01 | y= 2.659169e-03 
+ttopt-64d  | evals=1.29e+02+1.23e+02 | t_cur=4.97e-01 | y= 2.659169e-03 
+ttopt-64d  | evals=1.38e+02+1.32e+02 | t_cur=5.16e-01 | y= 2.659169e-03 
+ttopt-64d  | evals=1.47e+02+1.41e+02 | t_cur=5.35e-01 | y= 2.659169e-03 
+ttopt-64d  | evals=1.56e+02+1.50e+02 | t_cur=5.55e-01 | y= 2.659169e-03 
+ttopt-64d  | evals=1.65e+02+1.59e+02 | t_cur=5.74e-01 | y= 2.659169e-03 
+ttopt-64d  | evals=1.74e+02+1.68e+02 | t_cur=5.93e-01 | y= 2.847032e-03 
+ttopt-64d  | evals=1.83e+02+1.77e+02 | t_cur=6.12e-01 | y= 2.847032e-03 
+ttopt-64d  | evals=1.92e+02+1.86e+02 | t_cur=6.37e-01 | y= 2.847032e-03 
+ttopt-64d  | evals=2.01e+02+1.95e+02 | t_cur=6.56e-01 | y= 2.847032e-03 
+ttopt-64d  | evals=2.10e+02+2.04e+02 | t_cur=6.78e-01 | y= 2.847032e-03 
+ttopt-64d  | evals=2.19e+02+2.13e+02 | t_cur=6.97e-01 | y= 2.934210e-03 
+ttopt-64d  | evals=2.28e+02+2.22e+02 | t_cur=7.16e-01 | y= 2.934210e-03 
+ttopt-64d  | evals=2.37e+02+2.31e+02 | t_cur=7.35e-01 | y= 3.277068e-03 
+ttopt-64d  | evals=2.46e+02+2.40e+02 | t_cur=7.54e-01 | y= 3.277068e-03 
+ttopt-64d  | evals=2.55e+02+2.49e+02 | t_cur=7.73e-01 | y= 3.277068e-03 
+ttopt-64d  | evals=2.64e+02+2.58e+02 | t_cur=7.93e-01 | y= 3.277068e-03 
+ttopt-64d  | evals=2.73e+02+2.67e+02 | t_cur=8.12e-01 | y= 3.277068e-03 
+ttopt-64d  | evals=2.82e+02+2.76e+02 | t_cur=8.31e-01 | y= 3.277068e-03 
+ttopt-64d  | evals=2.91e+02+2.85e+02 | t_cur=8.50e-01 | y= 3.277068e-03 
+ttopt-64d  | evals=3.00e+02+2.94e+02 | t_cur=8.69e-01 | y= 3.282659e-03 
+ttopt-64d  | evals=3.09e+02+3.03e+02 | t_cur=8.88e-01 | y= 3.282659e-03 
+ttopt-64d  | evals=3.18e+02+3.12e+02 | t_cur=9.07e-01 | y= 3.383511e-03 
+ttopt-64d  | evals=3.27e+02+3.21e+02 | t_cur=9.26e-01 | y= 3.383511e-03 
+ttopt-64d  | evals=3.36e+02+3.30e+02 | t_cur=9.46e-01 | y= 3.442260e-03 
+ttopt-64d  | evals=3.45e+02+3.39e+02 | t_cur=9.65e-01 | y= 3.442260e-03 
+ttopt-64d  | evals=3.54e+02+3.48e+02 | t_cur=9.84e-01 | y= 3.442260e-03 
+ttopt-64d  | evals=3.63e+02+3.57e+02 | t_cur=1.00e+00 | y= 3.616175e-03 
+ttopt-64d  | evals=3.72e+02+3.66e+02 | t_cur=1.02e+00 | y= 3.616175e-03 
+ttopt-64d  | evals=3.81e+02+3.75e+02 | t_cur=1.04e+00 | y= 3.616175e-03 
+ttopt-64d  | evals=3.90e+02+3.84e+02 | t_cur=1.06e+00 | y= 3.616175e-03 
+ttopt-64d  | evals=3.99e+02+3.93e+02 | t_cur=1.08e+00 | y= 3.616175e-03 
+ttopt-64d  | evals=4.08e+02+4.02e+02 | t_cur=1.10e+00 | y= 3.616175e-03 
+ttopt-64d  | evals=4.17e+02+4.11e+02 | t_cur=1.12e+00 | y= 3.616175e-03 
+ttopt-64d  | evals=4.26e+02+4.20e+02 | t_cur=1.14e+00 | y= 3.620229e-03 
+ttopt-64d  | evals=4.35e+02+4.29e+02 | t_cur=1.16e+00 | y= 3.620229e-03 
+ttopt-64d  | evals=4.44e+02+4.38e+02 | t_cur=1.18e+00 | y= 3.620229e-03 
+ttopt-64d  | evals=4.53e+02+4.47e+02 | t_cur=1.19e+00 | y= 3.756461e-03 
+ttopt-64d  | evals=4.62e+02+4.56e+02 | t_cur=1.21e+00 | y= 4.057618e-03 
+ttopt-64d  | evals=4.71e+02+4.65e+02 | t_cur=1.23e+00 | y= 4.057618e-03 
+ttopt-64d  | evals=4.80e+02+4.74e+02 | t_cur=1.25e+00 | y= 4.057618e-03 
+ttopt-64d  | evals=4.89e+02+4.83e+02 | t_cur=1.27e+00 | y= 4.362635e-03 
+ttopt-64d  | evals=4.98e+02+4.92e+02 | t_cur=1.29e+00 | y= 4.362635e-03 
+ttopt-64d  | evals=5.07e+02+5.01e+02 | t_cur=1.31e+00 | y= 4.362635e-03 
+ttopt-64d  | evals=5.16e+02+5.10e+02 | t_cur=1.33e+00 | y= 4.362635e-03 
+ttopt-64d  | evals=5.25e+02+5.19e+02 | t_cur=1.35e+00 | y= 5.037813e-03 
+ttopt-64d  | evals=5.34e+02+5.28e+02 | t_cur=1.37e+00 | y= 5.037813e-03 
+ttopt-64d  | evals=5.43e+02+5.37e+02 | t_cur=1.39e+00 | y= 5.037813e-03 
+ttopt-64d  | evals=5.52e+02+5.46e+02 | t_cur=1.41e+00 | y= 5.037813e-03 
+ttopt-64d  | evals=5.61e+02+5.55e+02 | t_cur=1.43e+00 | y= 5.037813e-03 
+ttopt-64d  | evals=5.70e+02+5.64e+02 | t_cur=1.45e+00 | y= 6.765692e-03 
+ttopt-64d  | evals=5.79e+02+5.73e+02 | t_cur=1.47e+00 | y= 6.765692e-03 
+ttopt-64d  | evals=5.88e+02+5.82e+02 | t_cur=1.48e+00 | y= 6.765692e-03 
+ttopt-64d  | evals=5.97e+02+5.91e+02 | t_cur=1.50e+00 | y= 6.765692e-03 
+ttopt-64d  | evals=6.06e+02+6.00e+02 | t_cur=1.52e+00 | y= 6.815224e-03 
+ttopt-64d  | evals=6.15e+02+6.09e+02 | t_cur=1.54e+00 | y= 6.946962e-03 
+ttopt-64d  | evals=6.24e+02+6.18e+02 | t_cur=1.56e+00 | y= 6.946962e-03 
+ttopt-64d  | evals=6.33e+02+6.27e+02 | t_cur=1.58e+00 | y= 6.946962e-03 
+ttopt-64d  | evals=6.42e+02+6.36e+02 | t_cur=1.60e+00 | y= 6.946962e-03 
+ttopt-64d  | evals=6.51e+02+6.45e+02 | t_cur=1.62e+00 | y= 7.121979e-03 
+ttopt-64d  | evals=6.60e+02+6.54e+02 | t_cur=1.64e+00 | y= 7.121979e-03 
+ttopt-64d  | evals=6.69e+02+6.63e+02 | t_cur=1.66e+00 | y= 7.121979e-03 
+ttopt-64d  | evals=6.78e+02+6.72e+02 | t_cur=1.68e+00 | y= 7.121979e-03 
+ttopt-64d  | evals=6.87e+02+6.81e+02 | t_cur=1.70e+00 | y= 7.121979e-03 
+ttopt-64d  | evals=6.96e+02+6.90e+02 | t_cur=1.71e+00 | y= 7.121979e-03 
+ttopt-64d  | evals=7.05e+02+6.99e+02 | t_cur=1.73e+00 | y= 7.121979e-03 
+ttopt-64d  | evals=7.14e+02+7.08e+02 | t_cur=1.76e+00 | y= 7.121979e-03 
+ttopt-64d  | evals=7.23e+02+7.17e+02 | t_cur=1.78e+00 | y= 7.121979e-03 
+ttopt-64d  | evals=7.32e+02+7.26e+02 | t_cur=1.80e+00 | y= 7.121979e-03 
+ttopt-64d  | evals=7.41e+02+7.35e+02 | t_cur=1.82e+00 | y= 7.825679e-03 
+ttopt-64d  | evals=7.50e+02+7.44e+02 | t_cur=1.84e+00 | y= 7.825679e-03 
+ttopt-64d  | evals=7.59e+02+7.53e+02 | t_cur=1.85e+00 | y= 7.825679e-03 
+ttopt-64d  | evals=7.68e+02+7.62e+02 | t_cur=1.87e+00 | y= 7.825679e-03 
+ttopt-64d  | evals=7.77e+02+7.71e+02 | t_cur=1.90e+00 | y= 7.825679e-03 
+ttopt-64d  | evals=7.86e+02+7.80e+02 | t_cur=1.92e+00 | y= 7.825679e-03 
+ttopt-64d  | evals=7.95e+02+7.89e+02 | t_cur=1.94e+00 | y= 7.825679e-03 
+ttopt-64d  | evals=8.04e+02+7.98e+02 | t_cur=1.96e+00 | y= 7.825679e-03 
+ttopt-64d  | evals=8.13e+02+8.07e+02 | t_cur=1.98e+00 | y= 7.825679e-03 
+ttopt-64d  | evals=8.22e+02+8.16e+02 | t_cur=2.00e+00 | y= 7.846136e-03 
+ttopt-64d  | evals=8.31e+02+8.25e+02 | t_cur=2.02e+00 | y= 9.351503e-03 
+ttopt-64d  | evals=8.40e+02+8.34e+02 | t_cur=2.04e+00 | y= 9.351503e-03 
+ttopt-64d  | evals=8.49e+02+8.43e+02 | t_cur=2.06e+00 | y= 9.351503e-03 
+ttopt-64d  | evals=8.58e+02+8.52e+02 | t_cur=2.08e+00 | y= 9.351503e-03 
+ttopt-64d  | evals=8.67e+02+8.61e+02 | t_cur=2.09e+00 | y= 9.351503e-03 
+ttopt-64d  | evals=8.76e+02+8.70e+02 | t_cur=2.11e+00 | y= 9.351503e-03 
+ttopt-64d  | evals=8.85e+02+8.79e+02 | t_cur=2.13e+00 | y= 9.351503e-03 
+ttopt-64d  | evals=8.94e+02+8.88e+02 | t_cur=2.15e+00 | y= 9.351503e-03 
+ttopt-64d  | evals=9.03e+02+8.97e+02 | t_cur=2.17e+00 | y= 1.023251e-02 
+ttopt-64d  | evals=9.12e+02+9.06e+02 | t_cur=2.19e+00 | y= 1.040728e-02 
+ttopt-64d  | evals=9.21e+02+9.15e+02 | t_cur=2.21e+00 | y= 1.303574e-02 
+ttopt-64d  | evals=9.30e+02+9.24e+02 | t_cur=2.23e+00 | y= 1.303574e-02 
+ttopt-64d  | evals=9.39e+02+9.33e+02 | t_cur=2.25e+00 | y= 1.559852e-02 
+ttopt-64d  | evals=9.48e+02+9.42e+02 | t_cur=2.27e+00 | y= 1.702432e-02 
+ttopt-64d  | evals=9.57e+02+9.51e+02 | t_cur=2.29e+00 | y= 1.702432e-02 
+ttopt-64d  | evals=9.66e+02+9.60e+02 | t_cur=2.31e+00 | y= 1.702432e-02 
+ttopt-64d  | evals=9.75e+02+9.69e+02 | t_cur=2.33e+00 | y= 1.702432e-02 
+ttopt-64d  | evals=9.84e+02+9.78e+02 | t_cur=2.35e+00 | y= 1.702432e-02 
+ttopt-64d  | evals=9.93e+02+9.87e+02 | t_cur=2.37e+00 | y= 2.034586e-02 
+ttopt-64d  | evals=1.00e+03+9.96e+02 | t_cur=2.39e+00 | y= 2.034586e-02 
+ttopt-64d  | evals=1.01e+03+1.00e+03 | t_cur=2.41e+00 | y= 2.160101e-02 
+ttopt-64d  | evals=1.02e+03+1.01e+03 | t_cur=2.42e+00 | y= 2.160101e-02 
+ttopt-64d  | evals=1.03e+03+1.02e+03 | t_cur=2.44e+00 | y= 2.160101e-02 
+ttopt-64d  | evals=1.04e+03+1.03e+03 | t_cur=2.46e+00 | y= 2.160101e-02 
+ttopt-64d  | evals=1.05e+03+1.04e+03 | t_cur=2.48e+00 | y= 2.160101e-02 
+ttopt-64d  | evals=1.06e+03+1.05e+03 | t_cur=2.50e+00 | y= 2.160101e-02 
+ttopt-64d  | evals=1.06e+03+1.06e+03 | t_cur=2.52e+00 | y= 2.160101e-02 
+ttopt-64d  | evals=1.07e+03+1.07e+03 | t_cur=2.54e+00 | y= 2.160101e-02 
+ttopt-64d  | evals=1.08e+03+1.08e+03 | t_cur=2.56e+00 | y= 2.160101e-02 
+ttopt-64d  | evals=1.09e+03+1.09e+03 | t_cur=2.58e+00 | y= 2.160101e-02 
+ttopt-64d  | evals=1.10e+03+1.10e+03 | t_cur=2.59e+00 | y= 2.160101e-02 
+ttopt-64d  | evals=1.11e+03+1.10e+03 | t_cur=2.61e+00 | y= 2.160101e-02 
+ttopt-64d  | evals=1.12e+03+1.11e+03 | t_cur=2.63e+00 | y= 2.160101e-02 
+ttopt-64d  | evals=1.13e+03+1.12e+03 | t_cur=2.65e+00 | y= 2.160101e-02 
+ttopt-64d  | evals=1.14e+03+1.13e+03 | t_cur=2.67e+00 | y= 2.160101e-02 
+ttopt-64d  | evals=1.15e+03+1.14e+03 | t_cur=2.69e+00 | y= 2.222186e-02 
+ttopt-64d  | evals=1.16e+03+1.15e+03 | t_cur=2.71e+00 | y= 2.222186e-02 
+ttopt-64d  | evals=1.16e+03+1.16e+03 | t_cur=2.73e+00 | y= 2.407561e-02 
+ttopt-64d  | evals=1.17e+03+1.17e+03 | t_cur=2.75e+00 | y= 2.407561e-02 
+ttopt-64d  | evals=1.18e+03+1.18e+03 | t_cur=2.77e+00 | y= 2.407561e-02 
+ttopt-64d  | evals=1.19e+03+1.18e+03 | t_cur=2.79e+00 | y= 2.407561e-02 
+ttopt-64d  | evals=1.20e+03+1.19e+03 | t_cur=2.81e+00 | y= 2.407561e-02 
+ttopt-64d  | evals=1.21e+03+1.20e+03 | t_cur=2.83e+00 | y= 2.537823e-02 
+ttopt-64d  | evals=1.22e+03+1.21e+03 | t_cur=2.85e+00 | y= 2.537823e-02 
+ttopt-64d  | evals=1.23e+03+1.22e+03 | t_cur=2.86e+00 | y= 2.848617e-02 
+ttopt-64d  | evals=1.24e+03+1.23e+03 | t_cur=2.88e+00 | y= 2.848617e-02 
+ttopt-64d  | evals=1.24e+03+1.24e+03 | t_cur=2.90e+00 | y= 2.848617e-02 
+ttopt-64d  | evals=1.25e+03+1.25e+03 | t_cur=2.93e+00 | y= 2.848617e-02 
+ttopt-64d  | evals=1.26e+03+1.26e+03 | t_cur=2.95e+00 | y= 2.848617e-02 
+ttopt-64d  | evals=1.27e+03+1.27e+03 | t_cur=2.97e+00 | y= 2.848617e-02 
+ttopt-64d  | evals=1.28e+03+1.28e+03 | t_cur=2.98e+00 | y= 2.848617e-02 
+ttopt-64d  | evals=1.29e+03+1.28e+03 | t_cur=3.00e+00 | y= 2.848617e-02 
+ttopt-64d  | evals=1.30e+03+1.29e+03 | t_cur=3.02e+00 | y= 2.999276e-02 
+ttopt-64d  | evals=1.31e+03+1.30e+03 | t_cur=3.04e+00 | y= 2.999276e-02 
+ttopt-64d  | evals=1.32e+03+1.31e+03 | t_cur=3.06e+00 | y= 3.424893e-02 
+ttopt-64d  | evals=1.33e+03+1.32e+03 | t_cur=3.08e+00 | y= 3.424893e-02 
+ttopt-64d  | evals=1.34e+03+1.33e+03 | t_cur=3.10e+00 | y= 3.436882e-02 
+ttopt-64d  | evals=1.34e+03+1.34e+03 | t_cur=3.11e+00 | y= 3.604814e-02 
+ttopt-64d  | evals=1.35e+03+1.35e+03 | t_cur=3.13e+00 | y= 3.604814e-02 
+ttopt-64d  | evals=1.36e+03+1.36e+03 | t_cur=3.15e+00 | y= 3.604814e-02 
+ttopt-64d  | evals=1.37e+03+1.36e+03 | t_cur=3.17e+00 | y= 3.604814e-02 
+ttopt-64d  | evals=1.38e+03+1.37e+03 | t_cur=3.19e+00 | y= 3.604814e-02 
+ttopt-64d  | evals=1.39e+03+1.38e+03 | t_cur=3.21e+00 | y= 3.604814e-02 
+ttopt-64d  | evals=1.40e+03+1.39e+03 | t_cur=3.23e+00 | y= 3.959261e-02 
+ttopt-64d  | evals=1.41e+03+1.40e+03 | t_cur=3.25e+00 | y= 3.959261e-02 
+ttopt-64d  | evals=1.42e+03+1.41e+03 | t_cur=3.27e+00 | y= 3.959261e-02 
+ttopt-64d  | evals=1.42e+03+1.42e+03 | t_cur=3.29e+00 | y= 3.959261e-02 
+ttopt-64d  | evals=1.43e+03+1.43e+03 | t_cur=3.31e+00 | y= 3.959261e-02 
+ttopt-64d  | evals=1.44e+03+1.44e+03 | t_cur=3.33e+00 | y= 3.959261e-02 
+ttopt-64d  | evals=1.45e+03+1.45e+03 | t_cur=3.34e+00 | y= 3.959261e-02 
+ttopt-64d  | evals=1.46e+03+1.46e+03 | t_cur=3.36e+00 | y= 4.304929e-02 
+ttopt-64d  | evals=1.47e+03+1.46e+03 | t_cur=3.38e+00 | y= 4.304929e-02 
+ttopt-64d  | evals=1.48e+03+1.47e+03 | t_cur=3.40e+00 | y= 4.520421e-02 
+ttopt-64d  | evals=1.49e+03+1.48e+03 | t_cur=3.42e+00 | y= 4.520421e-02 
+ttopt-64d  | evals=1.50e+03+1.49e+03 | t_cur=3.44e+00 | y= 4.520421e-02 
+ttopt-64d  | evals=1.51e+03+1.50e+03 | t_cur=3.46e+00 | y= 4.520421e-02 
+ttopt-64d  | evals=1.52e+03+1.51e+03 | t_cur=3.48e+00 | y= 4.520421e-02 
+ttopt-64d  | evals=1.52e+03+1.52e+03 | t_cur=3.50e+00 | y= 4.520421e-02 
+ttopt-64d  | evals=1.53e+03+1.53e+03 | t_cur=3.52e+00 | y= 4.984239e-02 
+ttopt-64d  | evals=1.54e+03+1.54e+03 | t_cur=3.54e+00 | y= 4.984239e-02 
+ttopt-64d  | evals=1.55e+03+1.54e+03 | t_cur=3.56e+00 | y= 4.984239e-02 
+ttopt-64d  | evals=1.56e+03+1.55e+03 | t_cur=3.58e+00 | y= 5.065444e-02 
+ttopt-64d  | evals=1.57e+03+1.56e+03 | t_cur=3.60e+00 | y= 5.065444e-02 
+ttopt-64d  | evals=1.58e+03+1.57e+03 | t_cur=3.62e+00 | y= 5.065444e-02 
+ttopt-64d  | evals=1.59e+03+1.58e+03 | t_cur=3.63e+00 | y= 5.065444e-02 
+ttopt-64d  | evals=1.60e+03+1.59e+03 | t_cur=3.65e+00 | y= 6.033440e-02 
+ttopt-64d  | evals=1.60e+03+1.60e+03 | t_cur=3.67e+00 | y= 6.348535e-02 
+ttopt-64d  | evals=1.61e+03+1.61e+03 | t_cur=3.69e+00 | y= 6.348535e-02 
+ttopt-64d  | evals=1.62e+03+1.62e+03 | t_cur=3.71e+00 | y= 6.348535e-02 
+ttopt-64d  | evals=1.63e+03+1.63e+03 | t_cur=3.73e+00 | y= 6.348535e-02 
+ttopt-64d  | evals=1.64e+03+1.64e+03 | t_cur=3.75e+00 | y= 7.717543e-02 
+ttopt-64d  | evals=1.65e+03+1.64e+03 | t_cur=3.77e+00 | y= 7.717543e-02 
+ttopt-64d  | evals=1.66e+03+1.65e+03 | t_cur=3.78e+00 | y= 7.717543e-02 
+ttopt-64d  | evals=1.67e+03+1.66e+03 | t_cur=3.80e+00 | y= 7.717543e-02 
+ttopt-64d  | evals=1.68e+03+1.67e+03 | t_cur=3.82e+00 | y= 7.717543e-02 
+ttopt-64d  | evals=1.69e+03+1.68e+03 | t_cur=3.84e+00 | y= 7.717543e-02 
+ttopt-64d  | evals=1.70e+03+1.69e+03 | t_cur=3.86e+00 | y= 7.717543e-02 
+ttopt-64d  | evals=1.70e+03+1.70e+03 | t_cur=3.88e+00 | y= 7.717543e-02 
+ttopt-64d  | evals=1.71e+03+1.71e+03 | t_cur=3.90e+00 | y= 7.717543e-02 
+ttopt-64d  | evals=1.72e+03+1.72e+03 | t_cur=3.91e+00 | y= 7.717543e-02 
+ttopt-64d  | evals=1.73e+03+1.72e+03 | t_cur=3.93e+00 | y= 7.717543e-02 
+ttopt-64d  | evals=1.74e+03+1.73e+03 | t_cur=3.95e+00 | y= 7.717543e-02 
+ttopt-64d  | evals=1.75e+03+1.74e+03 | t_cur=3.97e+00 | y= 7.717543e-02 
+ttopt-64d  | evals=1.76e+03+1.75e+03 | t_cur=3.99e+00 | y= 7.717543e-02 
+ttopt-64d  | evals=1.77e+03+1.76e+03 | t_cur=4.02e+00 | y= 7.717543e-02 
+ttopt-64d  | evals=1.78e+03+1.77e+03 | t_cur=4.04e+00 | y= 7.717543e-02 
+ttopt-64d  | evals=1.78e+03+1.78e+03 | t_cur=4.06e+00 | y= 7.717543e-02 
+ttopt-64d  | evals=1.79e+03+1.79e+03 | t_cur=4.08e+00 | y= 9.219732e-02 
+ttopt-64d  | evals=1.80e+03+1.80e+03 | t_cur=4.10e+00 | y= 1.089123e-01 
+ttopt-64d  | evals=1.81e+03+1.81e+03 | t_cur=4.12e+00 | y= 1.089123e-01 
+ttopt-64d  | evals=1.82e+03+1.82e+03 | t_cur=4.14e+00 | y= 1.089123e-01 
+ttopt-64d  | evals=1.83e+03+1.82e+03 | t_cur=4.16e+00 | y= 1.089123e-01 
+ttopt-64d  | evals=1.84e+03+1.83e+03 | t_cur=4.18e+00 | y= 1.099858e-01 
+ttopt-64d  | evals=1.85e+03+1.84e+03 | t_cur=4.20e+00 | y= 1.099858e-01 
+ttopt-64d  | evals=1.86e+03+1.85e+03 | t_cur=4.21e+00 | y= 1.099858e-01 
+ttopt-64d  | evals=1.87e+03+1.86e+03 | t_cur=4.23e+00 | y= 1.099858e-01 
+ttopt-64d  | evals=1.88e+03+1.87e+03 | t_cur=4.25e+00 | y= 1.099858e-01 
+ttopt-64d  | evals=1.88e+03+1.88e+03 | t_cur=4.27e+00 | y= 1.242795e-01 
+ttopt-64d  | evals=1.89e+03+1.89e+03 | t_cur=4.29e+00 | y= 1.242795e-01 
+ttopt-64d  | evals=1.90e+03+1.90e+03 | t_cur=4.31e+00 | y= 1.242795e-01 
+ttopt-64d  | evals=1.91e+03+1.90e+03 | t_cur=4.33e+00 | y= 1.242795e-01 
+ttopt-64d  | evals=1.92e+03+1.91e+03 | t_cur=4.35e+00 | y= 1.246970e-01 
+ttopt-64d  | evals=1.93e+03+1.92e+03 | t_cur=4.37e+00 | y= 1.246970e-01 
+ttopt-64d  | evals=1.94e+03+1.93e+03 | t_cur=4.39e+00 | y= 1.246970e-01 
+ttopt-64d  | evals=1.95e+03+1.94e+03 | t_cur=4.41e+00 | y= 1.486014e-01 
+ttopt-64d  | evals=1.96e+03+1.95e+03 | t_cur=4.43e+00 | y= 1.491062e-01 
+ttopt-64d  | evals=1.96e+03+1.96e+03 | t_cur=4.45e+00 | y= 1.522026e-01 
+ttopt-64d  | evals=1.97e+03+1.97e+03 | t_cur=4.47e+00 | y= 1.522026e-01 
+ttopt-64d  | evals=1.98e+03+1.98e+03 | t_cur=4.49e+00 | y= 1.542598e-01 
+ttopt-64d  | evals=1.99e+03+1.99e+03 | t_cur=4.50e+00 | y= 1.542598e-01 
+ttopt-64d  | evals=2.00e+03+2.00e+03 | t_cur=4.52e+00 | y= 1.710939e-01 
+ttopt-64d  | evals=2.01e+03+2.00e+03 | t_cur=4.54e+00 | y= 1.710939e-01 
+ttopt-64d  | evals=2.02e+03+2.01e+03 | t_cur=4.56e+00 | y= 1.887895e-01 
+ttopt-64d  | evals=2.03e+03+2.02e+03 | t_cur=4.58e+00 | y= 1.887895e-01 
+ttopt-64d  | evals=2.04e+03+2.03e+03 | t_cur=4.60e+00 | y= 1.887895e-01 
+ttopt-64d  | evals=2.05e+03+2.04e+03 | t_cur=4.62e+00 | y= 1.887895e-01 
+ttopt-64d  | evals=2.06e+03+2.05e+03 | t_cur=4.64e+00 | y= 2.370578e-01 
+ttopt-64d  | evals=2.06e+03+2.06e+03 | t_cur=4.66e+00 | y= 2.370578e-01 
+ttopt-64d  | evals=2.07e+03+2.07e+03 | t_cur=4.68e+00 | y= 2.370578e-01 
+ttopt-64d  | evals=2.08e+03+2.08e+03 | t_cur=4.70e+00 | y= 2.370578e-01 
+ttopt-64d  | evals=2.09e+03+2.08e+03 | t_cur=4.72e+00 | y= 2.370578e-01 
+ttopt-64d  | evals=2.10e+03+2.09e+03 | t_cur=4.74e+00 | y= 2.370578e-01 
+ttopt-64d  | evals=2.11e+03+2.10e+03 | t_cur=4.76e+00 | y= 2.370578e-01 
+ttopt-64d  | evals=2.12e+03+2.11e+03 | t_cur=4.78e+00 | y= 2.370578e-01 
+ttopt-64d  | evals=2.13e+03+2.12e+03 | t_cur=4.80e+00 | y= 2.370578e-01 
+ttopt-64d  | evals=2.14e+03+2.13e+03 | t_cur=4.82e+00 | y= 2.370578e-01 
+ttopt-64d  | evals=2.14e+03+2.14e+03 | t_cur=4.83e+00 | y= 2.370578e-01 
+ttopt-64d  | evals=2.15e+03+2.15e+03 | t_cur=4.85e+00 | y= 2.370578e-01 
+ttopt-64d  | evals=2.16e+03+2.16e+03 | t_cur=4.87e+00 | y= 2.612491e-01 
+ttopt-64d  | evals=2.17e+03+2.17e+03 | t_cur=4.89e+00 | y= 2.612491e-01 
+ttopt-64d  | evals=2.18e+03+2.18e+03 | t_cur=4.91e+00 | y= 2.612491e-01 
+ttopt-64d  | evals=2.19e+03+2.18e+03 | t_cur=4.93e+00 | y= 2.612491e-01 
+ttopt-64d  | evals=2.20e+03+2.19e+03 | t_cur=4.95e+00 | y= 3.605005e-01 
+ttopt-64d  | evals=2.21e+03+2.20e+03 | t_cur=4.97e+00 | y= 3.605005e-01 
+ttopt-64d  | evals=2.22e+03+2.21e+03 | t_cur=4.99e+00 | y= 3.605005e-01 
+ttopt-64d  | evals=2.23e+03+2.22e+03 | t_cur=5.01e+00 | y= 3.605005e-01 
+ttopt-64d  | evals=2.24e+03+2.23e+03 | t_cur=5.03e+00 | y= 3.605005e-01 
+ttopt-64d  | evals=2.24e+03+2.24e+03 | t_cur=5.05e+00 | y= 3.605005e-01 
+ttopt-64d  | evals=2.25e+03+2.25e+03 | t_cur=5.07e+00 | y= 3.605005e-01 
+ttopt-64d  | evals=2.26e+03+2.26e+03 | t_cur=5.09e+00 | y= 3.940150e-01 
+ttopt-64d  | evals=2.27e+03+2.26e+03 | t_cur=5.11e+00 | y= 3.967085e-01 
+ttopt-64d  | evals=2.28e+03+2.27e+03 | t_cur=5.12e+00 | y= 3.967085e-01 
+ttopt-64d  | evals=2.29e+03+2.28e+03 | t_cur=5.14e+00 | y= 3.967085e-01 
+ttopt-64d  | evals=2.30e+03+2.29e+03 | t_cur=5.16e+00 | y= 3.967085e-01 
+ttopt-64d  | evals=2.31e+03+2.30e+03 | t_cur=5.19e+00 | y= 4.677488e-01 
+ttopt-64d  | evals=2.32e+03+2.31e+03 | t_cur=5.21e+00 | y= 4.677488e-01 
+ttopt-64d  | evals=2.32e+03+2.32e+03 | t_cur=5.23e+00 | y= 4.677488e-01 
+ttopt-64d  | evals=2.33e+03+2.33e+03 | t_cur=5.25e+00 | y= 4.677488e-01 
+ttopt-64d  | evals=2.34e+03+2.34e+03 | t_cur=5.26e+00 | y= 4.677488e-01 
+ttopt-64d  | evals=2.35e+03+2.35e+03 | t_cur=5.28e+00 | y= 4.677488e-01 
+ttopt-64d  | evals=2.36e+03+2.36e+03 | t_cur=5.30e+00 | y= 4.677488e-01 
+ttopt-64d  | evals=2.37e+03+2.36e+03 | t_cur=5.32e+00 | y= 4.677488e-01 
+ttopt-64d  | evals=2.38e+03+2.37e+03 | t_cur=5.34e+00 | y= 4.677488e-01 
+ttopt-64d  | evals=2.39e+03+2.38e+03 | t_cur=5.36e+00 | y= 4.677488e-01 
+ttopt-64d  | evals=2.40e+03+2.39e+03 | t_cur=5.38e+00 | y= 4.677488e-01 
+ttopt-64d  | evals=2.41e+03+2.40e+03 | t_cur=5.40e+00 | y= 4.677488e-01 
+ttopt-64d  | evals=2.42e+03+2.41e+03 | t_cur=5.42e+00 | y= 5.113776e-01 
+ttopt-64d  | evals=2.42e+03+2.42e+03 | t_cur=5.44e+00 | y= 5.227579e-01 
+ttopt-64d  | evals=2.43e+03+2.43e+03 | t_cur=5.46e+00 | y= 5.227579e-01 
+ttopt-64d  | evals=2.44e+03+2.44e+03 | t_cur=5.47e+00 | y= 7.754431e-01 
+ttopt-64d  | evals=2.45e+03+2.44e+03 | t_cur=5.49e+00 | y= 7.754431e-01 
+ttopt-64d  | evals=2.46e+03+2.45e+03 | t_cur=5.51e+00 | y= 7.754431e-01 
+ttopt-64d  | evals=2.47e+03+2.46e+03 | t_cur=5.53e+00 | y= 7.754431e-01 
+ttopt-64d  | evals=2.48e+03+2.47e+03 | t_cur=5.55e+00 | y= 7.754431e-01 
+ttopt-64d  | evals=2.49e+03+2.48e+03 | t_cur=5.57e+00 | y= 7.754431e-01 
+ttopt-64d  | evals=2.50e+03+2.49e+03 | t_cur=5.59e+00 | y= 7.754431e-01 
+ttopt-64d  | evals=2.50e+03+2.50e+03 | t_cur=5.61e+00 | y= 8.102304e-01 
+ttopt-64d  | evals=2.51e+03+2.51e+03 | t_cur=5.63e+00 | y= 8.102304e-01 
+ttopt-64d  | evals=2.52e+03+2.52e+03 | t_cur=5.64e+00 | y= 8.102304e-01 
+ttopt-64d  | evals=2.53e+03+2.53e+03 | t_cur=5.66e+00 | y= 8.102304e-01 
+ttopt-64d  | evals=2.54e+03+2.54e+03 | t_cur=5.68e+00 | y= 8.102304e-01 
+ttopt-64d  | evals=2.55e+03+2.54e+03 | t_cur=5.70e+00 | y= 8.102304e-01 
+ttopt-64d  | evals=2.56e+03+2.55e+03 | t_cur=5.72e+00 | y= 8.102304e-01 
+ttopt-64d  | evals=2.57e+03+2.56e+03 | t_cur=5.74e+00 | y= 8.102304e-01 
+ttopt-64d  | evals=2.58e+03+2.57e+03 | t_cur=5.76e+00 | y= 8.102304e-01 
+ttopt-64d  | evals=2.59e+03+2.58e+03 | t_cur=5.78e+00 | y= 8.102304e-01 
+ttopt-64d  | evals=2.60e+03+2.59e+03 | t_cur=5.80e+00 | y= 8.102304e-01 
+ttopt-64d  | evals=2.60e+03+2.60e+03 | t_cur=5.81e+00 | y= 8.102304e-01 
+ttopt-64d  | evals=2.61e+03+2.61e+03 | t_cur=5.83e+00 | y= 8.152399e-01 
+ttopt-64d  | evals=2.62e+03+2.62e+03 | t_cur=5.85e+00 | y= 8.158802e-01 
+ttopt-64d  | evals=2.63e+03+2.62e+03 | t_cur=5.87e+00 | y= 8.158802e-01 
+ttopt-64d  | evals=2.64e+03+2.63e+03 | t_cur=5.89e+00 | y= 8.158802e-01 
+ttopt-64d  | evals=2.65e+03+2.64e+03 | t_cur=5.91e+00 | y= 8.158802e-01 
+ttopt-64d  | evals=2.66e+03+2.65e+03 | t_cur=5.93e+00 | y= 8.396384e-01 
+ttopt-64d  | evals=2.67e+03+2.66e+03 | t_cur=5.95e+00 | y= 8.491128e-01 
+ttopt-64d  | evals=2.68e+03+2.67e+03 | t_cur=5.97e+00 | y= 8.491128e-01 
+ttopt-64d  | evals=2.68e+03+2.68e+03 | t_cur=5.98e+00 | y= 8.749382e-01 
+ttopt-64d  | evals=2.69e+03+2.69e+03 | t_cur=6.00e+00 | y= 8.749382e-01 
+ttopt-64d  | evals=2.70e+03+2.70e+03 | t_cur=6.02e+00 | y= 8.928694e-01 
+ttopt-64d  | evals=2.71e+03+2.71e+03 | t_cur=6.04e+00 | y= 8.928694e-01 
+ttopt-64d  | evals=2.72e+03+2.72e+03 | t_cur=6.06e+00 | y= 8.928694e-01 
+ttopt-64d  | evals=2.73e+03+2.72e+03 | t_cur=6.08e+00 | y= 8.928694e-01 
+ttopt-64d  | evals=2.74e+03+2.73e+03 | t_cur=6.10e+00 | y= 9.014231e-01 
+ttopt-64d  | evals=2.75e+03+2.74e+03 | t_cur=6.12e+00 | y= 9.014231e-01 
+ttopt-64d  | evals=2.76e+03+2.75e+03 | t_cur=6.14e+00 | y= 9.014231e-01 
+ttopt-64d  | evals=2.77e+03+2.76e+03 | t_cur=6.16e+00 | y= 9.014231e-01 
+ttopt-64d  | evals=2.78e+03+2.77e+03 | t_cur=6.18e+00 | y= 9.224817e-01 
+ttopt-64d  | evals=2.78e+03+2.78e+03 | t_cur=6.20e+00 | y= 9.224817e-01 
+ttopt-64d  | evals=2.79e+03+2.79e+03 | t_cur=6.22e+00 | y= 9.224817e-01 
+ttopt-64d  | evals=2.80e+03+2.80e+03 | t_cur=6.24e+00 | y= 9.224817e-01 
+ttopt-64d  | evals=2.81e+03+2.80e+03 | t_cur=6.26e+00 | y= 9.224817e-01 
+ttopt-64d  | evals=2.82e+03+2.81e+03 | t_cur=6.28e+00 | y= 9.224817e-01 
+ttopt-64d  | evals=2.83e+03+2.82e+03 | t_cur=6.30e+00 | y= 9.224817e-01 
+ttopt-64d  | evals=2.84e+03+2.83e+03 | t_cur=6.32e+00 | y= 9.224817e-01 
+ttopt-64d  | evals=2.85e+03+2.84e+03 | t_cur=6.34e+00 | y= 9.224817e-01 
+ttopt-64d  | evals=2.86e+03+2.85e+03 | t_cur=6.36e+00 | y= 9.231047e-01 
+ttopt-64d  | evals=2.86e+03+2.86e+03 | t_cur=6.38e+00 | y= 9.231047e-01 
+ttopt-64d  | evals=2.87e+03+2.87e+03 | t_cur=6.40e+00 | y= 9.231047e-01 
+ttopt-64d  | evals=2.88e+03+2.88e+03 | t_cur=6.42e+00 | y= 9.231047e-01 
+ttopt-64d  | evals=2.89e+03+2.89e+03 | t_cur=6.44e+00 | y= 9.231047e-01 
+ttopt-64d  | evals=2.90e+03+2.90e+03 | t_cur=6.46e+00 | y= 9.231047e-01 
+ttopt-64d  | evals=2.91e+03+2.90e+03 | t_cur=6.48e+00 | y= 9.368524e-01 
+ttopt-64d  | evals=2.92e+03+2.91e+03 | t_cur=6.50e+00 | y= 9.368524e-01 
+ttopt-64d  | evals=2.93e+03+2.92e+03 | t_cur=6.51e+00 | y= 9.368524e-01 
+ttopt-64d  | evals=2.94e+03+2.93e+03 | t_cur=6.53e+00 | y= 9.368524e-01 
+ttopt-64d  | evals=2.95e+03+2.94e+03 | t_cur=6.55e+00 | y= 9.368524e-01 
+ttopt-64d  | evals=2.96e+03+2.95e+03 | t_cur=6.57e+00 | y= 9.368524e-01 
+ttopt-64d  | evals=2.96e+03+2.96e+03 | t_cur=6.59e+00 | y= 9.368524e-01 
+ttopt-64d  | evals=2.97e+03+2.97e+03 | t_cur=6.61e+00 | y= 9.368524e-01 
+ttopt-64d  | evals=2.98e+03+2.98e+03 | t_cur=6.63e+00 | y= 9.368524e-01 
+ttopt-64d  | evals=2.99e+03+2.98e+03 | t_cur=6.65e+00 | y= 9.368524e-01 
+ttopt-64d  | evals=3.00e+03+2.99e+03 | t_cur=6.66e+00 | y= 9.368524e-01 
+ttopt-64d  | evals=3.01e+03+3.00e+03 | t_cur=6.68e+00 | y= 9.368524e-01 
+ttopt-64d  | evals=3.02e+03+3.01e+03 | t_cur=6.70e+00 | y= 9.528992e-01 
+ttopt-64d  | evals=3.03e+03+3.02e+03 | t_cur=6.72e+00 | y= 9.528992e-01 
+ttopt-64d  | evals=3.04e+03+3.03e+03 | t_cur=6.74e+00 | y= 9.528992e-01 
+ttopt-64d  | evals=3.04e+03+3.04e+03 | t_cur=6.76e+00 | y= 9.528992e-01 
+ttopt-64d  | evals=3.05e+03+3.05e+03 | t_cur=6.77e+00 | y= 9.528992e-01 
+ttopt-64d  | evals=3.06e+03+3.06e+03 | t_cur=6.79e+00 | y= 9.528992e-01 
+ttopt-64d  | evals=3.07e+03+3.07e+03 | t_cur=6.81e+00 | y= 9.528992e-01 
+ttopt-64d  | evals=3.08e+03+3.08e+03 | t_cur=6.83e+00 | y= 9.528992e-01 
+ttopt-64d  | evals=3.09e+03+3.08e+03 | t_cur=6.85e+00 | y= 9.528992e-01 
+ttopt-64d  | evals=3.10e+03+3.09e+03 | t_cur=6.87e+00 | y= 9.528992e-01 
+ttopt-64d  | evals=3.11e+03+3.10e+03 | t_cur=6.89e+00 | y= 9.528992e-01 
+ttopt-64d  | evals=3.12e+03+3.11e+03 | t_cur=6.91e+00 | y= 9.528992e-01 
+ttopt-64d  | evals=3.13e+03+3.12e+03 | t_cur=6.93e+00 | y= 9.528992e-01 
+ttopt-64d  | evals=3.14e+03+3.13e+03 | t_cur=6.95e+00 | y= 9.528992e-01 
+ttopt-64d  | evals=3.14e+03+3.14e+03 | t_cur=6.97e+00 | y= 9.528992e-01 
+ttopt-64d  | evals=3.15e+03+3.15e+03 | t_cur=6.99e+00 | y= 9.528992e-01 
+ttopt-64d  | evals=3.16e+03+3.16e+03 | t_cur=7.01e+00 | y= 9.539498e-01 
+ttopt-64d  | evals=3.17e+03+3.16e+03 | t_cur=7.03e+00 | y= 9.539498e-01 
+ttopt-64d  | evals=3.18e+03+3.17e+03 | t_cur=7.05e+00 | y= 9.560801e-01 
+ttopt-64d  | evals=3.19e+03+3.18e+03 | t_cur=7.07e+00 | y= 9.569272e-01 
+ttopt-64d  | evals=3.20e+03+3.19e+03 | t_cur=7.08e+00 | y= 9.569272e-01 
+ttopt-64d  | evals=3.21e+03+3.20e+03 | t_cur=7.10e+00 | y= 9.569272e-01 
+ttopt-64d  | evals=3.22e+03+3.21e+03 | t_cur=7.12e+00 | y= 9.570174e-01 
+ttopt-64d  | evals=3.22e+03+3.22e+03 | t_cur=7.14e+00 | y= 9.604170e-01 
+ttopt-64d  | evals=3.23e+03+3.23e+03 | t_cur=7.16e+00 | y= 9.604170e-01 
+ttopt-64d  | evals=3.24e+03+3.24e+03 | t_cur=7.18e+00 | y= 9.629395e-01 
+ttopt-64d  | evals=3.25e+03+3.25e+03 | t_cur=7.20e+00 | y= 9.629395e-01 
+ttopt-64d  | evals=3.26e+03+3.26e+03 | t_cur=7.22e+00 | y= 9.629395e-01 
+ttopt-64d  | evals=3.27e+03+3.26e+03 | t_cur=7.24e+00 | y= 9.629395e-01 
+ttopt-64d  | evals=3.28e+03+3.27e+03 | t_cur=7.26e+00 | y= 9.629395e-01 
+ttopt-64d  | evals=3.29e+03+3.28e+03 | t_cur=7.28e+00 | y= 9.629395e-01 
+ttopt-64d  | evals=3.30e+03+3.29e+03 | t_cur=7.30e+00 | y= 9.629395e-01 
+ttopt-64d  | evals=3.31e+03+3.30e+03 | t_cur=7.32e+00 | y= 9.629395e-01 
+ttopt-64d  | evals=3.32e+03+3.31e+03 | t_cur=7.33e+00 | y= 9.629395e-01 
+ttopt-64d  | evals=3.32e+03+3.32e+03 | t_cur=7.35e+00 | y= 9.629395e-01 
+ttopt-64d  | evals=3.33e+03+3.33e+03 | t_cur=7.37e+00 | y= 9.629395e-01 
+ttopt-64d  | evals=3.34e+03+3.34e+03 | t_cur=7.39e+00 | y= 9.629395e-01 
+ttopt-64d  | evals=3.35e+03+3.34e+03 | t_cur=7.41e+00 | y= 9.629395e-01 
+ttopt-64d  | evals=3.36e+03+3.35e+03 | t_cur=7.43e+00 | y= 9.629395e-01 
+ttopt-64d  | evals=3.37e+03+3.36e+03 | t_cur=7.45e+00 | y= 9.629395e-01 
+ttopt-64d  | evals=3.38e+03+3.37e+03 | t_cur=7.48e+00 | y= 9.629395e-01 
+ttopt-64d  | evals=3.39e+03+3.38e+03 | t_cur=7.50e+00 | y= 9.629395e-01 
+ttopt-64d  | evals=3.40e+03+3.39e+03 | t_cur=7.52e+00 | y= 9.629395e-01 
+ttopt-64d  | evals=3.40e+03+3.40e+03 | t_cur=7.53e+00 | y= 9.629395e-01 
+ttopt-64d  | evals=3.41e+03+3.41e+03 | t_cur=7.55e+00 | y= 9.676440e-01 
+ttopt-64d  | evals=3.42e+03+3.42e+03 | t_cur=7.57e+00 | y= 9.689566e-01 
+ttopt-64d  | evals=3.43e+03+3.43e+03 | t_cur=7.59e+00 | y= 9.689566e-01 
+ttopt-64d  | evals=3.44e+03+3.44e+03 | t_cur=7.61e+00 | y= 9.689566e-01 
+ttopt-64d  | evals=3.45e+03+3.44e+03 | t_cur=7.63e+00 | y= 9.689566e-01 
+ttopt-64d  | evals=3.46e+03+3.45e+03 | t_cur=7.65e+00 | y= 9.689566e-01 
+ttopt-64d  | evals=3.47e+03+3.46e+03 | t_cur=7.66e+00 | y= 9.689566e-01 
+ttopt-64d  | evals=3.48e+03+3.47e+03 | t_cur=7.68e+00 | y= 9.689566e-01 
+ttopt-64d  | evals=3.49e+03+3.48e+03 | t_cur=7.70e+00 | y= 9.689566e-01 
+ttopt-64d  | evals=3.50e+03+3.49e+03 | t_cur=7.72e+00 | y= 9.689566e-01 
+ttopt-64d  | evals=3.50e+03+3.50e+03 | t_cur=7.74e+00 | y= 9.690725e-01 
+ttopt-64d  | evals=3.51e+03+3.51e+03 | t_cur=7.76e+00 | y= 9.690725e-01 
+ttopt-64d  | evals=3.52e+03+3.52e+03 | t_cur=7.77e+00 | y= 9.690725e-01 
+ttopt-64d  | evals=3.53e+03+3.52e+03 | t_cur=7.79e+00 | y= 9.690725e-01 
+ttopt-64d  | evals=3.54e+03+3.53e+03 | t_cur=7.81e+00 | y= 9.690725e-01 
+ttopt-64d  | evals=3.55e+03+3.54e+03 | t_cur=7.83e+00 | y= 9.697610e-01 
+ttopt-64d  | evals=3.56e+03+3.55e+03 | t_cur=7.85e+00 | y= 9.697610e-01 
+ttopt-64d  | evals=3.57e+03+3.56e+03 | t_cur=7.87e+00 | y= 9.697610e-01 
+ttopt-64d  | evals=3.58e+03+3.57e+03 | t_cur=7.89e+00 | y= 9.724011e-01 
+ttopt-64d  | evals=3.58e+03+3.58e+03 | t_cur=7.91e+00 | y= 9.726914e-01 
+ttopt-64d  | evals=3.59e+03+3.59e+03 | t_cur=7.93e+00 | y= 9.726914e-01 
+ttopt-64d  | evals=3.60e+03+3.60e+03 | t_cur=7.95e+00 | y= 9.726914e-01 
+ttopt-64d  | evals=3.61e+03+3.61e+03 | t_cur=7.97e+00 | y= 9.726914e-01 
+ttopt-64d  | evals=3.62e+03+3.62e+03 | t_cur=7.99e+00 | y= 9.726914e-01 
+ttopt-64d  | evals=3.63e+03+3.62e+03 | t_cur=8.01e+00 | y= 9.742473e-01 
+ttopt-64d  | evals=3.64e+03+3.63e+03 | t_cur=8.03e+00 | y= 9.742473e-01 
+ttopt-64d  | evals=3.65e+03+3.64e+03 | t_cur=8.05e+00 | y= 9.742473e-01 
+ttopt-64d  | evals=3.66e+03+3.65e+03 | t_cur=8.06e+00 | y= 9.742473e-01 
+ttopt-64d  | evals=3.67e+03+3.66e+03 | t_cur=8.08e+00 | y= 9.753681e-01 
+ttopt-64d  | evals=3.68e+03+3.67e+03 | t_cur=8.10e+00 | y= 9.753681e-01 
+ttopt-64d  | evals=3.68e+03+3.68e+03 | t_cur=8.12e+00 | y= 9.753681e-01 
+ttopt-64d  | evals=3.69e+03+3.69e+03 | t_cur=8.14e+00 | y= 9.753681e-01 
+ttopt-64d  | evals=3.70e+03+3.70e+03 | t_cur=8.16e+00 | y= 9.753681e-01 
+ttopt-64d  | evals=3.71e+03+3.70e+03 | t_cur=8.18e+00 | y= 9.753681e-01 
+ttopt-64d  | evals=3.72e+03+3.71e+03 | t_cur=8.20e+00 | y= 9.753681e-01 
+ttopt-64d  | evals=3.73e+03+3.72e+03 | t_cur=8.22e+00 | y= 9.753681e-01 
+ttopt-64d  | evals=3.74e+03+3.73e+03 | t_cur=8.24e+00 | y= 9.765624e-01 
+ttopt-64d  | evals=3.75e+03+3.74e+03 | t_cur=8.26e+00 | y= 9.766232e-01 
+ttopt-64d  | evals=3.76e+03+3.75e+03 | t_cur=8.28e+00 | y= 9.766232e-01 
+ttopt-64d  | evals=3.76e+03+3.76e+03 | t_cur=8.29e+00 | y= 9.766822e-01 
+ttopt-64d  | evals=3.77e+03+3.77e+03 | t_cur=8.31e+00 | y= 9.768818e-01 
+ttopt-64d  | evals=3.78e+03+3.78e+03 | t_cur=8.33e+00 | y= 9.768818e-01 
+ttopt-64d  | evals=3.79e+03+3.79e+03 | t_cur=8.35e+00 | y= 9.768818e-01 
+ttopt-64d  | evals=3.80e+03+3.80e+03 | t_cur=8.37e+00 | y= 9.768818e-01 
+ttopt-64d  | evals=3.81e+03+3.80e+03 | t_cur=8.39e+00 | y= 9.768818e-01 
+ttopt-64d  | evals=3.82e+03+3.81e+03 | t_cur=8.41e+00 | y= 9.768818e-01 
+ttopt-64d  | evals=3.83e+03+3.82e+03 | t_cur=8.43e+00 | y= 9.768818e-01 
+ttopt-64d  | evals=3.84e+03+3.83e+03 | t_cur=8.45e+00 | y= 9.768818e-01 
+ttopt-64d  | evals=3.85e+03+3.84e+03 | t_cur=8.47e+00 | y= 9.768818e-01 
+ttopt-64d  | evals=3.86e+03+3.85e+03 | t_cur=8.49e+00 | y= 9.774373e-01 
+ttopt-64d  | evals=3.86e+03+3.86e+03 | t_cur=8.51e+00 | y= 9.774373e-01 
+ttopt-64d  | evals=3.87e+03+3.87e+03 | t_cur=8.52e+00 | y= 9.774510e-01 
+ttopt-64d  | evals=3.88e+03+3.88e+03 | t_cur=8.54e+00 | y= 9.774510e-01 
+ttopt-64d  | evals=3.89e+03+3.88e+03 | t_cur=8.56e+00 | y= 9.774510e-01 
+ttopt-64d  | evals=3.90e+03+3.89e+03 | t_cur=8.58e+00 | y= 9.777610e-01 
+ttopt-64d  | evals=3.91e+03+3.90e+03 | t_cur=8.61e+00 | y= 9.777610e-01 
+ttopt-64d  | evals=3.92e+03+3.91e+03 | t_cur=8.62e+00 | y= 9.777610e-01 
+ttopt-64d  | evals=3.93e+03+3.92e+03 | t_cur=8.64e+00 | y= 9.777610e-01 
+ttopt-64d  | evals=3.94e+03+3.93e+03 | t_cur=8.66e+00 | y= 9.777610e-01 
+ttopt-64d  | evals=3.94e+03+3.94e+03 | t_cur=8.68e+00 | y= 9.777610e-01 
+ttopt-64d  | evals=3.95e+03+3.95e+03 | t_cur=8.70e+00 | y= 9.777610e-01 
+ttopt-64d  | evals=3.96e+03+3.96e+03 | t_cur=8.72e+00 | y= 9.777610e-01 
+ttopt-64d  | evals=3.97e+03+3.97e+03 | t_cur=8.74e+00 | y= 9.777610e-01 
+ttopt-64d  | evals=3.98e+03+3.98e+03 | t_cur=8.76e+00 | y= 9.777610e-01 
+ttopt-64d  | evals=3.99e+03+3.98e+03 | t_cur=8.78e+00 | y= 9.777610e-01 
+ttopt-64d  | evals=4.00e+03+3.99e+03 | t_cur=8.80e+00 | y= 9.777610e-01 
+ttopt-64d  | evals=4.01e+03+4.00e+03 | t_cur=8.82e+00 | y= 9.777610e-01 
+ttopt-64d  | evals=4.02e+03+4.01e+03 | t_cur=8.83e+00 | y= 9.777610e-01 
+ttopt-64d  | evals=4.03e+03+4.02e+03 | t_cur=8.85e+00 | y= 9.777610e-01 
+ttopt-64d  | evals=4.04e+03+4.03e+03 | t_cur=8.88e+00 | y= 9.777610e-01 
+ttopt-64d  | evals=4.04e+03+4.04e+03 | t_cur=8.89e+00 | y= 9.779595e-01 
+ttopt-64d  | evals=4.05e+03+4.05e+03 | t_cur=8.91e+00 | y= 9.779595e-01 
+ttopt-64d  | evals=4.06e+03+4.06e+03 | t_cur=8.93e+00 | y= 9.779595e-01 
+ttopt-64d  | evals=4.07e+03+4.06e+03 | t_cur=8.95e+00 | y= 9.779595e-01 
+ttopt-64d  | evals=4.08e+03+4.07e+03 | t_cur=8.97e+00 | y= 9.783508e-01 
+ttopt-64d  | evals=4.09e+03+4.08e+03 | t_cur=8.99e+00 | y= 9.783508e-01 
+ttopt-64d  | evals=4.10e+03+4.09e+03 | t_cur=9.01e+00 | y= 9.783508e-01 
+ttopt-64d  | evals=4.11e+03+4.10e+03 | t_cur=9.03e+00 | y= 9.783508e-01 
+ttopt-64d  | evals=4.12e+03+4.11e+03 | t_cur=9.05e+00 | y= 9.783508e-01 
+ttopt-64d  | evals=4.12e+03+4.12e+03 | t_cur=9.06e+00 | y= 9.783508e-01 
+ttopt-64d  | evals=4.13e+03+4.13e+03 | t_cur=9.08e+00 | y= 9.783508e-01 
+ttopt-64d  | evals=4.14e+03+4.14e+03 | t_cur=9.10e+00 | y= 9.783508e-01 
+ttopt-64d  | evals=4.15e+03+4.15e+03 | t_cur=9.12e+00 | y= 9.783508e-01 
+ttopt-64d  | evals=4.16e+03+4.16e+03 | t_cur=9.14e+00 | y= 9.783508e-01 
+ttopt-64d  | evals=4.17e+03+4.16e+03 | t_cur=9.16e+00 | y= 9.783508e-01 
+ttopt-64d  | evals=4.18e+03+4.17e+03 | t_cur=9.18e+00 | y= 9.783508e-01 
+ttopt-64d  | evals=4.19e+03+4.18e+03 | t_cur=9.20e+00 | y= 9.783508e-01 
+ttopt-64d  | evals=4.20e+03+4.19e+03 | t_cur=9.22e+00 | y= 9.783508e-01 
+ttopt-64d  | evals=4.21e+03+4.20e+03 | t_cur=9.24e+00 | y= 9.783508e-01 
+ttopt-64d  | evals=4.22e+03+4.21e+03 | t_cur=9.26e+00 | y= 9.783508e-01 
+ttopt-64d  | evals=4.22e+03+4.22e+03 | t_cur=9.28e+00 | y= 9.783508e-01 
+ttopt-64d  | evals=4.23e+03+4.23e+03 | t_cur=9.29e+00 | y= 9.783508e-01 
+ttopt-64d  | evals=4.24e+03+4.24e+03 | t_cur=9.31e+00 | y= 9.783508e-01 
+ttopt-64d  | evals=4.25e+03+4.24e+03 | t_cur=9.33e+00 | y= 9.783508e-01 
+ttopt-64d  | evals=4.26e+03+4.25e+03 | t_cur=9.35e+00 | y= 9.783508e-01 
+ttopt-64d  | evals=4.27e+03+4.26e+03 | t_cur=9.37e+00 | y= 9.783508e-01 
+ttopt-64d  | evals=4.28e+03+4.27e+03 | t_cur=9.39e+00 | y= 9.783508e-01 
+ttopt-64d  | evals=4.29e+03+4.28e+03 | t_cur=9.41e+00 | y= 9.783508e-01 
+ttopt-64d  | evals=4.30e+03+4.29e+03 | t_cur=9.43e+00 | y= 9.783508e-01 
+ttopt-64d  | evals=4.30e+03+4.30e+03 | t_cur=9.45e+00 | y= 9.783508e-01 
+ttopt-64d  | evals=4.31e+03+4.31e+03 | t_cur=9.47e+00 | y= 9.783508e-01 
+ttopt-64d  | evals=4.32e+03+4.32e+03 | t_cur=9.49e+00 | y= 9.783818e-01 
+ttopt-64d  | evals=4.33e+03+4.33e+03 | t_cur=9.51e+00 | y= 9.783818e-01 
+ttopt-64d  | evals=4.34e+03+4.34e+03 | t_cur=9.52e+00 | y= 9.783818e-01 
+ttopt-64d  | evals=4.35e+03+4.34e+03 | t_cur=9.54e+00 | y= 9.783818e-01 
+ttopt-64d  | evals=4.36e+03+4.35e+03 | t_cur=9.56e+00 | y= 9.783818e-01 
+ttopt-64d  | evals=4.37e+03+4.36e+03 | t_cur=9.58e+00 | y= 9.783818e-01 
+ttopt-64d  | evals=4.38e+03+4.37e+03 | t_cur=9.60e+00 | y= 9.783818e-01 
+ttopt-64d  | evals=4.39e+03+4.38e+03 | t_cur=9.62e+00 | y= 9.783818e-01 
+ttopt-64d  | evals=4.40e+03+4.39e+03 | t_cur=9.64e+00 | y= 9.783818e-01 
+ttopt-64d  | evals=4.40e+03+4.40e+03 | t_cur=9.66e+00 | y= 9.783818e-01 
+ttopt-64d  | evals=4.41e+03+4.41e+03 | t_cur=9.68e+00 | y= 9.783818e-01 
+ttopt-64d  | evals=4.42e+03+4.42e+03 | t_cur=9.70e+00 | y= 9.783844e-01 
+ttopt-64d  | evals=4.43e+03+4.42e+03 | t_cur=9.72e+00 | y= 9.784399e-01 
+ttopt-64d  | evals=4.44e+03+4.43e+03 | t_cur=9.74e+00 | y= 9.787099e-01 
+ttopt-64d  | evals=4.45e+03+4.44e+03 | t_cur=9.75e+00 | y= 9.787099e-01 
+ttopt-64d  | evals=4.46e+03+4.45e+03 | t_cur=9.77e+00 | y= 9.787099e-01 
+ttopt-64d  | evals=4.47e+03+4.46e+03 | t_cur=9.79e+00 | y= 9.787099e-01 
+ttopt-64d  | evals=4.48e+03+4.47e+03 | t_cur=9.81e+00 | y= 9.787099e-01 
+ttopt-64d  | evals=4.48e+03+4.48e+03 | t_cur=9.83e+00 | y= 9.787536e-01 
+ttopt-64d  | evals=4.49e+03+4.49e+03 | t_cur=9.85e+00 | y= 9.787536e-01 
+ttopt-64d  | evals=4.50e+03+4.50e+03 | t_cur=9.87e+00 | y= 9.787536e-01 
+ttopt-64d  | evals=4.51e+03+4.51e+03 | t_cur=9.89e+00 | y= 9.787536e-01 
+ttopt-64d  | evals=4.52e+03+4.52e+03 | t_cur=9.91e+00 | y= 9.787536e-01 
+ttopt-64d  | evals=4.53e+03+4.52e+03 | t_cur=9.93e+00 | y= 9.787536e-01 
+ttopt-64d  | evals=4.54e+03+4.53e+03 | t_cur=9.95e+00 | y= 9.787536e-01 
+ttopt-64d  | evals=4.55e+03+4.54e+03 | t_cur=9.96e+00 | y= 9.787536e-01 
+ttopt-64d  | evals=4.56e+03+4.55e+03 | t_cur=9.98e+00 | y= 9.787536e-01 
+ttopt-64d  | evals=4.57e+03+4.56e+03 | t_cur=1.00e+01 | y= 9.787536e-01 
+ttopt-64d  | evals=4.58e+03+4.57e+03 | t_cur=1.00e+01 | y= 9.787907e-01 
+ttopt-64d  | evals=4.58e+03+4.58e+03 | t_cur=1.00e+01 | y= 9.788597e-01 
+ttopt-64d  | evals=4.59e+03+4.59e+03 | t_cur=1.01e+01 | y= 9.788597e-01 
+ttopt-64d  | evals=4.60e+03+4.60e+03 | t_cur=1.01e+01 | y= 9.788597e-01 
+ttopt-64d  | evals=4.61e+03+4.60e+03 | t_cur=1.01e+01 | y= 9.788597e-01 
+ttopt-64d  | evals=4.62e+03+4.61e+03 | t_cur=1.01e+01 | y= 9.788709e-01 
+ttopt-64d  | evals=4.63e+03+4.62e+03 | t_cur=1.01e+01 | y= 9.788709e-01 
+ttopt-64d  | evals=4.64e+03+4.63e+03 | t_cur=1.02e+01 | y= 9.788709e-01 
+ttopt-64d  | evals=4.65e+03+4.64e+03 | t_cur=1.02e+01 | y= 9.789131e-01 
+ttopt-64d  | evals=4.66e+03+4.65e+03 | t_cur=1.02e+01 | y= 9.790387e-01 
+ttopt-64d  | evals=4.66e+03+4.66e+03 | t_cur=1.02e+01 | y= 9.790440e-01 
+ttopt-64d  | evals=4.67e+03+4.67e+03 | t_cur=1.02e+01 | y= 9.790440e-01 
+ttopt-64d  | evals=4.68e+03+4.68e+03 | t_cur=1.03e+01 | y= 9.790440e-01 
+ttopt-64d  | evals=4.69e+03+4.69e+03 | t_cur=1.03e+01 | y= 9.790440e-01 
+ttopt-64d  | evals=4.70e+03+4.70e+03 | t_cur=1.03e+01 | y= 9.790440e-01 
+ttopt-64d  | evals=4.71e+03+4.70e+03 | t_cur=1.03e+01 | y= 9.790440e-01 
+ttopt-64d  | evals=4.72e+03+4.71e+03 | t_cur=1.03e+01 | y= 9.790440e-01 
+ttopt-64d  | evals=4.73e+03+4.72e+03 | t_cur=1.03e+01 | y= 9.791008e-01 
+ttopt-64d  | evals=4.74e+03+4.73e+03 | t_cur=1.04e+01 | y= 9.791008e-01 
+ttopt-64d  | evals=4.75e+03+4.74e+03 | t_cur=1.04e+01 | y= 9.791008e-01 
+ttopt-64d  | evals=4.76e+03+4.75e+03 | t_cur=1.04e+01 | y= 9.791008e-01 
+ttopt-64d  | evals=4.76e+03+4.76e+03 | t_cur=1.04e+01 | y= 9.791008e-01 
+ttopt-64d  | evals=4.77e+03+4.77e+03 | t_cur=1.04e+01 | y= 9.791008e-01 
+ttopt-64d  | evals=4.78e+03+4.78e+03 | t_cur=1.05e+01 | y= 9.791924e-01 
+ttopt-64d  | evals=4.79e+03+4.78e+03 | t_cur=1.05e+01 | y= 9.791924e-01 
+ttopt-64d  | evals=4.80e+03+4.79e+03 | t_cur=1.05e+01 | y= 9.791924e-01 
+ttopt-64d  | evals=4.81e+03+4.80e+03 | t_cur=1.05e+01 | y= 9.791924e-01 
+ttopt-64d  | evals=4.82e+03+4.81e+03 | t_cur=1.05e+01 | y= 9.791924e-01 
+ttopt-64d  | evals=4.83e+03+4.82e+03 | t_cur=1.06e+01 | y= 9.791924e-01 
+ttopt-64d  | evals=4.84e+03+4.83e+03 | t_cur=1.06e+01 | y= 9.794129e-01 
+ttopt-64d  | evals=4.84e+03+4.84e+03 | t_cur=1.06e+01 | y= 9.794129e-01 
+ttopt-64d  | evals=4.85e+03+4.85e+03 | t_cur=1.06e+01 | y= 9.794129e-01 
+ttopt-64d  | evals=4.86e+03+4.86e+03 | t_cur=1.06e+01 | y= 9.794129e-01 
+ttopt-64d  | evals=4.87e+03+4.87e+03 | t_cur=1.07e+01 | y= 9.794129e-01 
+ttopt-64d  | evals=4.88e+03+4.88e+03 | t_cur=1.07e+01 | y= 9.794129e-01 
+ttopt-64d  | evals=4.89e+03+4.88e+03 | t_cur=1.07e+01 | y= 9.794129e-01 
+ttopt-64d  | evals=4.90e+03+4.89e+03 | t_cur=1.07e+01 | y= 9.794129e-01 
+ttopt-64d  | evals=4.91e+03+4.90e+03 | t_cur=1.07e+01 | y= 9.796623e-01 
+ttopt-64d  | evals=4.92e+03+4.91e+03 | t_cur=1.08e+01 | y= 9.796623e-01 
+ttopt-64d  | evals=4.93e+03+4.92e+03 | t_cur=1.08e+01 | y= 9.796623e-01 
+ttopt-64d  | evals=4.94e+03+4.93e+03 | t_cur=1.08e+01 | y= 9.796623e-01 
+ttopt-64d  | evals=4.94e+03+4.94e+03 | t_cur=1.08e+01 | y= 9.797465e-01 
+ttopt-64d  | evals=4.95e+03+4.95e+03 | t_cur=1.08e+01 | y= 9.797465e-01 
+ttopt-64d  | evals=4.96e+03+4.96e+03 | t_cur=1.09e+01 | y= 9.797465e-01 
+ttopt-64d  | evals=4.97e+03+4.96e+03 | t_cur=1.09e+01 | y= 9.797465e-01 
+ttopt-64d  | evals=4.98e+03+4.97e+03 | t_cur=1.09e+01 | y= 9.798202e-01 
+ttopt-64d  | evals=4.99e+03+4.98e+03 | t_cur=1.09e+01 | y= 9.798202e-01 
+ttopt-64d  | evals=5.00e+03+4.99e+03 | t_cur=1.09e+01 | y= 9.798202e-01 
+ttopt-64d  | evals=5.01e+03+5.00e+03 | t_cur=1.09e+01 | y= 9.798202e-01 
+ttopt-64d  | evals=5.02e+03+5.01e+03 | t_cur=1.10e+01 | y= 9.798202e-01 
+ttopt-64d  | evals=5.02e+03+5.02e+03 | t_cur=1.10e+01 | y= 9.798202e-01 
+ttopt-64d  | evals=5.03e+03+5.03e+03 | t_cur=1.10e+01 | y= 9.799061e-01 
+ttopt-64d  | evals=5.04e+03+5.04e+03 | t_cur=1.10e+01 | y= 9.799061e-01 
+ttopt-64d  | evals=5.05e+03+5.05e+03 | t_cur=1.10e+01 | y= 9.799518e-01 
+ttopt-64d  | evals=5.06e+03+5.06e+03 | t_cur=1.11e+01 | y= 9.799518e-01 
+ttopt-64d  | evals=5.07e+03+5.06e+03 | t_cur=1.11e+01 | y= 9.799518e-01 
+ttopt-64d  | evals=5.08e+03+5.07e+03 | t_cur=1.11e+01 | y= 9.799518e-01 
+ttopt-64d  | evals=5.09e+03+5.08e+03 | t_cur=1.11e+01 | y= 9.802019e-01 
+ttopt-64d  | evals=5.10e+03+5.09e+03 | t_cur=1.11e+01 | y= 9.802019e-01 
+ttopt-64d  | evals=5.11e+03+5.10e+03 | t_cur=1.12e+01 | y= 9.802019e-01 
+ttopt-64d  | evals=5.12e+03+5.11e+03 | t_cur=1.12e+01 | y= 9.802019e-01 
+ttopt-64d  | evals=5.12e+03+5.12e+03 | t_cur=1.12e+01 | y= 9.802340e-01 
+ttopt-64d  | evals=5.13e+03+5.13e+03 | t_cur=1.12e+01 | y= 9.803281e-01 
+ttopt-64d  | evals=5.14e+03+5.14e+03 | t_cur=1.12e+01 | y= 9.803281e-01 
+ttopt-64d  | evals=5.15e+03+5.14e+03 | t_cur=1.13e+01 | y= 9.803281e-01 
+ttopt-64d  | evals=5.16e+03+5.15e+03 | t_cur=1.13e+01 | y= 9.803281e-01 
+ttopt-64d  | evals=5.16e+03+5.16e+03 | t_cur=1.14e+01 | y= 9.803281e-01 
+ttopt-64d  | evals=5.16e+03+5.17e+03 | t_cur=1.14e+01 | y= 9.803281e-01 
+ttopt-64d  | evals=5.16e+03+5.17e+03 | t_cur=1.14e+01 | y= 9.803281e-01 
+ttopt-64d  | evals=5.16e+03+5.18e+03 | t_cur=1.14e+01 | y= 9.803281e-01 
+ttopt-64d  | evals=5.17e+03+5.20e+03 | t_cur=1.14e+01 | y= 9.803281e-01 
+ttopt-64d  | evals=5.17e+03+5.21e+03 | t_cur=1.14e+01 | y= 9.803281e-01 
+ttopt-64d  | evals=5.17e+03+5.23e+03 | t_cur=1.14e+01 | y= 9.803281e-01 
+ttopt-64d  | evals=5.18e+03+5.24e+03 | t_cur=1.15e+01 | y= 9.803281e-01 
+ttopt-64d  | evals=5.18e+03+5.25e+03 | t_cur=1.15e+01 | y= 9.803281e-01 
+ttopt-64d  | evals=5.19e+03+5.26e+03 | t_cur=1.15e+01 | y= 9.803281e-01 
+ttopt-64d  | evals=5.20e+03+5.28e+03 | t_cur=1.15e+01 | y= 9.803281e-01 
+ttopt-64d  | evals=5.20e+03+5.29e+03 | t_cur=1.15e+01 | y= 9.803281e-01 
+ttopt-64d  | evals=5.20e+03+5.30e+03 | t_cur=1.15e+01 | y= 9.803281e-01 
+ttopt-64d  | evals=5.21e+03+5.31e+03 | t_cur=1.16e+01 | y= 9.803281e-01 
+ttopt-64d  | evals=5.22e+03+5.32e+03 | t_cur=1.16e+01 | y= 9.803281e-01 
+ttopt-64d  | evals=5.23e+03+5.33e+03 | t_cur=1.16e+01 | y= 9.803281e-01 
+ttopt-64d  | evals=5.24e+03+5.34e+03 | t_cur=1.16e+01 | y= 9.803281e-01 
+ttopt-64d  | evals=5.25e+03+5.35e+03 | t_cur=1.16e+01 | y= 9.803281e-01 
+ttopt-64d  | evals=5.26e+03+5.36e+03 | t_cur=1.17e+01 | y= 9.803281e-01 
+ttopt-64d  | evals=5.27e+03+5.37e+03 | t_cur=1.17e+01 | y= 9.803704e-01 
+ttopt-64d  | evals=5.28e+03+5.38e+03 | t_cur=1.17e+01 | y= 9.803704e-01 
+ttopt-64d  | evals=5.29e+03+5.38e+03 | t_cur=1.17e+01 | y= 9.803704e-01 
+ttopt-64d  | evals=5.30e+03+5.39e+03 | t_cur=1.17e+01 | y= 9.803704e-01 
+ttopt-64d  | evals=5.30e+03+5.40e+03 | t_cur=1.18e+01 | y= 9.803704e-01 
+ttopt-64d  | evals=5.31e+03+5.41e+03 | t_cur=1.18e+01 | y= 9.803704e-01 
+ttopt-64d  | evals=5.32e+03+5.42e+03 | t_cur=1.18e+01 | y= 9.803704e-01 
+ttopt-64d  | evals=5.33e+03+5.43e+03 | t_cur=1.18e+01 | y= 9.803704e-01 
+ttopt-64d  | evals=5.34e+03+5.44e+03 | t_cur=1.18e+01 | y= 9.803704e-01 
+ttopt-64d  | evals=5.35e+03+5.45e+03 | t_cur=1.19e+01 | y= 9.803704e-01 
+ttopt-64d  | evals=5.36e+03+5.46e+03 | t_cur=1.19e+01 | y= 9.803704e-01 
+ttopt-64d  | evals=5.37e+03+5.46e+03 | t_cur=1.19e+01 | y= 9.803704e-01 
+ttopt-64d  | evals=5.38e+03+5.47e+03 | t_cur=1.19e+01 | y= 9.803704e-01 
+ttopt-64d  | evals=5.38e+03+5.48e+03 | t_cur=1.19e+01 | y= 9.803704e-01 
+ttopt-64d  | evals=5.39e+03+5.49e+03 | t_cur=1.20e+01 | y= 9.803704e-01 
+ttopt-64d  | evals=5.40e+03+5.50e+03 | t_cur=1.20e+01 | y= 9.803704e-01 
+ttopt-64d  | evals=5.41e+03+5.51e+03 | t_cur=1.20e+01 | y= 9.803704e-01 
+ttopt-64d  | evals=5.42e+03+5.52e+03 | t_cur=1.20e+01 | y= 9.803704e-01 
+ttopt-64d  | evals=5.43e+03+5.53e+03 | t_cur=1.20e+01 | y= 9.803704e-01 
+ttopt-64d  | evals=5.44e+03+5.54e+03 | t_cur=1.21e+01 | y= 9.803704e-01 
+ttopt-64d  | evals=5.45e+03+5.55e+03 | t_cur=1.21e+01 | y= 9.803704e-01 
+ttopt-64d  | evals=5.46e+03+5.56e+03 | t_cur=1.21e+01 | y= 9.803704e-01 
+ttopt-64d  | evals=5.47e+03+5.56e+03 | t_cur=1.21e+01 | y= 9.803704e-01 
+ttopt-64d  | evals=5.48e+03+5.57e+03 | t_cur=1.21e+01 | y= 9.803704e-01 
+ttopt-64d  | evals=5.48e+03+5.58e+03 | t_cur=1.21e+01 | y= 9.803704e-01 
+ttopt-64d  | evals=5.49e+03+5.59e+03 | t_cur=1.22e+01 | y= 9.803704e-01 
+ttopt-64d  | evals=5.50e+03+5.60e+03 | t_cur=1.22e+01 | y= 9.803704e-01 
+ttopt-64d  | evals=5.51e+03+5.61e+03 | t_cur=1.22e+01 | y= 9.803704e-01 
+ttopt-64d  | evals=5.52e+03+5.62e+03 | t_cur=1.22e+01 | y= 9.803704e-01 
+ttopt-64d  | evals=5.53e+03+5.63e+03 | t_cur=1.22e+01 | y= 9.803704e-01 
+ttopt-64d  | evals=5.54e+03+5.64e+03 | t_cur=1.23e+01 | y= 9.803704e-01 
+ttopt-64d  | evals=5.55e+03+5.64e+03 | t_cur=1.23e+01 | y= 9.803704e-01 
+ttopt-64d  | evals=5.56e+03+5.65e+03 | t_cur=1.23e+01 | y= 9.803704e-01 
+ttopt-64d  | evals=5.56e+03+5.66e+03 | t_cur=1.23e+01 | y= 9.803704e-01 
+ttopt-64d  | evals=5.57e+03+5.67e+03 | t_cur=1.23e+01 | y= 9.803704e-01 
+ttopt-64d  | evals=5.58e+03+5.68e+03 | t_cur=1.24e+01 | y= 9.803704e-01 
+ttopt-64d  | evals=5.59e+03+5.69e+03 | t_cur=1.24e+01 | y= 9.803704e-01 
+ttopt-64d  | evals=5.60e+03+5.70e+03 | t_cur=1.24e+01 | y= 9.803704e-01 
+ttopt-64d  | evals=5.61e+03+5.71e+03 | t_cur=1.24e+01 | y= 9.804087e-01 
+ttopt-64d  | evals=5.62e+03+5.72e+03 | t_cur=1.24e+01 | y= 9.804087e-01 
+ttopt-64d  | evals=5.63e+03+5.73e+03 | t_cur=1.24e+01 | y= 9.804087e-01 
+ttopt-64d  | evals=5.64e+03+5.74e+03 | t_cur=1.25e+01 | y= 9.804187e-01 
+ttopt-64d  | evals=5.65e+03+5.74e+03 | t_cur=1.25e+01 | y= 9.804187e-01 
+ttopt-64d  | evals=5.66e+03+5.75e+03 | t_cur=1.25e+01 | y= 9.804187e-01 
+ttopt-64d  | evals=5.66e+03+5.76e+03 | t_cur=1.25e+01 | y= 9.804187e-01 
+ttopt-64d  | evals=5.67e+03+5.77e+03 | t_cur=1.25e+01 | y= 9.804187e-01 
+ttopt-64d  | evals=5.68e+03+5.78e+03 | t_cur=1.26e+01 | y= 9.804187e-01 
+ttopt-64d  | evals=5.69e+03+5.79e+03 | t_cur=1.26e+01 | y= 9.804187e-01 
+ttopt-64d  | evals=5.70e+03+5.80e+03 | t_cur=1.26e+01 | y= 9.804187e-01 
+ttopt-64d  | evals=5.71e+03+5.81e+03 | t_cur=1.26e+01 | y= 9.804825e-01 
+ttopt-64d  | evals=5.72e+03+5.82e+03 | t_cur=1.26e+01 | y= 9.806174e-01 
+ttopt-64d  | evals=5.73e+03+5.82e+03 | t_cur=1.27e+01 | y= 9.806264e-01 
+ttopt-64d  | evals=5.74e+03+5.83e+03 | t_cur=1.27e+01 | y= 9.806264e-01 
+ttopt-64d  | evals=5.74e+03+5.84e+03 | t_cur=1.27e+01 | y= 9.806264e-01 
+ttopt-64d  | evals=5.75e+03+5.85e+03 | t_cur=1.27e+01 | y= 9.806264e-01 
+ttopt-64d  | evals=5.76e+03+5.86e+03 | t_cur=1.27e+01 | y= 9.806264e-01 
+ttopt-64d  | evals=5.77e+03+5.87e+03 | t_cur=1.28e+01 | y= 9.806264e-01 
+ttopt-64d  | evals=5.78e+03+5.88e+03 | t_cur=1.28e+01 | y= 9.806264e-01 
+ttopt-64d  | evals=5.79e+03+5.89e+03 | t_cur=1.28e+01 | y= 9.806264e-01 
+ttopt-64d  | evals=5.80e+03+5.90e+03 | t_cur=1.28e+01 | y= 9.806264e-01 
+ttopt-64d  | evals=5.81e+03+5.91e+03 | t_cur=1.28e+01 | y= 9.806264e-01 
+ttopt-64d  | evals=5.82e+03+5.92e+03 | t_cur=1.29e+01 | y= 9.806264e-01 
+ttopt-64d  | evals=5.83e+03+5.92e+03 | t_cur=1.29e+01 | y= 9.806264e-01 
+ttopt-64d  | evals=5.84e+03+5.93e+03 | t_cur=1.29e+01 | y= 9.806264e-01 
+ttopt-64d  | evals=5.84e+03+5.94e+03 | t_cur=1.29e+01 | y= 9.806264e-01 
+ttopt-64d  | evals=5.85e+03+5.95e+03 | t_cur=1.29e+01 | y= 9.806264e-01 
+ttopt-64d  | evals=5.86e+03+5.96e+03 | t_cur=1.30e+01 | y= 9.806264e-01 
+ttopt-64d  | evals=5.87e+03+5.97e+03 | t_cur=1.30e+01 | y= 9.807509e-01 
+ttopt-64d  | evals=5.88e+03+5.98e+03 | t_cur=1.30e+01 | y= 9.807509e-01 
+ttopt-64d  | evals=5.89e+03+5.99e+03 | t_cur=1.30e+01 | y= 9.807509e-01 
+ttopt-64d  | evals=5.90e+03+6.00e+03 | t_cur=1.30e+01 | y= 9.807509e-01 
+ttopt-64d  | evals=5.91e+03+6.00e+03 | t_cur=1.30e+01 | y= 9.807509e-01 
+ttopt-64d  | evals=5.92e+03+6.01e+03 | t_cur=1.31e+01 | y= 9.807591e-01 
+ttopt-64d  | evals=5.92e+03+6.02e+03 | t_cur=1.31e+01 | y= 9.807591e-01 
+ttopt-64d  | evals=5.93e+03+6.03e+03 | t_cur=1.31e+01 | y= 9.807591e-01 
+ttopt-64d  | evals=5.94e+03+6.04e+03 | t_cur=1.31e+01 | y= 9.807591e-01 
+ttopt-64d  | evals=5.95e+03+6.05e+03 | t_cur=1.31e+01 | y= 9.807591e-01 
+ttopt-64d  | evals=5.96e+03+6.06e+03 | t_cur=1.32e+01 | y= 9.807591e-01 
+ttopt-64d  | evals=5.97e+03+6.07e+03 | t_cur=1.32e+01 | y= 9.807591e-01 
+ttopt-64d  | evals=5.98e+03+6.08e+03 | t_cur=1.32e+01 | y= 9.807591e-01 
+ttopt-64d  | evals=5.99e+03+6.09e+03 | t_cur=1.32e+01 | y= 9.807591e-01 
+ttopt-64d  | evals=6.00e+03+6.10e+03 | t_cur=1.32e+01 | y= 9.807591e-01 
+ttopt-64d  | evals=6.01e+03+6.10e+03 | t_cur=1.33e+01 | y= 9.807591e-01 
+ttopt-64d  | evals=6.02e+03+6.11e+03 | t_cur=1.33e+01 | y= 9.807591e-01 
+ttopt-64d  | evals=6.02e+03+6.12e+03 | t_cur=1.33e+01 | y= 9.807591e-01 
+ttopt-64d  | evals=6.03e+03+6.13e+03 | t_cur=1.33e+01 | y= 9.807591e-01 
+ttopt-64d  | evals=6.04e+03+6.14e+03 | t_cur=1.33e+01 | y= 9.807591e-01 
+ttopt-64d  | evals=6.05e+03+6.15e+03 | t_cur=1.33e+01 | y= 9.807591e-01 
+ttopt-64d  | evals=6.06e+03+6.16e+03 | t_cur=1.34e+01 | y= 9.807591e-01 
+ttopt-64d  | evals=6.07e+03+6.17e+03 | t_cur=1.34e+01 | y= 9.807591e-01 
+ttopt-64d  | evals=6.08e+03+6.18e+03 | t_cur=1.34e+01 | y= 9.807591e-01 
+ttopt-64d  | evals=6.09e+03+6.18e+03 | t_cur=1.34e+01 | y= 9.807591e-01 
+ttopt-64d  | evals=6.10e+03+6.19e+03 | t_cur=1.34e+01 | y= 9.807591e-01 
+ttopt-64d  | evals=6.10e+03+6.20e+03 | t_cur=1.35e+01 | y= 9.807591e-01 
+ttopt-64d  | evals=6.11e+03+6.21e+03 | t_cur=1.35e+01 | y= 9.807591e-01 
+ttopt-64d  | evals=6.12e+03+6.22e+03 | t_cur=1.35e+01 | y= 9.807591e-01 
+ttopt-64d  | evals=6.13e+03+6.23e+03 | t_cur=1.35e+01 | y= 9.807591e-01 
+ttopt-64d  | evals=6.14e+03+6.24e+03 | t_cur=1.35e+01 | y= 9.807591e-01 
+ttopt-64d  | evals=6.15e+03+6.25e+03 | t_cur=1.36e+01 | y= 9.807591e-01 
+ttopt-64d  | evals=6.16e+03+6.26e+03 | t_cur=1.36e+01 | y= 9.807591e-01 
+ttopt-64d  | evals=6.17e+03+6.27e+03 | t_cur=1.36e+01 | y= 9.807591e-01 
+ttopt-64d  | evals=6.18e+03+6.28e+03 | t_cur=1.36e+01 | y= 9.807591e-01 
+ttopt-64d  | evals=6.19e+03+6.28e+03 | t_cur=1.36e+01 | y= 9.807591e-01 
+ttopt-64d  | evals=6.20e+03+6.29e+03 | t_cur=1.37e+01 | y= 9.807591e-01 
+ttopt-64d  | evals=6.20e+03+6.30e+03 | t_cur=1.37e+01 | y= 9.807591e-01 
+ttopt-64d  | evals=6.21e+03+6.31e+03 | t_cur=1.37e+01 | y= 9.807591e-01 
+ttopt-64d  | evals=6.22e+03+6.32e+03 | t_cur=1.37e+01 | y= 9.807591e-01 
+ttopt-64d  | evals=6.23e+03+6.33e+03 | t_cur=1.37e+01 | y= 9.807591e-01 
+ttopt-64d  | evals=6.24e+03+6.34e+03 | t_cur=1.37e+01 | y= 9.807591e-01 
+ttopt-64d  | evals=6.25e+03+6.35e+03 | t_cur=1.38e+01 | y= 9.807591e-01 
+ttopt-64d  | evals=6.26e+03+6.36e+03 | t_cur=1.38e+01 | y= 9.808093e-01 
+ttopt-64d  | evals=6.27e+03+6.36e+03 | t_cur=1.38e+01 | y= 9.808093e-01 
+ttopt-64d  | evals=6.28e+03+6.37e+03 | t_cur=1.38e+01 | y= 9.808093e-01 
+ttopt-64d  | evals=6.28e+03+6.38e+03 | t_cur=1.38e+01 | y= 9.808093e-01 
+ttopt-64d  | evals=6.29e+03+6.39e+03 | t_cur=1.39e+01 | y= 9.808093e-01 
+ttopt-64d  | evals=6.30e+03+6.40e+03 | t_cur=1.39e+01 | y= 9.810770e-01 
+ttopt-64d  | evals=6.31e+03+6.41e+03 | t_cur=1.39e+01 | y= 9.810770e-01 
+ttopt-64d  | evals=6.32e+03+6.42e+03 | t_cur=1.39e+01 | y= 9.810770e-01 
+ttopt-64d  | evals=6.33e+03+6.43e+03 | t_cur=1.39e+01 | y= 9.810770e-01 
+ttopt-64d  | evals=6.34e+03+6.44e+03 | t_cur=1.40e+01 | y= 9.810770e-01 
+ttopt-64d  | evals=6.35e+03+6.45e+03 | t_cur=1.40e+01 | y= 9.810770e-01 
+ttopt-64d  | evals=6.36e+03+6.46e+03 | t_cur=1.40e+01 | y= 9.810770e-01 
+ttopt-64d  | evals=6.37e+03+6.46e+03 | t_cur=1.40e+01 | y= 9.810770e-01 
+ttopt-64d  | evals=6.38e+03+6.47e+03 | t_cur=1.40e+01 | y= 9.810770e-01 
+ttopt-64d  | evals=6.38e+03+6.48e+03 | t_cur=1.41e+01 | y= 9.810770e-01 
+ttopt-64d  | evals=6.39e+03+6.49e+03 | t_cur=1.41e+01 | y= 9.810770e-01 
+ttopt-64d  | evals=6.40e+03+6.50e+03 | t_cur=1.41e+01 | y= 9.810770e-01 
+ttopt-64d  | evals=6.41e+03+6.51e+03 | t_cur=1.41e+01 | y= 9.810770e-01 
+ttopt-64d  | evals=6.42e+03+6.52e+03 | t_cur=1.41e+01 | y= 9.810770e-01 
+ttopt-64d  | evals=6.43e+03+6.53e+03 | t_cur=1.42e+01 | y= 9.810770e-01 
+ttopt-64d  | evals=6.44e+03+6.54e+03 | t_cur=1.42e+01 | y= 9.810770e-01 
+ttopt-64d  | evals=6.45e+03+6.54e+03 | t_cur=1.42e+01 | y= 9.810770e-01 
+ttopt-64d  | evals=6.46e+03+6.55e+03 | t_cur=1.42e+01 | y= 9.810770e-01 
+ttopt-64d  | evals=6.46e+03+6.56e+03 | t_cur=1.42e+01 | y= 9.810770e-01 
+ttopt-64d  | evals=6.47e+03+6.57e+03 | t_cur=1.42e+01 | y= 9.810770e-01 
+ttopt-64d  | evals=6.48e+03+6.58e+03 | t_cur=1.43e+01 | y= 9.810770e-01 
+ttopt-64d  | evals=6.49e+03+6.59e+03 | t_cur=1.43e+01 | y= 9.810770e-01 
+ttopt-64d  | evals=6.50e+03+6.60e+03 | t_cur=1.43e+01 | y= 9.810770e-01 
+ttopt-64d  | evals=6.51e+03+6.61e+03 | t_cur=1.43e+01 | y= 9.810770e-01 
+ttopt-64d  | evals=6.52e+03+6.62e+03 | t_cur=1.43e+01 | y= 9.810770e-01 
+ttopt-64d  | evals=6.53e+03+6.63e+03 | t_cur=1.44e+01 | y= 9.810770e-01 
+ttopt-64d  | evals=6.54e+03+6.64e+03 | t_cur=1.44e+01 | y= 9.810770e-01 
+ttopt-64d  | evals=6.55e+03+6.64e+03 | t_cur=1.44e+01 | y= 9.810770e-01 
+ttopt-64d  | evals=6.56e+03+6.65e+03 | t_cur=1.44e+01 | y= 9.810770e-01 
+ttopt-64d  | evals=6.56e+03+6.66e+03 | t_cur=1.44e+01 | y= 9.810770e-01 
+ttopt-64d  | evals=6.57e+03+6.67e+03 | t_cur=1.45e+01 | y= 9.816114e-01 
+ttopt-64d  | evals=6.58e+03+6.68e+03 | t_cur=1.45e+01 | y= 9.816114e-01 
+ttopt-64d  | evals=6.59e+03+6.69e+03 | t_cur=1.45e+01 | y= 9.816114e-01 
+ttopt-64d  | evals=6.60e+03+6.70e+03 | t_cur=1.45e+01 | y= 9.816114e-01 
+ttopt-64d  | evals=6.61e+03+6.71e+03 | t_cur=1.45e+01 | y= 9.816114e-01 
+ttopt-64d  | evals=6.62e+03+6.72e+03 | t_cur=1.46e+01 | y= 9.816114e-01 
+ttopt-64d  | evals=6.63e+03+6.72e+03 | t_cur=1.46e+01 | y= 9.817477e-01 
+ttopt-64d  | evals=6.64e+03+6.73e+03 | t_cur=1.46e+01 | y= 9.817477e-01 
+ttopt-64d  | evals=6.64e+03+6.74e+03 | t_cur=1.46e+01 | y= 9.817485e-01 
+ttopt-64d  | evals=6.65e+03+6.75e+03 | t_cur=1.46e+01 | y= 9.817485e-01 
+ttopt-64d  | evals=6.66e+03+6.76e+03 | t_cur=1.47e+01 | y= 9.819139e-01 
+ttopt-64d  | evals=6.67e+03+6.77e+03 | t_cur=1.47e+01 | y= 9.819139e-01 
+ttopt-64d  | evals=6.68e+03+6.78e+03 | t_cur=1.47e+01 | y= 9.819139e-01 
+ttopt-64d  | evals=6.69e+03+6.79e+03 | t_cur=1.47e+01 | y= 9.819139e-01 
+ttopt-64d  | evals=6.70e+03+6.80e+03 | t_cur=1.47e+01 | y= 9.819139e-01 
+ttopt-64d  | evals=6.71e+03+6.81e+03 | t_cur=1.47e+01 | y= 9.819139e-01 
+ttopt-64d  | evals=6.72e+03+6.82e+03 | t_cur=1.48e+01 | y= 9.819139e-01 
+ttopt-64d  | evals=6.73e+03+6.82e+03 | t_cur=1.48e+01 | y= 9.819139e-01 
+ttopt-64d  | evals=6.74e+03+6.83e+03 | t_cur=1.48e+01 | y= 9.819139e-01 
+ttopt-64d  | evals=6.74e+03+6.84e+03 | t_cur=1.48e+01 | y= 9.819139e-01 
+ttopt-64d  | evals=6.75e+03+6.85e+03 | t_cur=1.48e+01 | y= 9.819139e-01 
+ttopt-64d  | evals=6.76e+03+6.86e+03 | t_cur=1.49e+01 | y= 9.819139e-01 
+ttopt-64d  | evals=6.77e+03+6.87e+03 | t_cur=1.49e+01 | y= 9.819139e-01 
+ttopt-64d  | evals=6.78e+03+6.88e+03 | t_cur=1.49e+01 | y= 9.819139e-01 
+ttopt-64d  | evals=6.79e+03+6.89e+03 | t_cur=1.49e+01 | y= 9.819139e-01 
+ttopt-64d  | evals=6.80e+03+6.90e+03 | t_cur=1.49e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=6.81e+03+6.90e+03 | t_cur=1.50e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=6.82e+03+6.91e+03 | t_cur=1.50e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=6.82e+03+6.92e+03 | t_cur=1.50e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=6.83e+03+6.93e+03 | t_cur=1.50e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=6.84e+03+6.94e+03 | t_cur=1.50e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=6.85e+03+6.95e+03 | t_cur=1.51e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=6.86e+03+6.96e+03 | t_cur=1.51e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=6.87e+03+6.97e+03 | t_cur=1.51e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=6.88e+03+6.98e+03 | t_cur=1.51e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=6.89e+03+6.99e+03 | t_cur=1.51e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=6.90e+03+7.00e+03 | t_cur=1.51e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=6.91e+03+7.00e+03 | t_cur=1.52e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=6.92e+03+7.01e+03 | t_cur=1.52e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=6.92e+03+7.02e+03 | t_cur=1.52e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=6.93e+03+7.03e+03 | t_cur=1.52e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=6.94e+03+7.04e+03 | t_cur=1.52e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=6.95e+03+7.05e+03 | t_cur=1.53e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=6.96e+03+7.06e+03 | t_cur=1.53e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=6.97e+03+7.07e+03 | t_cur=1.53e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=6.98e+03+7.08e+03 | t_cur=1.53e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=6.99e+03+7.08e+03 | t_cur=1.53e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=7.00e+03+7.09e+03 | t_cur=1.54e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=7.00e+03+7.10e+03 | t_cur=1.54e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=7.01e+03+7.11e+03 | t_cur=1.54e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=7.02e+03+7.12e+03 | t_cur=1.54e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=7.03e+03+7.13e+03 | t_cur=1.54e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=7.04e+03+7.14e+03 | t_cur=1.55e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=7.05e+03+7.15e+03 | t_cur=1.55e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=7.06e+03+7.16e+03 | t_cur=1.55e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=7.07e+03+7.17e+03 | t_cur=1.55e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=7.08e+03+7.18e+03 | t_cur=1.55e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=7.09e+03+7.18e+03 | t_cur=1.56e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=7.10e+03+7.19e+03 | t_cur=1.56e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=7.10e+03+7.20e+03 | t_cur=1.56e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=7.11e+03+7.21e+03 | t_cur=1.56e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=7.12e+03+7.22e+03 | t_cur=1.56e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=7.13e+03+7.23e+03 | t_cur=1.56e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=7.14e+03+7.24e+03 | t_cur=1.57e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=7.15e+03+7.25e+03 | t_cur=1.57e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=7.16e+03+7.26e+03 | t_cur=1.57e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=7.17e+03+7.26e+03 | t_cur=1.57e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=7.18e+03+7.27e+03 | t_cur=1.57e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=7.18e+03+7.28e+03 | t_cur=1.58e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=7.19e+03+7.29e+03 | t_cur=1.58e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=7.20e+03+7.30e+03 | t_cur=1.58e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=7.21e+03+7.31e+03 | t_cur=1.58e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=7.22e+03+7.32e+03 | t_cur=1.58e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=7.23e+03+7.33e+03 | t_cur=1.59e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=7.24e+03+7.34e+03 | t_cur=1.59e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=7.25e+03+7.35e+03 | t_cur=1.59e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=7.26e+03+7.36e+03 | t_cur=1.59e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=7.27e+03+7.36e+03 | t_cur=1.59e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=7.28e+03+7.37e+03 | t_cur=1.60e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=7.28e+03+7.38e+03 | t_cur=1.60e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=7.29e+03+7.39e+03 | t_cur=1.60e+01 | y= 9.820235e-01 
+ttopt-64d  | evals=7.30e+03+7.40e+03 | t_cur=1.60e+01 | y= 9.834012e-01 
+ttopt-64d  | evals=7.31e+03+7.41e+03 | t_cur=1.60e+01 | y= 9.834012e-01 
+ttopt-64d  | evals=7.32e+03+7.42e+03 | t_cur=1.61e+01 | y= 9.838120e-01 
+ttopt-64d  | evals=7.33e+03+7.43e+03 | t_cur=1.61e+01 | y= 9.838120e-01 
+ttopt-64d  | evals=7.34e+03+7.44e+03 | t_cur=1.61e+01 | y= 9.838120e-01 
+ttopt-64d  | evals=7.35e+03+7.44e+03 | t_cur=1.61e+01 | y= 9.838120e-01 
+ttopt-64d  | evals=7.36e+03+7.45e+03 | t_cur=1.61e+01 | y= 9.838120e-01 
+ttopt-64d  | evals=7.36e+03+7.46e+03 | t_cur=1.61e+01 | y= 9.838120e-01 
+ttopt-64d  | evals=7.37e+03+7.47e+03 | t_cur=1.62e+01 | y= 9.838120e-01 
+ttopt-64d  | evals=7.38e+03+7.48e+03 | t_cur=1.62e+01 | y= 9.838120e-01 
+ttopt-64d  | evals=7.39e+03+7.49e+03 | t_cur=1.62e+01 | y= 9.838120e-01 
+ttopt-64d  | evals=7.40e+03+7.50e+03 | t_cur=1.62e+01 | y= 9.838120e-01 
+ttopt-64d  | evals=7.41e+03+7.51e+03 | t_cur=1.62e+01 | y= 9.838120e-01 
+ttopt-64d  | evals=7.42e+03+7.52e+03 | t_cur=1.63e+01 | y= 9.838120e-01 
+ttopt-64d  | evals=7.43e+03+7.53e+03 | t_cur=1.63e+01 | y= 9.838120e-01 
+ttopt-64d  | evals=7.44e+03+7.54e+03 | t_cur=1.63e+01 | y= 9.838120e-01 
+ttopt-64d  | evals=7.45e+03+7.54e+03 | t_cur=1.63e+01 | y= 9.838120e-01 
+ttopt-64d  | evals=7.46e+03+7.55e+03 | t_cur=1.63e+01 | y= 9.838450e-01 
+ttopt-64d  | evals=7.46e+03+7.56e+03 | t_cur=1.64e+01 | y= 9.838450e-01 
+ttopt-64d  | evals=7.47e+03+7.57e+03 | t_cur=1.64e+01 | y= 9.838450e-01 
+ttopt-64d  | evals=7.48e+03+7.58e+03 | t_cur=1.64e+01 | y= 9.838450e-01 
+ttopt-64d  | evals=7.49e+03+7.59e+03 | t_cur=1.64e+01 | y= 9.838450e-01 
+ttopt-64d  | evals=7.50e+03+7.60e+03 | t_cur=1.64e+01 | y= 9.838450e-01 
+ttopt-64d  | evals=7.51e+03+7.61e+03 | t_cur=1.64e+01 | y= 9.838450e-01 
+ttopt-64d  | evals=7.52e+03+7.62e+03 | t_cur=1.65e+01 | y= 9.838450e-01 
+ttopt-64d  | evals=7.53e+03+7.62e+03 | t_cur=1.65e+01 | y= 9.838450e-01 
+ttopt-64d  | evals=7.54e+03+7.63e+03 | t_cur=1.65e+01 | y= 9.838450e-01 
+ttopt-64d  | evals=7.54e+03+7.64e+03 | t_cur=1.65e+01 | y= 9.838450e-01 
+ttopt-64d  | evals=7.55e+03+7.65e+03 | t_cur=1.65e+01 | y= 9.838450e-01 
+ttopt-64d  | evals=7.56e+03+7.66e+03 | t_cur=1.66e+01 | y= 9.839787e-01 
+ttopt-64d  | evals=7.57e+03+7.67e+03 | t_cur=1.66e+01 | y= 9.839787e-01 
+ttopt-64d  | evals=7.58e+03+7.68e+03 | t_cur=1.66e+01 | y= 9.839787e-01 
+ttopt-64d  | evals=7.59e+03+7.69e+03 | t_cur=1.66e+01 | y= 9.842062e-01 
+ttopt-64d  | evals=7.60e+03+7.70e+03 | t_cur=1.66e+01 | y= 9.842062e-01 
+ttopt-64d  | evals=7.61e+03+7.71e+03 | t_cur=1.67e+01 | y= 9.842062e-01 
+ttopt-64d  | evals=7.62e+03+7.72e+03 | t_cur=1.67e+01 | y= 9.842062e-01 
+ttopt-64d  | evals=7.63e+03+7.72e+03 | t_cur=1.67e+01 | y= 9.842062e-01 
+ttopt-64d  | evals=7.64e+03+7.73e+03 | t_cur=1.67e+01 | y= 9.842062e-01 
+ttopt-64d  | evals=7.64e+03+7.74e+03 | t_cur=1.67e+01 | y= 9.842062e-01 
+ttopt-64d  | evals=7.65e+03+7.75e+03 | t_cur=1.68e+01 | y= 9.842062e-01 
+ttopt-64d  | evals=7.66e+03+7.76e+03 | t_cur=1.68e+01 | y= 9.842062e-01 
+ttopt-64d  | evals=7.67e+03+7.77e+03 | t_cur=1.68e+01 | y= 9.842062e-01 
+ttopt-64d  | evals=7.68e+03+7.78e+03 | t_cur=1.68e+01 | y= 9.842062e-01 
+ttopt-64d  | evals=7.69e+03+7.79e+03 | t_cur=1.68e+01 | y= 9.842062e-01 
+ttopt-64d  | evals=7.70e+03+7.80e+03 | t_cur=1.69e+01 | y= 9.842062e-01 
+ttopt-64d  | evals=7.71e+03+7.80e+03 | t_cur=1.69e+01 | y= 9.842062e-01 
+ttopt-64d  | evals=7.72e+03+7.81e+03 | t_cur=1.69e+01 | y= 9.842062e-01 
+ttopt-64d  | evals=7.72e+03+7.82e+03 | t_cur=1.69e+01 | y= 9.842062e-01 
+ttopt-64d  | evals=7.73e+03+7.83e+03 | t_cur=1.69e+01 | y= 9.842062e-01 
+ttopt-64d  | evals=7.74e+03+7.84e+03 | t_cur=1.69e+01 | y= 9.842062e-01 
+ttopt-64d  | evals=7.75e+03+7.85e+03 | t_cur=1.70e+01 | y= 9.842891e-01 
+ttopt-64d  | evals=7.76e+03+7.86e+03 | t_cur=1.70e+01 | y= 9.846216e-01 
+ttopt-64d  | evals=7.77e+03+7.87e+03 | t_cur=1.70e+01 | y= 9.846216e-01 
+ttopt-64d  | evals=7.78e+03+7.88e+03 | t_cur=1.70e+01 | y= 9.846216e-01 
+ttopt-64d  | evals=7.79e+03+7.89e+03 | t_cur=1.70e+01 | y= 9.846216e-01 
+ttopt-64d  | evals=7.80e+03+7.90e+03 | t_cur=1.71e+01 | y= 9.846216e-01 
+ttopt-64d  | evals=7.81e+03+7.90e+03 | t_cur=1.71e+01 | y= 9.846216e-01 
+ttopt-64d  | evals=7.82e+03+7.91e+03 | t_cur=1.71e+01 | y= 9.847141e-01 
+ttopt-64d  | evals=7.82e+03+7.92e+03 | t_cur=1.71e+01 | y= 9.847141e-01 
+ttopt-64d  | evals=7.83e+03+7.93e+03 | t_cur=1.71e+01 | y= 9.851053e-01 
+ttopt-64d  | evals=7.84e+03+7.94e+03 | t_cur=1.72e+01 | y= 9.851053e-01 
+ttopt-64d  | evals=7.85e+03+7.95e+03 | t_cur=1.72e+01 | y= 9.852090e-01 
+ttopt-64d  | evals=7.86e+03+7.96e+03 | t_cur=1.72e+01 | y= 9.852090e-01 
+ttopt-64d  | evals=7.87e+03+7.97e+03 | t_cur=1.72e+01 | y= 9.852090e-01 
+ttopt-64d  | evals=7.88e+03+7.98e+03 | t_cur=1.72e+01 | y= 9.852090e-01 
+ttopt-64d  | evals=7.89e+03+7.98e+03 | t_cur=1.73e+01 | y= 9.852090e-01 
+ttopt-64d  | evals=7.90e+03+7.99e+03 | t_cur=1.73e+01 | y= 9.852090e-01 
+ttopt-64d  | evals=7.90e+03+8.00e+03 | t_cur=1.73e+01 | y= 9.852090e-01 
+ttopt-64d  | evals=7.91e+03+8.01e+03 | t_cur=1.73e+01 | y= 9.852090e-01 
+ttopt-64d  | evals=7.92e+03+8.02e+03 | t_cur=1.73e+01 | y= 9.852090e-01 
+ttopt-64d  | evals=7.93e+03+8.03e+03 | t_cur=1.74e+01 | y= 9.852090e-01 
+ttopt-64d  | evals=7.94e+03+8.04e+03 | t_cur=1.74e+01 | y= 9.852090e-01 
+ttopt-64d  | evals=7.95e+03+8.05e+03 | t_cur=1.74e+01 | y= 9.852090e-01 
+ttopt-64d  | evals=7.96e+03+8.06e+03 | t_cur=1.74e+01 | y= 9.852090e-01 
+ttopt-64d  | evals=7.97e+03+8.07e+03 | t_cur=1.74e+01 | y= 9.852090e-01 
+ttopt-64d  | evals=7.98e+03+8.08e+03 | t_cur=1.75e+01 | y= 9.852090e-01 
+ttopt-64d  | evals=7.99e+03+8.08e+03 | t_cur=1.75e+01 | y= 9.852090e-01 
+ttopt-64d  | evals=8.00e+03+8.09e+03 | t_cur=1.75e+01 | y= 9.852090e-01 
+ttopt-64d  | evals=8.00e+03+8.10e+03 | t_cur=1.75e+01 | y= 9.853488e-01 
+ttopt-64d  | evals=8.01e+03+8.11e+03 | t_cur=1.75e+01 | y= 9.853488e-01 
+ttopt-64d  | evals=8.02e+03+8.12e+03 | t_cur=1.75e+01 | y= 9.853488e-01 
+ttopt-64d  | evals=8.03e+03+8.13e+03 | t_cur=1.76e+01 | y= 9.853488e-01 
+ttopt-64d  | evals=8.04e+03+8.14e+03 | t_cur=1.76e+01 | y= 9.853488e-01 
+ttopt-64d  | evals=8.05e+03+8.15e+03 | t_cur=1.76e+01 | y= 9.853488e-01 
+ttopt-64d  | evals=8.06e+03+8.16e+03 | t_cur=1.76e+01 | y= 9.853488e-01 
+ttopt-64d  | evals=8.07e+03+8.16e+03 | t_cur=1.76e+01 | y= 9.853488e-01 
+ttopt-64d  | evals=8.08e+03+8.17e+03 | t_cur=1.77e+01 | y= 9.853488e-01 
+ttopt-64d  | evals=8.08e+03+8.18e+03 | t_cur=1.77e+01 | y= 9.853488e-01 
+ttopt-64d  | evals=8.09e+03+8.19e+03 | t_cur=1.77e+01 | y= 9.853488e-01 
+ttopt-64d  | evals=8.10e+03+8.20e+03 | t_cur=1.77e+01 | y= 9.853488e-01 
+ttopt-64d  | evals=8.11e+03+8.21e+03 | t_cur=1.77e+01 | y= 9.853488e-01 
+ttopt-64d  | evals=8.12e+03+8.22e+03 | t_cur=1.78e+01 | y= 9.853488e-01 
+ttopt-64d  | evals=8.13e+03+8.23e+03 | t_cur=1.78e+01 | y= 9.853488e-01 
+ttopt-64d  | evals=8.14e+03+8.24e+03 | t_cur=1.78e+01 | y= 9.853488e-01 
+ttopt-64d  | evals=8.15e+03+8.25e+03 | t_cur=1.78e+01 | y= 9.853488e-01 
+ttopt-64d  | evals=8.16e+03+8.26e+03 | t_cur=1.78e+01 | y= 9.853488e-01 
+ttopt-64d  | evals=8.17e+03+8.26e+03 | t_cur=1.78e+01 | y= 9.853488e-01 
+ttopt-64d  | evals=8.18e+03+8.27e+03 | t_cur=1.79e+01 | y= 9.853488e-01 
+ttopt-64d  | evals=8.18e+03+8.28e+03 | t_cur=1.79e+01 | y= 9.853488e-01 
+ttopt-64d  | evals=8.19e+03+8.29e+03 | t_cur=1.79e+01 | y= 9.854448e-01 
+ttopt-64d  | evals=8.20e+03+8.30e+03 | t_cur=1.79e+01 | y= 9.859068e-01 
+ttopt-64d  | evals=8.21e+03+8.31e+03 | t_cur=1.79e+01 | y= 9.859068e-01 
+ttopt-64d  | evals=8.22e+03+8.32e+03 | t_cur=1.80e+01 | y= 9.861301e-01 
+ttopt-64d  | evals=8.23e+03+8.33e+03 | t_cur=1.80e+01 | y= 9.861301e-01 
+ttopt-64d  | evals=8.24e+03+8.34e+03 | t_cur=1.80e+01 | y= 9.861301e-01 
+ttopt-64d  | evals=8.25e+03+8.34e+03 | t_cur=1.80e+01 | y= 9.861301e-01 
+ttopt-64d  | evals=8.26e+03+8.35e+03 | t_cur=1.80e+01 | y= 9.861301e-01 
+ttopt-64d  | evals=8.26e+03+8.36e+03 | t_cur=1.81e+01 | y= 9.861301e-01 
+ttopt-64d  | evals=8.27e+03+8.37e+03 | t_cur=1.81e+01 | y= 9.861301e-01 
+ttopt-64d  | evals=8.28e+03+8.38e+03 | t_cur=1.81e+01 | y= 9.861301e-01 
+ttopt-64d  | evals=8.29e+03+8.39e+03 | t_cur=1.81e+01 | y= 9.861301e-01 
+ttopt-64d  | evals=8.30e+03+8.40e+03 | t_cur=1.81e+01 | y= 9.861301e-01 
+ttopt-64d  | evals=8.31e+03+8.41e+03 | t_cur=1.82e+01 | y= 9.861301e-01 
+ttopt-64d  | evals=8.32e+03+8.42e+03 | t_cur=1.82e+01 | y= 9.861301e-01 
+ttopt-64d  | evals=8.33e+03+8.43e+03 | t_cur=1.82e+01 | y= 9.861301e-01 
+ttopt-64d  | evals=8.34e+03+8.44e+03 | t_cur=1.82e+01 | y= 9.861330e-01 
+ttopt-64d  | evals=8.35e+03+8.44e+03 | t_cur=1.82e+01 | y= 9.862449e-01 
+ttopt-64d  | evals=8.36e+03+8.45e+03 | t_cur=1.82e+01 | y= 9.862449e-01 
+ttopt-64d  | evals=8.36e+03+8.46e+03 | t_cur=1.83e+01 | y= 9.862449e-01 
+ttopt-64d  | evals=8.37e+03+8.47e+03 | t_cur=1.83e+01 | y= 9.862449e-01 
+ttopt-64d  | evals=8.38e+03+8.48e+03 | t_cur=1.83e+01 | y= 9.862449e-01 
+ttopt-64d  | evals=8.39e+03+8.49e+03 | t_cur=1.83e+01 | y= 9.862449e-01 
+ttopt-64d  | evals=8.40e+03+8.50e+03 | t_cur=1.83e+01 | y= 9.862449e-01 
+ttopt-64d  | evals=8.41e+03+8.51e+03 | t_cur=1.84e+01 | y= 9.862449e-01 
+ttopt-64d  | evals=8.42e+03+8.52e+03 | t_cur=1.84e+01 | y= 9.862449e-01 
+ttopt-64d  | evals=8.43e+03+8.52e+03 | t_cur=1.84e+01 | y= 9.862449e-01 
+ttopt-64d  | evals=8.44e+03+8.53e+03 | t_cur=1.84e+01 | y= 9.862449e-01 
+ttopt-64d  | evals=8.44e+03+8.54e+03 | t_cur=1.84e+01 | y= 9.862449e-01 
+ttopt-64d  | evals=8.45e+03+8.55e+03 | t_cur=1.85e+01 | y= 9.862449e-01 
+ttopt-64d  | evals=8.46e+03+8.56e+03 | t_cur=1.85e+01 | y= 9.862449e-01 
+ttopt-64d  | evals=8.47e+03+8.57e+03 | t_cur=1.85e+01 | y= 9.862449e-01 
+ttopt-64d  | evals=8.48e+03+8.58e+03 | t_cur=1.85e+01 | y= 9.862449e-01 
+ttopt-64d  | evals=8.49e+03+8.59e+03 | t_cur=1.85e+01 | y= 9.862449e-01 
+ttopt-64d  | evals=8.50e+03+8.60e+03 | t_cur=1.86e+01 | y= 9.862449e-01 
+ttopt-64d  | evals=8.51e+03+8.61e+03 | t_cur=1.86e+01 | y= 9.862449e-01 
+ttopt-64d  | evals=8.52e+03+8.62e+03 | t_cur=1.86e+01 | y= 9.862449e-01 
+ttopt-64d  | evals=8.53e+03+8.62e+03 | t_cur=1.86e+01 | y= 9.862449e-01 
+ttopt-64d  | evals=8.54e+03+8.63e+03 | t_cur=1.86e+01 | y= 9.862449e-01 
+ttopt-64d  | evals=8.54e+03+8.64e+03 | t_cur=1.86e+01 | y= 9.862449e-01 
+ttopt-64d  | evals=8.55e+03+8.65e+03 | t_cur=1.87e+01 | y= 9.862449e-01 
+ttopt-64d  | evals=8.56e+03+8.66e+03 | t_cur=1.87e+01 | y= 9.862449e-01 
+ttopt-64d  | evals=8.57e+03+8.67e+03 | t_cur=1.87e+01 | y= 9.862449e-01 
+ttopt-64d  | evals=8.58e+03+8.68e+03 | t_cur=1.87e+01 | y= 9.862449e-01 
+ttopt-64d  | evals=8.59e+03+8.69e+03 | t_cur=1.87e+01 | y= 9.862449e-01 
+ttopt-64d  | evals=8.60e+03+8.70e+03 | t_cur=1.88e+01 | y= 9.862449e-01 
+ttopt-64d  | evals=8.61e+03+8.70e+03 | t_cur=1.88e+01 | y= 9.862449e-01 
+ttopt-64d  | evals=8.62e+03+8.71e+03 | t_cur=1.88e+01 | y= 9.862449e-01 
+ttopt-64d  | evals=8.62e+03+8.72e+03 | t_cur=1.88e+01 | y= 9.862449e-01 
+ttopt-64d  | evals=8.63e+03+8.73e+03 | t_cur=1.88e+01 | y= 9.862449e-01 
+ttopt-64d  | evals=8.64e+03+8.74e+03 | t_cur=1.89e+01 | y= 9.862449e-01 
+ttopt-64d  | evals=8.65e+03+8.75e+03 | t_cur=1.89e+01 | y= 9.862449e-01 
+ttopt-64d  | evals=8.66e+03+8.76e+03 | t_cur=1.89e+01 | y= 9.862449e-01 
+ttopt-64d  | evals=8.67e+03+8.77e+03 | t_cur=1.89e+01 | y= 9.862449e-01 
+ttopt-64d  | evals=8.68e+03+8.78e+03 | t_cur=1.89e+01 | y= 9.862449e-01 
+ttopt-64d  | evals=8.69e+03+8.79e+03 | t_cur=1.90e+01 | y= 9.866608e-01 
+ttopt-64d  | evals=8.70e+03+8.80e+03 | t_cur=1.90e+01 | y= 9.866608e-01 
+ttopt-64d  | evals=8.71e+03+8.80e+03 | t_cur=1.90e+01 | y= 9.866608e-01 
+ttopt-64d  | evals=8.72e+03+8.81e+03 | t_cur=1.90e+01 | y= 9.867360e-01 
+ttopt-64d  | evals=8.72e+03+8.82e+03 | t_cur=1.90e+01 | y= 9.867360e-01 
+ttopt-64d  | evals=8.73e+03+8.83e+03 | t_cur=1.90e+01 | y= 9.867360e-01 
+ttopt-64d  | evals=8.74e+03+8.84e+03 | t_cur=1.91e+01 | y= 9.867360e-01 
+ttopt-64d  | evals=8.75e+03+8.85e+03 | t_cur=1.91e+01 | y= 9.867360e-01 
+ttopt-64d  | evals=8.76e+03+8.86e+03 | t_cur=1.91e+01 | y= 9.867360e-01 
+ttopt-64d  | evals=8.77e+03+8.87e+03 | t_cur=1.91e+01 | y= 9.867360e-01 
+ttopt-64d  | evals=8.78e+03+8.88e+03 | t_cur=1.91e+01 | y= 9.867360e-01 
+ttopt-64d  | evals=8.79e+03+8.88e+03 | t_cur=1.92e+01 | y= 9.867360e-01 
+ttopt-64d  | evals=8.80e+03+8.89e+03 | t_cur=1.92e+01 | y= 9.867360e-01 
+ttopt-64d  | evals=8.80e+03+8.90e+03 | t_cur=1.92e+01 | y= 9.867360e-01 
+ttopt-64d  | evals=8.81e+03+8.91e+03 | t_cur=1.92e+01 | y= 9.867360e-01 
+ttopt-64d  | evals=8.82e+03+8.92e+03 | t_cur=1.92e+01 | y= 9.867360e-01 
+ttopt-64d  | evals=8.83e+03+8.93e+03 | t_cur=1.93e+01 | y= 9.867360e-01 
+ttopt-64d  | evals=8.84e+03+8.94e+03 | t_cur=1.93e+01 | y= 9.867360e-01 
+ttopt-64d  | evals=8.85e+03+8.95e+03 | t_cur=1.93e+01 | y= 9.867360e-01 
+ttopt-64d  | evals=8.86e+03+8.96e+03 | t_cur=1.93e+01 | y= 9.867360e-01 
+ttopt-64d  | evals=8.87e+03+8.97e+03 | t_cur=1.93e+01 | y= 9.867821e-01 
+ttopt-64d  | evals=8.88e+03+8.98e+03 | t_cur=1.94e+01 | y= 9.867821e-01 
+ttopt-64d  | evals=8.89e+03+8.98e+03 | t_cur=1.94e+01 | y= 9.867821e-01 
+ttopt-64d  | evals=8.90e+03+8.99e+03 | t_cur=1.94e+01 | y= 9.870597e-01 
+ttopt-64d  | evals=8.90e+03+9.00e+03 | t_cur=1.94e+01 | y= 9.870597e-01 
+ttopt-64d  | evals=8.91e+03+9.01e+03 | t_cur=1.94e+01 | y= 9.870597e-01 
+ttopt-64d  | evals=8.92e+03+9.02e+03 | t_cur=1.95e+01 | y= 9.870597e-01 
+ttopt-64d  | evals=8.93e+03+9.03e+03 | t_cur=1.95e+01 | y= 9.871930e-01 
+ttopt-64d  | evals=8.94e+03+9.04e+03 | t_cur=1.95e+01 | y= 9.871930e-01 
+ttopt-64d  | evals=8.95e+03+9.05e+03 | t_cur=1.95e+01 | y= 9.871930e-01 
+ttopt-64d  | evals=8.96e+03+9.06e+03 | t_cur=1.95e+01 | y= 9.871930e-01 
+ttopt-64d  | evals=8.97e+03+9.06e+03 | t_cur=1.95e+01 | y= 9.871930e-01 
+ttopt-64d  | evals=8.98e+03+9.07e+03 | t_cur=1.96e+01 | y= 9.871930e-01 
+ttopt-64d  | evals=8.98e+03+9.08e+03 | t_cur=1.96e+01 | y= 9.871930e-01 
+ttopt-64d  | evals=8.99e+03+9.09e+03 | t_cur=1.96e+01 | y= 9.871930e-01 
+ttopt-64d  | evals=9.00e+03+9.10e+03 | t_cur=1.96e+01 | y= 9.874452e-01 
+ttopt-64d  | evals=9.01e+03+9.11e+03 | t_cur=1.96e+01 | y= 9.875190e-01 
+ttopt-64d  | evals=9.02e+03+9.12e+03 | t_cur=1.97e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.03e+03+9.13e+03 | t_cur=1.97e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.04e+03+9.14e+03 | t_cur=1.97e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.05e+03+9.15e+03 | t_cur=1.97e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.06e+03+9.16e+03 | t_cur=1.97e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.07e+03+9.16e+03 | t_cur=1.98e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.08e+03+9.17e+03 | t_cur=1.98e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.08e+03+9.18e+03 | t_cur=1.98e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.09e+03+9.19e+03 | t_cur=1.98e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.10e+03+9.20e+03 | t_cur=1.98e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.11e+03+9.21e+03 | t_cur=1.99e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.12e+03+9.22e+03 | t_cur=1.99e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.13e+03+9.23e+03 | t_cur=1.99e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.14e+03+9.24e+03 | t_cur=1.99e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.15e+03+9.24e+03 | t_cur=1.99e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.16e+03+9.25e+03 | t_cur=2.00e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.16e+03+9.26e+03 | t_cur=2.00e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.17e+03+9.27e+03 | t_cur=2.00e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.18e+03+9.28e+03 | t_cur=2.00e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.19e+03+9.29e+03 | t_cur=2.00e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.20e+03+9.30e+03 | t_cur=2.00e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.21e+03+9.31e+03 | t_cur=2.01e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.22e+03+9.32e+03 | t_cur=2.01e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.23e+03+9.33e+03 | t_cur=2.01e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.24e+03+9.34e+03 | t_cur=2.01e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.25e+03+9.34e+03 | t_cur=2.01e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.26e+03+9.35e+03 | t_cur=2.02e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.26e+03+9.36e+03 | t_cur=2.02e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.27e+03+9.37e+03 | t_cur=2.02e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.28e+03+9.38e+03 | t_cur=2.02e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.29e+03+9.39e+03 | t_cur=2.02e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.30e+03+9.40e+03 | t_cur=2.03e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.31e+03+9.41e+03 | t_cur=2.03e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.32e+03+9.42e+03 | t_cur=2.03e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.33e+03+9.42e+03 | t_cur=2.03e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.34e+03+9.43e+03 | t_cur=2.03e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.34e+03+9.44e+03 | t_cur=2.04e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.35e+03+9.45e+03 | t_cur=2.04e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.36e+03+9.46e+03 | t_cur=2.04e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.37e+03+9.47e+03 | t_cur=2.04e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.38e+03+9.48e+03 | t_cur=2.04e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.39e+03+9.49e+03 | t_cur=2.04e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.40e+03+9.50e+03 | t_cur=2.05e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.41e+03+9.51e+03 | t_cur=2.05e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.42e+03+9.52e+03 | t_cur=2.05e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.43e+03+9.52e+03 | t_cur=2.05e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.44e+03+9.53e+03 | t_cur=2.05e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.44e+03+9.54e+03 | t_cur=2.06e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.45e+03+9.55e+03 | t_cur=2.06e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.46e+03+9.56e+03 | t_cur=2.06e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.47e+03+9.57e+03 | t_cur=2.06e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.48e+03+9.58e+03 | t_cur=2.06e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.49e+03+9.59e+03 | t_cur=2.07e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.50e+03+9.60e+03 | t_cur=2.07e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.51e+03+9.60e+03 | t_cur=2.07e+01 | y= 9.875728e-01 
+ttopt-64d  | evals=9.52e+03+9.61e+03 | t_cur=2.07e+01 | y= 9.875744e-01 
+ttopt-64d  | evals=9.52e+03+9.62e+03 | t_cur=2.07e+01 | y= 9.875744e-01 
+ttopt-64d  | evals=9.53e+03+9.63e+03 | t_cur=2.07e+01 | y= 9.875744e-01 
+ttopt-64d  | evals=9.54e+03+9.64e+03 | t_cur=2.08e+01 | y= 9.876815e-01 
+ttopt-64d  | evals=9.55e+03+9.65e+03 | t_cur=2.08e+01 | y= 9.876815e-01 
+ttopt-64d  | evals=9.56e+03+9.66e+03 | t_cur=2.08e+01 | y= 9.876815e-01 
+ttopt-64d  | evals=9.57e+03+9.67e+03 | t_cur=2.08e+01 | y= 9.876815e-01 
+ttopt-64d  | evals=9.58e+03+9.68e+03 | t_cur=2.08e+01 | y= 9.876815e-01 
+ttopt-64d  | evals=9.59e+03+9.69e+03 | t_cur=2.09e+01 | y= 9.876815e-01 
+ttopt-64d  | evals=9.60e+03+9.70e+03 | t_cur=2.09e+01 | y= 9.876815e-01 
+ttopt-64d  | evals=9.61e+03+9.70e+03 | t_cur=2.09e+01 | y= 9.876815e-01 
+ttopt-64d  | evals=9.62e+03+9.71e+03 | t_cur=2.09e+01 | y= 9.876815e-01 
+ttopt-64d  | evals=9.62e+03+9.72e+03 | t_cur=2.09e+01 | y= 9.876815e-01 
+ttopt-64d  | evals=9.63e+03+9.73e+03 | t_cur=2.10e+01 | y= 9.876815e-01 
+ttopt-64d  | evals=9.64e+03+9.74e+03 | t_cur=2.10e+01 | y= 9.876815e-01 
+ttopt-64d  | evals=9.65e+03+9.75e+03 | t_cur=2.10e+01 | y= 9.877201e-01 
+ttopt-64d  | evals=9.66e+03+9.76e+03 | t_cur=2.10e+01 | y= 9.877201e-01 
+ttopt-64d  | evals=9.67e+03+9.77e+03 | t_cur=2.10e+01 | y= 9.877201e-01 
+ttopt-64d  | evals=9.68e+03+9.78e+03 | t_cur=2.11e+01 | y= 9.877201e-01 
+ttopt-64d  | evals=9.69e+03+9.78e+03 | t_cur=2.11e+01 | y= 9.877201e-01 
+ttopt-64d  | evals=9.70e+03+9.79e+03 | t_cur=2.11e+01 | y= 9.877201e-01 
+ttopt-64d  | evals=9.70e+03+9.80e+03 | t_cur=2.11e+01 | y= 9.877201e-01 
+ttopt-64d  | evals=9.71e+03+9.81e+03 | t_cur=2.11e+01 | y= 9.877201e-01 
+ttopt-64d  | evals=9.72e+03+9.82e+03 | t_cur=2.11e+01 | y= 9.877201e-01 
+ttopt-64d  | evals=9.73e+03+9.83e+03 | t_cur=2.12e+01 | y= 9.877201e-01 
+ttopt-64d  | evals=9.74e+03+9.84e+03 | t_cur=2.12e+01 | y= 9.877201e-01 
+ttopt-64d  | evals=9.75e+03+9.85e+03 | t_cur=2.12e+01 | y= 9.877201e-01 
+ttopt-64d  | evals=9.76e+03+9.86e+03 | t_cur=2.12e+01 | y= 9.878417e-01 
+ttopt-64d  | evals=9.77e+03+9.87e+03 | t_cur=2.12e+01 | y= 9.878417e-01 
+ttopt-64d  | evals=9.78e+03+9.88e+03 | t_cur=2.13e+01 | y= 9.878417e-01 
+ttopt-64d  | evals=9.79e+03+9.88e+03 | t_cur=2.13e+01 | y= 9.878417e-01 
+ttopt-64d  | evals=9.80e+03+9.89e+03 | t_cur=2.13e+01 | y= 9.878417e-01 
+ttopt-64d  | evals=9.80e+03+9.90e+03 | t_cur=2.13e+01 | y= 9.878417e-01 
+ttopt-64d  | evals=9.81e+03+9.91e+03 | t_cur=2.13e+01 | y= 9.878417e-01 
+ttopt-64d  | evals=9.82e+03+9.92e+03 | t_cur=2.14e+01 | y= 9.878417e-01 
+ttopt-64d  | evals=9.83e+03+9.93e+03 | t_cur=2.14e+01 | y= 9.878417e-01 
+ttopt-64d  | evals=9.84e+03+9.94e+03 | t_cur=2.14e+01 | y= 9.878417e-01 
+ttopt-64d  | evals=9.85e+03+9.95e+03 | t_cur=2.14e+01 | y= 9.878417e-01 
+ttopt-64d  | evals=9.86e+03+9.96e+03 | t_cur=2.14e+01 | y= 9.878417e-01 
+ttopt-64d  | evals=9.87e+03+9.96e+03 | t_cur=2.15e+01 | y= 9.878417e-01 
+ttopt-64d  | evals=9.88e+03+9.97e+03 | t_cur=2.15e+01 | y= 9.878417e-01 
+ttopt-64d  | evals=9.88e+03+9.98e+03 | t_cur=2.15e+01 | y= 9.878801e-01 
+ttopt-64d  | evals=9.89e+03+9.99e+03 | t_cur=2.15e+01 | y= 9.878801e-01 
+ttopt-64d  | evals=9.90e+03+1.00e+04 | t_cur=2.15e+01 | y= 9.878801e-01 
+ttopt-64d  | evals=9.91e+03+1.00e+04 | t_cur=2.16e+01 | y= 9.879612e-01 
+ttopt-64d  | evals=9.92e+03+1.00e+04 | t_cur=2.16e+01 | y= 9.879612e-01 
+ttopt-64d  | evals=9.93e+03+1.00e+04 | t_cur=2.16e+01 | y= 9.879612e-01 
+ttopt-64d  | evals=9.94e+03+1.00e+04 | t_cur=2.16e+01 | y= 9.879612e-01 
+ttopt-64d  | evals=9.95e+03+1.00e+04 | t_cur=2.16e+01 | y= 9.879612e-01 
+ttopt-64d  | evals=9.96e+03+1.01e+04 | t_cur=2.16e+01 | y= 9.879612e-01 
+ttopt-64d  | evals=9.97e+03+1.01e+04 | t_cur=2.17e+01 | y= 9.879612e-01 
+ttopt-64d  | evals=9.98e+03+1.01e+04 | t_cur=2.17e+01 | y= 9.879612e-01 
+ttopt-64d  | evals=9.98e+03+1.01e+04 | t_cur=2.17e+01 | y= 9.879612e-01 
+ttopt-64d  | evals=9.99e+03+1.01e+04 | t_cur=2.18e+01 | y= 9.879612e-01 
+Result: it 1.0e+04, t 2.4e+01, a 9.9e-01
+DONE (  3974.19 sec.) 
 
 
 ===================== -------------------------------------
-[2023-04-02 14-53-36] Work is finished (1126.50 sec. total)
+[2023-04-02 16-22-36] Work is finished (3987.11 sec. total)
 
 
-[2023-04-02 14-53-36] cifar10-vae_vq-densenet-check-gen (cuda)
-===================== ----------------------------------------
-
-
-.... Loading "cifar10" dataset
-DONE (     5.51 sec.) 
-
-
-.... Loading "vae_vq" generator
-DONE (     0.06 sec.) 
-
-
-.... Loading "densenet" model
-DONE (     1.89 sec.) 
-
-Gen 25 random samples (time/sample 9.53e-05 sec)
-Gen 25 random samples (time/sample 7.61e-05 sec)
-Gen 25 random samples (time/sample 7.16e-05 sec)
-Gen 25 random samples (time/sample 6.93e-05 sec)
-Gen 25 random samples (time/sample 6.86e-05 sec)
-
-Gen 25 embeddings     (time/sample 8.83e-05 sec)
-Gen 25 embeddings     (time/sample 9.47e-05 sec)
-Gen 25 embeddings     (time/sample 8.95e-05 sec)
-Gen 25 embeddings     (time/sample 9.25e-05 sec)
-Gen 25 embeddings     (time/sample 9.18e-05 sec)
-
-
-===================== -----------------------------------
-[2023-04-02 14-54-18] Work is finished (41.70 sec. total)
-
-
-[2023-04-02 14-54-18] cifar10-vae_vq-densenet-check-model (cuda)
+[2023-04-02 16-22-36] cifar10-vae_vq-densenet-check-model (cuda)
 ===================== ------------------------------------------
 
 
 .... Loading "cifar10" dataset
-DONE (     4.60 sec.) 
+DONE (     4.65 sec.) 
 
 
 .... Loading "vae_vq" generator
@@ -130,17 +1192,17 @@ DONE (     0.06 sec.)
 
 
 .... Loading "densenet" model
-DONE (     2.08 sec.) 
+DONE (     1.84 sec.) 
 
-Accuracy   trn : 99.94% (    49968 /     50000) | time =      53.76 sec
+Accuracy   trn : 99.94% (    49968 /     50000) | time =      53.23 sec
 Activation trn : [5.0e-04, 9.8e-01] (avg: 1.0e-01)
 Traceback (most recent call last):
-  File "manager.py", line 303, in <module>
+  File "manager.py", line 338, in <module>
     man = Manager(task)
-  File "manager.py", line 69, in __init__
+  File "manager.py", line 64, in __init__
     eval(f'self.task_{self.task}_{self.kind}()')
   File "<string>", line 1, in <module>
-  File "manager.py", line 290, in task_check_model
+  File "manager.py", line 325, in task_check_model
     self.log()
 TypeError: __call__() missing 1 required positional argument: 'text'
 srun: error: gn24: task 0: Exited with exit code 1
