@@ -110,9 +110,6 @@ class Gen:
         self.gen = dec
         self.enc = enc
 
-        self.gen.eval()
-        self.enc.eval()
-
         self.d = vae.embedding_dim
         self.n = vae.num_embeddings
         self.lim_a = None

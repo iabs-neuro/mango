@@ -207,6 +207,9 @@ class VAEVqCifar10(nn.Module):
     def __init__(self, num_hiddens=128, num_residual_layers=2, num_residual_hiddens=32, num_embeddings=512, embedding_dim=64, commitment_cost=0.25, decay=0.99):
         super().__init__()
 
+        self.embedding_dim = embedding_dim
+        self.num_embeddings = num_embeddings
+
         self._encoder = Encoder(
             3, num_hiddens,
             num_residual_layers, num_residual_hiddens)
