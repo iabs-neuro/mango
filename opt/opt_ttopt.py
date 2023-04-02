@@ -2,7 +2,7 @@ import numpy as np
 from ttopt import TTOpt
 
 
-def opt_ttopt(func, d, n, m, is_max=True):
+def opt_ttopt(func, d, n, m, rank=3, is_max=True):
     """Activation maximization with TTOpt."""
     q = np.log2(n)
     if 2**q != n:
@@ -34,8 +34,8 @@ def opt_ttopt(func, d, n, m, is_max=True):
     tto = TTOpt(func_wrap, d=d, p=2, q=q, evals=m, name='ttopt',
         is_func=False, with_cache=True, with_log=True)
     if is_max:
-        tto.maximize(rmax=5)
+        tto.maximize(rmax=rank)
     else:
-        tto.minimize(rmax=5)
+        tto.minimize(rmax=rank)
 
     return info['i'], info['y'], (info['ml'], info['il'], info['yl'])
