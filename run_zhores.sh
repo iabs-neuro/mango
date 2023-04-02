@@ -23,7 +23,7 @@ module rm *
 module load python/anaconda3
 module load gpu/cuda-12.0
 conda activate neural_tensor_train
-srun python3 manager.py
+srun python3 manager.py cifar10-vae_vq-densenet-am-cl cifar10-vae_vq-densenet-check-model
 
 exit 0
 
