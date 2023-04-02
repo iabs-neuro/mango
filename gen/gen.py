@@ -93,7 +93,8 @@ class Gen:
 
         def dec(z):
             m = z.shape[0]
-            Z = torch.zeros(self.d * m, 1, dtype=torch.int64)
+            Z = torch.zeros(self.d * m, 1, dtype=torch.int64,
+                device=self.device)
             for i in range(m):
                 Z[i*self.d:(i+1)*self.d, 0] = z[i, :]
             v = vae._vq_vae.forward_spec(Z)
