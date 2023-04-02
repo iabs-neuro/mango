@@ -223,7 +223,7 @@ class Manager:
             x = self.gen.run(z)
             a = self.model.run_target(x)
 
-            self.log(f'Result: it {m:-7.1e}, t {t:-7.1e}, a {a:-7.1e}')
+            self.log(f'Result: it {m:-7.1e}, t {t:-7.1e}, a {a:-11.5e}')
 
             title = f'{meth} : p={a:-9.3e} ({l})'
             X.append(x)
