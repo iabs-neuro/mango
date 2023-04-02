@@ -81,6 +81,19 @@ class Data:
         transform = self.transform_wo_norm if wo_norm else self.transform
         return transform(img).to(device)
 
+    def info(self):
+        text = ''
+        text += f'Dataset             : {self.name}\n'
+        text += f'Number of classes   : {len(self.labels):-10d}\n'
+
+        if self.name != 'imagenet':
+            text += f'Size of trn dataset : {len(self.data_trn):-10d}\n'
+            text += f'Size of tst dataset : {len(self.data_tst):-10d}\n'
+            text += f'Var  of trn dataset : {self.var_trn:-10.4e}\n'
+            text += f'Var  of tst dataset : {self.var_tst:-10.4e}\n'
+
+        return text
+
     def load_data(self):
         fpath = os.path.dirname(__file__) + '/_data'
 
@@ -89,6 +102,9 @@ class Data:
 
         self.dataloader_trn = None
         self.dataloader_tst = None
+
+        self.var_trn = None
+        self.var_tst = None
 
         if self.name == 'mnist':
             func = torchvision.datasets.MNIST
@@ -116,6 +132,12 @@ class Data:
                 batch_size=self.batch_trn, shuffle=True)
             self.dataloader_tst = DataLoader(self.data_tst,
                 batch_size=self.batch_tst, shuffle=True)
+
+        if self.data_trn is not None:
+            self.var_trn = np.var(self.data_trn.data / 255.0)
+
+        if self.data_tst is not None:
+            self.var_tst = np.var(self.data_tst.data / 255.0)
 
     def load_labels(self):
         self.labels = {}
@@ -248,7 +270,7 @@ class Data:
             plt.show()
             plt.close(fig)
 
-    def plot_many(self, X=None, titles=None, cols=3, rows=3, size=3, fpath=None):
+    def plot_many(self, X=None, titles=None, cols=5, rows=5, size=3, fpath=None):
         fig = plt.figure(figsize=(size*cols, size*rows))
 
         for j in range(1, cols * rows + 1):
