@@ -39,9 +39,9 @@ OPTS = {
 }
 TASKS = [
     'cifar10-vae_vq-densenet-check-data',
+    'cifar10-vae_vq-densenet-train-gen',
     'cifar10-vae_vq-densenet-check-gen',
     'cifar10-vae_vq-densenet-check-model',
-    'cifar10-vae_vq-densenet-train-gen',
 ]
 
 
@@ -86,38 +86,47 @@ class Manager:
         os.makedirs(os.path.dirname(fpath), exist_ok=True)
         return fpath
 
-    def load_data(self, name=None):
+    def load_data(self, name=None, log=True):
         name = name or self.name_data
-        tm = self.log.prc(f'Loading "{name}" dataset')
+        if log:
+            tm = self.log.prc(f'Loading "{name}" dataset')
         try:
             self.data = Data(name)
-            self.log.res(tpc()-tm)
+            if log:
+                self.log.res(tpc()-tm)
         except Exception as e:
             self.log.wrn('Can not load Data')
-        self.log('')
+        if log:
+            self.log('')
 
-    def load_gen(self, name=None):
+    def load_gen(self, name=None, log=True):
         name = name or self.name_gen
-        tm = self.log.prc(f'Loading "{name}" generator')
+        if log:
+            tm = self.log.prc(f'Loading "{name}" generator')
         try:
             self.gen = Gen(name, self.data, self.device)
-            self.log.res(tpc()-tm)
+            if log:
+                self.log.res(tpc()-tm)
         except Exception as e:
             self.log.wrn('Can not load Gen')
-        self.log('')
+        if log:
+            self.log('')
 
-    def load_model(self, name=None):
+    def load_model(self, name=None, log=True):
         name = name or self.name_model
-        tm = self.log.prc(f'Loading "{name}" model')
+        if log:
+            tm = self.log.prc(f'Loading "{name}" model')
         try:
             self.model = Model(name, self.data, self.device)
             self.model.set_target(**AM_TARGET)
-            self.log.res(tpc()-tm)
+            if log:
+                self.log.res(tpc()-tm)
         except Exception as e:
             self.log.wrn('Can not load Model')
-        self.log('')
+        if log:
+            self.log('')
 
-    def run_train_vae_vq_cifar10(self, lr=1.E-3, iters=15000, log_step=10):
+    def run_train_vae_vq_cifar10(self, lr=1.E-3, iters=15000, log_step=500):
         from gen.vae_vq_cifar10 import VAEVqCifar10
         tm = self.log.prc(f'Training "vae_vq_cifar10" model')
 
@@ -133,8 +142,9 @@ class Manager:
 
         vae.train()
 
+        # Batch of real images to visualize accuracy while training:
         x_real = torch.cat([self.data.get()[0][None] for _ in range(25)])
-        p, l = self.model.run_pred(x)
+        p, l = self.model.run_pred(x_real)
         titles = [f'{v_l} ({v_p:-7.1e})' for (v_p, v_l) in zip(p, l)]
         self.data.plot_many(x_real, titles, cols=5, rows=5,
             fpath=self.get_path(f'img/imgs_real.png'))
@@ -168,15 +178,13 @@ class Manager:
                 self.log(text)
 
                 # Plot samples for the current model:
+                self.load_gen(log=False)
                 z = self.gen.enc(x_real)
                 x = self.gen.run(z)
                 p, l = self.model.run_pred(x)
                 titles = [f'{v_l} ({v_p:-7.1e})' for (v_p, v_l) in zip(p, l)]
                 self.data.plot_many(x, titles, cols=5, rows=5,
                     fpath=self.get_path(f'img/it_{it+1}_gen.png'))
-
-            if it == 402:
-                break
 
         self.log.res(tpc()-tm)
 
