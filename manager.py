@@ -179,7 +179,7 @@ class Manager:
 
                 # Plot samples for the current model:
                 self.load_gen(log=False)
-                z = self.gen.enc(x_real)
+                z = self.gen.rev(x_real)
                 x = self.gen.run(z)
                 p, l = self.model.run_pred(x)
                 titles = [f'{v_l} ({v_p:-7.1e})' for (v_p, v_l) in zip(p, l)]
@@ -251,7 +251,7 @@ class Manager:
                 fpath=self.get_path(f'img/{i+1}/gen_real.png'))
 
             t = tpc()
-            z = self.gen.enc(x)
+            z = self.gen.rev(x)
             t = (tpc() - t) / len(x)
 
             self.log(f'Gen {len(x)} embeddings     (time/sample {t:-8.2e} sec)')
