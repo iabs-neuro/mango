@@ -1,0 +1,44 @@
+[2023-04-04 15-07-08] Computations (cuda)
+===================== -------------------
+Data                : "cifar10"
+Gen                 : "vae_vq"
+Model               : "densenet"
+Task                : "check"
+Kind of task        : "gen"
+=========================================
+
+
+.... Loading "cifar10" dataset
+DONE (     5.43 sec.) 
+
+
+.... Loading "vae_vq" generator
+DONE (     7.79 sec.) 
+
+
+.... Loading "densenet" model
+DONE (     2.65 sec.) 
+
+
+.... Generate random images
+Gen 25 random samples (time/sample 3.89e-01 sec)
+Gen 25 random samples (time/sample 6.60e-05 sec)
+Gen 25 random samples (time/sample 6.62e-05 sec)
+Gen 25 random samples (time/sample 6.69e-05 sec)
+Gen 25 random samples (time/sample 6.64e-05 sec)
+DONE (    20.86 sec.) 
+
+
+.... Reconstruct images from the dataset
+Gen 25 embeddings     (time/sample 3.00e-03 sec)
+Gen 25 embeddings     (time/sample 8.45e-05 sec)
+Gen 25 embeddings     (time/sample 8.54e-05 sec)
+Gen 25 embeddings     (time/sample 8.45e-05 sec)
+Gen 25 embeddings     (time/sample 8.57e-05 sec)
+DONE (    21.92 sec.) 
+
+
+===================== -----------------------------------
+[2023-04-04 15-08-07] Work is finished (58.70 sec. total)
+
+

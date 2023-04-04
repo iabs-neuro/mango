@@ -1,0 +1,61 @@
+[2023-04-04 14-48-25] Computations (cuda)
+===================== -------------------
+Data                : "cifar10"
+Gen                 : "vae_vq"
+Model               : "densenet"
+Task                : "train"
+Kind of task        : "gen"
+=========================================
+
+
+.... Loading "cifar10" dataset
+DONE (     5.34 sec.) 
+
+
+.... Loading "vae_vq" generator
+DONE (     7.12 sec.) 
+
+
+.... Loading "densenet" model
+DONE (     2.05 sec.) 
+
+
+.... Training "vae_vq_cifar10" model
+#        1 | time 1.5e+01 sec | E recon = 1.646e+01 | Perplexity = 1.008e+00 | 
+#      500 | time 5.0e+01 sec | E recon = 7.707e+00 | Perplexity = 1.982e+00 | 
+#     1000 | time 8.5e+01 sec | E recon = 2.748e+00 | Perplexity = 2.491e+01 | 
+#     1500 | time 1.2e+02 sec | E recon = 1.714e+00 | Perplexity = 6.687e+01 | 
+#     2000 | time 1.6e+02 sec | E recon = 1.460e+00 | Perplexity = 1.057e+02 | 
+#     2500 | time 1.9e+02 sec | E recon = 1.285e+00 | Perplexity = 1.509e+02 | 
+#     3000 | time 2.3e+02 sec | E recon = 1.179e+00 | Perplexity = 2.062e+02 | 
+#     3500 | time 2.6e+02 sec | E recon = 1.089e+00 | Perplexity = 2.786e+02 | 
+#     4000 | time 3.0e+02 sec | E recon = 1.018e+00 | Perplexity = 3.558e+02 | 
+#     4500 | time 3.4e+02 sec | E recon = 9.733e-01 | Perplexity = 3.945e+02 | 
+#     5000 | time 3.7e+02 sec | E recon = 9.414e-01 | Perplexity = 4.061e+02 | 
+#     5500 | time 4.1e+02 sec | E recon = 9.230e-01 | Perplexity = 4.079e+02 | 
+#     6000 | time 4.5e+02 sec | E recon = 9.069e-01 | Perplexity = 4.082e+02 | 
+#     6500 | time 4.8e+02 sec | E recon = 8.944e-01 | Perplexity = 4.079e+02 | 
+#     7000 | time 5.2e+02 sec | E recon = 8.847e-01 | Perplexity = 4.069e+02 | 
+#     7500 | time 5.5e+02 sec | E recon = 8.734e-01 | Perplexity = 4.059e+02 | 
+#     8000 | time 5.9e+02 sec | E recon = 8.689e-01 | Perplexity = 4.056e+02 | 
+#     8500 | time 6.2e+02 sec | E recon = 8.629e-01 | Perplexity = 4.058e+02 | 
+#     9000 | time 6.6e+02 sec | E recon = 8.592e-01 | Perplexity = 4.053e+02 | 
+#     9500 | time 6.9e+02 sec | E recon = 8.535e-01 | Perplexity = 4.059e+02 | 
+#    10000 | time 7.3e+02 sec | E recon = 8.460e-01 | Perplexity = 4.051e+02 | 
+#    10500 | time 7.7e+02 sec | E recon = 8.454e-01 | Perplexity = 4.061e+02 | 
+#    11000 | time 8.0e+02 sec | E recon = 8.431e-01 | Perplexity = 4.055e+02 | 
+#    11500 | time 8.4e+02 sec | E recon = 8.402e-01 | Perplexity = 4.053e+02 | 
+#    12000 | time 8.7e+02 sec | E recon = 8.338e-01 | Perplexity = 4.054e+02 | 
+#    12500 | time 9.1e+02 sec | E recon = 8.370e-01 | Perplexity = 4.052e+02 | 
+#    13000 | time 9.4e+02 sec | E recon = 8.269e-01 | Perplexity = 4.063e+02 | 
+#    13500 | time 9.8e+02 sec | E recon = 8.283e-01 | Perplexity = 4.066e+02 | 
+#    14000 | time 1.0e+03 sec | E recon = 8.233e-01 | Perplexity = 4.058e+02 | 
+#    14500 | time 1.0e+03 sec | E recon = 8.239e-01 | Perplexity = 4.063e+02 | 
+#    15000 | time 1.1e+03 sec | E recon = 8.223e-01 | Perplexity = 4.064e+02 | 
+DONE (  1088.47 sec.) 
+
+
+===================== -------------------------------------
+[2023-04-04 15-06-48] Work is finished (1102.98 sec. total)
+
+

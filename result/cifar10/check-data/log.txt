@@ -1,0 +1,27 @@
+[2023-04-04 14-45-02] Computations (cuda)
+===================== -------------------
+Data                : "cifar10"
+Task                : "check"
+Kind of task        : "data"
+=========================================
+
+
+.... Loading "cifar10" dataset
+DONE (    22.37 sec.) 
+
+
+.... Check data for "cifar10" dataset
+Dataset             : cifar10
+Number of classes   :         10
+Size of trn dataset :      50000
+Size of tst dataset :      10000
+Var  of trn dataset : 6.3287e-02
+Var  of tst dataset : 6.3111e-02
+
+DONE (     4.87 sec.) 
+
+
+===================== -----------------------------------
+[2023-04-04 14-45-30] Work is finished (27.25 sec. total)
+
+

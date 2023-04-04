@@ -1,0 +1,35 @@
+[2023-04-04 15-08-24] Computations (cuda)
+===================== -------------------
+Data                : "cifar10"
+Gen                 : "gan_sn"
+Model               : "densenet"
+Task                : "check"
+Kind of task        : "gen"
+=========================================
+
+
+.... Loading "cifar10" dataset
+DONE (     5.36 sec.) 
+
+
+.... Loading "gan_sn" generator
+DONE (     8.25 sec.) 
+
+
+.... Loading "densenet" model
+DONE (     3.51 sec.) 
+
+
+.... Generate random images
+Gen 25 random samples (time/sample 4.04e-01 sec)
+Gen 25 random samples (time/sample 7.09e-04 sec)
+Gen 25 random samples (time/sample 7.09e-04 sec)
+Gen 25 random samples (time/sample 7.09e-04 sec)
+Gen 25 random samples (time/sample 7.11e-04 sec)
+DONE (    21.72 sec.) 
+
+
+===================== -----------------------------------
+[2023-04-04 15-09-03] Work is finished (38.84 sec. total)
+
+
