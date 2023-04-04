@@ -227,7 +227,7 @@ class Manager:
         random.seed(seed)
         torch.manual_seed(seed)
 
-    def task_am_class(self, m=1.E+2):
+    def task_am_class(self, m=1.E+4):
         c = int(self.c)
         l = self.data.labels[c]
         tm = self.log.prc(f'Run AM for out class "{c}" ({l})')

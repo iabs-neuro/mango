@@ -32,11 +32,11 @@ module load python/anaconda3
 module load gpu/cuda-12.0
 conda activate neural_tensor_train
 
-srun python3 manager.py --data cifar10 --task check --kind data
-srun python3 manager.py --data cifar10 --model densenet --task check --kind model --c 0
-srun python3 manager.py --data cifar10 --gen vae_vq --model densenet --task train --kind gen
-srun python3 manager.py --data cifar10 --gen vae_vq --model densenet --task check --kind gen
-srun python3 manager.py --data cifar10 --gen gan_sn --model densenet --task check --kind gen
+# srun python3 manager.py --data cifar10 --task check --kind data
+# srun python3 manager.py --data cifar10 --model densenet --task check --kind model --c 0
+# srun python3 manager.py --data cifar10 --gen vae_vq --model densenet --task train --kind gen
+# srun python3 manager.py --data cifar10 --gen vae_vq --model densenet --task check --kind gen
+# srun python3 manager.py --data cifar10 --gen gan_sn --model densenet --task check --kind gen
 srun python3 manager.py --data cifar10 --gen vae_vq --model densenet --task am --kind class --c 0
 srun python3 manager.py --data cifar10 --gen gan_sn --model densenet --task am --kind class --c 0
 srun python3 manager.py --data cifar10 --gen vae_vq --model densenet --task am --kind class --c 1
