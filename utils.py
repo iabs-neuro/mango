@@ -1,5 +1,6 @@
 from datetime import datetime
 import matplotlib.pyplot as plt
+import numpy as np
 import requests
 from time import perf_counter as tpc
 from urllib.parse import urlencode
@@ -63,12 +64,23 @@ def plot_hist_am(a, title='', fpath=None, size=6, bins=100):
     plt.close(fig)
 
 
-def plot_opt_conv(data, title='', fpath=None, size=7):
-    colors = ['#FFB300', '#1144AA', '#00B454', '#FFF800', '#CE0071']
-    marker = ['o', 's', '*', 'D', 'p']
-    
+def plot_opt_conv(data, title='', fpath=None, size=7, m_min=None):
+    colors = [
+        '#040A1F', '#1144AA', '#09EA48',
+        '#FFF800', '#CE0071', '#FFB300',
+        '#6A1C07', '#A30FCB', '#1C5628']
+    marker = [
+        'D', 's', '*',
+        'p', 's', 'o',
+        'p', 'p', 'p']
+
     fig = plt.figure(figsize=(size, size))
     for i, (meth, info) in enumerate(data.items()):
+        x, y = info[0], info[2]
+        if m_min is not None:
+            ind = np.argmax(x > m_min)
+            x = x[ind:]
+            y = y[ind:]
         plt.plot(info[0], info[2], label=meth,
             marker=marker[i], markersize=8, linewidth=3, color=colors[i])
 

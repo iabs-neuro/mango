@@ -28,9 +28,76 @@ from utils import plot_opt_conv
 
 
 OPTS = {
-    'Portfolio': opt_ng_portfolio,
-    'PROTES': opt_protes,
-    'TTOpt': opt_ttopt,
+    'Portfolio': {
+        'func': opt_ng_portfolio,
+    },
+    'PROTES': {
+        'func': opt_protes,
+    },
+    'TTOpt': {
+        'func': opt_ttopt,
+    },
+    'Q-PROTES-small': {
+        'func': opt_protes,
+        'args': {'k': 10, 'k_top': 1, 'with_qtt': True},
+    },
+    'Q-PROTES': {
+        'func': opt_protes,
+        'args': {'with_qtt': True},
+    },
+    'Q-TTOpt': {
+        'func': opt_ttopt,
+        'args': {'with_qtt': True},
+    },
+    'Q-PROTES-small-2': {
+        'func': opt_protes,
+        'args': {'k': 10, 'k_top': 2, 'with_qtt': True},
+    },
+    'PROTES-small': {
+        'func': opt_protes,
+        'args': {'k': 10, 'k_top': 1},
+    },
+    'PROTES-small-2': {
+        'func': opt_protes,
+        'args': {'k': 10, 'k_top': 2},
+    },
+}
+
+
+OPTS = {
+    'Portfolio': {
+        'func': opt_ng_portfolio,
+    },
+    'PROTES': {
+        'func': opt_protes,
+    },
+    'TTOpt': {
+        'func': opt_ttopt,
+    },
+    'Q-PROTES-small': {
+        'func': opt_protes,
+        'args': {'k': 10, 'k_top': 1, 'with_qtt': True},
+    },
+    'Q-PROTES': {
+        'func': opt_protes,
+        'args': {'with_qtt': True},
+    },
+    'Q-TTOpt': {
+        'func': opt_ttopt,
+        'args': {'with_qtt': True},
+    },
+    'Q-PROTES-small-2': {
+        'func': opt_protes,
+        'args': {'k': 10, 'k_top': 2, 'with_qtt': True},
+    },
+    'PROTES-small': {
+        'func': opt_protes,
+        'args': {'k': 10, 'k_top': 1},
+    },
+    'PROTES-small-2': {
+        'func': opt_protes,
+        'args': {'k': 10, 'k_top': 2},
+    },
 }
 
 
@@ -227,7 +294,8 @@ class Manager:
         random.seed(seed)
         torch.manual_seed(seed)
 
-    def task_am_class(self, m=1.E+4):
+    def task_am_class(self, m=1.E+3, m_short=1.E+1):
+        # def task_am_class(self, m=1.E+4, m_short=1.E+2):
         c = int(self.c)
         l = self.data.labels[c]
         tm = self.log.prc(f'Run AM for out class "{c}" ({l})')
@@ -238,8 +306,10 @@ class Manager:
             self.model.set_target(c=c)
 
             t = tpc()
-            z_index, _, hist = opt(self.func_ind, self.gen.d, self.gen.n, m,
-                is_max=True)
+            func = opt.get('func')
+            args = opt.get('args', {})
+            z_index, _, hist = func(self.func_ind, self.gen.d, self.gen.n, m,
+                is_max=True, **args)
             res[meth] = hist
             t = tpc() - t
             z = self.gen.ind_to_poi(z_index)
@@ -265,11 +335,17 @@ class Manager:
         with open(self.get_path('dat/opt_info.pkl'), 'wb') as f:
             pickle.dump(res, f)
 
-        with open(self.get_path('dat/opt_info.pkl'), 'rb') as f:
-            res = pickle.load(f)
+        # with open(self.get_path('dat/opt_info.pkl'), 'rb') as f:
+        #     res = pickle.load(f)
 
         title = f'Activation maximization for class "{c}" ({l})'
         plot_opt_conv(res, title, self.get_path('img/opt_conv.png'))
+
+        try:
+            plot_opt_conv(res, title, self.get_path('img/opt_conv_short.png'),
+                m_min=m_short)
+        except Exception as e:
+            pass
 
         fname = f'img/am_c{c}.png'
         self.data.plot_many(X, titles, fpath=self.get_path(fname),

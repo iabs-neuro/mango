@@ -3,7 +3,7 @@ from protes import protes
 import teneva
 
 
-def opt_protes(func, d, n, m, k=10, k_top=1, is_max=True, with_qtt=True):
+def opt_protes(func, d, n, m, k=50, k_top=5, with_qtt=False, is_max=True):
     """Activation Maximization with PROTES."""
 
     q = int(np.log2(n))

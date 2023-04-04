@@ -2,11 +2,12 @@ import numpy as np
 from ttopt import TTOpt
 
 
-def opt_ttopt(func, d, n, m, rank=5, is_max=True):
+def opt_ttopt(func, d, n, m, rank=5, with_qtt=False, is_max=True):
     """Activation maximization with TTOpt."""
-    q = np.log2(n)
-    if 2**q != n:
-        raise ValueError('Invalid grid size. It should be power of 2')
+    if with_qtt:
+        q = np.log2(n)
+        if 2**q != n:
+            raise ValueError('Invalid grid size. It should be power of 2')
 
     info = {'m': 0, 'i': None, 'y': None, 'ml': [], 'il': [], 'yl': []}
 
@@ -31,8 +32,11 @@ def opt_ttopt(func, d, n, m, rank=5, is_max=True):
 
         return y
 
-    tto = TTOpt(func_wrap, d=d, p=2, q=q, evals=m, name='ttopt',
-        is_func=False, with_cache=True, with_log=True)
+    tto = TTOpt(func_wrap, d=d,
+        n=None if with_qtt else n,
+        p=2 if with_qtt else None,
+        q=q if with_qtt else None,
+        evals=m, name='ttopt', is_func=False, with_cache=True, with_log=True)
     if is_max:
         tto.maximize(rmax=rank)
     else:
