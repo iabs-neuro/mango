@@ -1,0 +1,40 @@
+[2023-04-04 18-18-04] Computations (cuda)
+===================== -------------------
+Data                : "cifar10"
+Gen                 : "vae_vq"
+Model               : "densenet"
+Task                : "am"
+Kind of task        : "class"
+Target class        : "1"
+=========================================
+
+
+.... Loading "cifar10" dataset
+DONE (     4.91 sec.) 
+
+
+.... Loading "vae_vq" generator
+DONE (     5.10 sec.) 
+
+
+.... Loading "densenet" model
+DONE (     1.90 sec.) 
+
+
+.... Run AM for out class "1" (automobile)
+
+Optimization with "Portfolio" method:
+Result: it 1.0e+04, t 2.0e+03, a 9.82758e-01
+
+Optimization with "PROTES" method:
+Result: it 1.0e+04, t 4.1e+02, a 7.46200e-01
+
+Optimization with "TTOpt" method:
+Result: it 1.0e+04, t 1.1e+01, a 7.72187e-02
+DONE (  2406.42 sec.) 
+
+
+===================== -------------------------------------
+[2023-04-04 18-58-22] Work is finished (2418.34 sec. total)
+
+
