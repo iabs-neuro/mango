@@ -1,0 +1,58 @@
+[2023-04-04 21-47-21] Computations (cuda)
+===================== -------------------
+Data                : "cifar10"
+Gen                 : "vae_vq"
+Model               : "densenet"
+Task                : "am"
+Kind of task        : "class"
+Target class        : "0"
+=========================================
+
+
+.... Loading "cifar10" dataset
+DONE (     5.55 sec.) 
+
+
+.... Loading "vae_vq" generator
+DONE (     6.57 sec.) 
+
+
+.... Loading "densenet" model
+DONE (     4.87 sec.) 
+
+
+.... Run AM for out class "0" (airplane)
+
+Optimization with "Portfolio" method:
+Result: it 1.0e+03, t 2.0e+02, a 7.87036e-01
+
+Optimization with "PROTES" method:
+Result: it 1.0e+03, t 4.5e+01, a 7.66853e-01
+
+Optimization with "TTOpt" method:
+Result: it 1.0e+03, t 1.5e+00, a 4.23010e-01
+
+Optimization with "Q-PROTES-small" method:
+Result: it 1.0e+03, t 2.5e+01, a 3.31777e-01
+
+Optimization with "Q-PROTES" method:
+Result: it 1.0e+03, t 1.0e+01, a 9.68363e-01
+
+Optimization with "Q-TTOpt" method:
+Result: it 1.0e+03, t 1.8e+00, a 8.23289e-03
+
+Optimization with "Q-PROTES-small-2" method:
+Result: it 1.0e+03, t 3.4e+01, a 5.19434e-01
+
+Optimization with "PROTES-small" method:
+Result: it 1.0e+03, t 1.6e+02, a 9.15266e-01
+
+Optimization with "PROTES-small-2" method:
+Result: it 1.0e+03, t 2.1e+02, a 9.39085e-01
+DONE (   700.11 sec.) 
+
+
+===================== ------------------------------------
+[2023-04-04 21-59-18] Work is finished (717.11 sec. total)
+
+
