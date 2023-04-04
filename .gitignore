@@ -13,3 +13,4 @@ data/_data
 model/_data/
 snn/data/*
 _tmp/
+doc/

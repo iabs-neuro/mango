@@ -31,15 +31,18 @@ class Log:
     def res(self, t, content=''):
         self(f'DONE ({t:-9.2f} sec.) {content}')
 
-    def title(self, content):
+    def title(self, content, info):
         self.tm = tpc()
         dt = datetime.now().strftime('%Y-%m-%d %H-%M-%S')
         text = f'[{dt}] {content}'
         text += '\n' + '=' * 21 + ' ' + '-' * len(content) + '\n'
+        text += info
+        text += '=' * (22 + len(content)) + '\n'
         self(text)
 
     def wrn(self, content=''):
         self(f'WRN ! {content}')
+
 
 def load_yandex(url, fpath):
     link = 'https://cloud-api.yandex.net/v1/disk/public/resources/download?'
