@@ -37,11 +37,11 @@ class Gen:
         self.n = None          # Grid size
         self.lim_a = None      # Grid lower limit
         self.lim_b = None      # Grid upper limit
-        self.discrete = False  # If discrete latent space
+        self.discrete = False  # Is True if discrete latent space is used
 
         self.gen = None        # Generator
-        self.dsc = None        # Decriminator
-        self.enc = None        # Encoder
+        self.dsc = None        # Decriminator (only for GAN-like models)
+        self.enc = None        # Encoder (only for VAE-like models)
 
         if self.name == 'gan_sn':
             self.load_gan_sn(fpath)
@@ -129,6 +129,12 @@ class Gen:
         else:
             with torch.no_grad():
                 x = self.gen(z)
+
+        if self.name == 'gan_sn':
+            # TODO: check it
+            # We should change data transformation for output of this model:
+            x = x / 2. + 0.5
+            x = self.data.transform_norm(x)
 
         return x if is_batch else x[0]
 

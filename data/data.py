@@ -214,6 +214,7 @@ class Data:
 
     def load_transform(self, m=None, v=None):
         self.transform = torchvision.transforms.ToTensor()
+        self.transform_norm = None
         self.transform_wo_norm = torchvision.transforms.ToTensor()
 
         if self.name == 'cifar10':
@@ -223,6 +224,9 @@ class Data:
             v = (0.2471, 0.2435, 0.2616) if v is None else v
             self.transform = torchvision.transforms.Compose([
                 torchvision.transforms.ToTensor(),
+                torchvision.transforms.Normalize(m, v),
+            ])
+            self.transform_norm = torchvision.transforms.Compose([
                 torchvision.transforms.Normalize(m, v),
             ])
 
@@ -235,6 +239,9 @@ class Data:
                 torchvision.transforms.ToTensor(),
                 torchvision.transforms.Normalize(m, v),
                 # torchvision.transforms.Lambda(lambda x: x[None]),
+            ])
+            self.transform_norm = torchvision.transforms.Compose([
+                torchvision.transforms.Normalize(m, v),
             ])
             self.transform_wo_norm = torchvision.transforms.Compose([
                 torchvision.transforms.CenterCrop(self.sz),
