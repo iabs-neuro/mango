@@ -152,23 +152,23 @@ class Model:
         self.l = None
         self.f = None
 
-        if c is not None and (l is not None or f is not None):
-            raise ValueError('Please, set class or later+filter, not both')
-
         if c is not None:
+            if l is not None or f is not None:
+                raise ValueError('Please, set class or later+filter, not both')
             self.c = int(c)
             return
 
+        if l is None or f is None:
+            return
+
         self.l = l
-        self.f = f
+        self.f = int(f)
 
         layer = self.net.features[l] # TODO: check
         if type(layer) != torch.nn.modules.conv.Conv2d:
             raise ValueError('We work only with conv layers')
-
         if self.f < 0 or self.f >= layer.out_channels:
             raise ValueError('Filter does not exist')
-
         self.hook = AmHook(self.f)
         self.hook_hand = [layer.register_forward_hook(self.hook.forward)]
 

@@ -1,7 +1,7 @@
+import argparse
 import numpy as np
 import os
 import random
-import sys
 import teneva
 from time import perf_counter as tpc
 import torch
@@ -25,44 +25,32 @@ from utils import Log
 from utils import plot_hist_am
 
 
-AM_TARGET = {'layer': None, 'filter': None, 'cl': 0} # TODO!
 OPTS = {
     'Portfolio': opt_ng_portfolio,
     'PROTES': opt_protes,
     'TTOpt': opt_ttopt,
 }
-TASKS = [
-    'cifar10-vae_vq-densenet-check-data',
-    'cifar10-vae_vq-densenet-train-gen',
-    'cifar10-vae_vq-densenet-check-gen',
-    'cifar10-vae_vq-densenet-check-model',
-    'cifar10-vae_vq-densenet-am-cl',
-]
 
 
 class Manager:
-    def __init__(self, name, device=None):
-        if not name in TASKS:
-            raise ValueError(f'Manager task "{name}" is not supported')
-
-        self.name = name
-        self.name_data = name.split('-')[0]
-        self.name_gen = name.split('-')[1]
-        self.name_model = name.split('-')[2]
-        self.task = name.split('-')[3]
-        self.kind = name.split('-')[4]
+    def __init__(self, data, gen, model, task, kind, c=None, l=None, f=None, root='result', device=None):
+        self.data_name = data
+        self.gen_name = gen
+        self.model_name = model
+        self.task = task
+        self.kind = kind
+        self.c = c
+        self.l = l
+        self.f = f
 
         self.set_rand()
         self.set_device(device)
-        self.set_path()
+        self.set_path(root)
         self.set_log()
-
         self.load_data()
         self.load_gen()
         self.load_model()
-
         eval(f'self.task_{self.task}_{self.kind}()')
-
         self.end()
 
     def end(self):
@@ -77,16 +65,17 @@ class Manager:
         return self.func(self.gen.ind_to_poi(z_index))
 
     def get_path(self, fpath):
-        fpath = os.path.join(self.path_result, fpath)
+        fpath = os.path.join(self.path, fpath)
         os.makedirs(os.path.dirname(fpath), exist_ok=True)
         return fpath
 
-    def load_data(self, name=None, log=True):
-        name = name or self.name_data
+    def load_data(self, log=True):
+        if self.data_name is None:
+            raise ValueError('Name of the dataset is not set')
         if log:
-            tm = self.log.prc(f'Loading "{name}" dataset')
+            tm = self.log.prc(f'Loading "{self.data_name}" dataset')
         try:
-            self.data = Data(name)
+            self.data = Data(self.data_name)
             if log:
                 self.log.res(tpc()-tm)
         except Exception as e:
@@ -94,12 +83,13 @@ class Manager:
         if log:
             self.log('')
 
-    def load_gen(self, name=None, log=True):
-        name = name or self.name_gen
+    def load_gen(self, log=True):
+        if self.gen_name is None:
+            return
         if log:
-            tm = self.log.prc(f'Loading "{name}" generator')
+            tm = self.log.prc(f'Loading "{self.gen_name}" generator')
         try:
-            self.gen = Gen(name, self.data, self.device)
+            self.gen = Gen(self.gen_name, self.data, self.device)
             if log:
                 self.log.res(tpc()-tm)
         except Exception as e:
@@ -107,21 +97,22 @@ class Manager:
         if log:
             self.log('')
 
-    def load_model(self, name=None, log=True):
-        name = name or self.name_model
+    def load_model(self, log=True):
+        if self.model_name is None:
+            return
         if log:
-            tm = self.log.prc(f'Loading "{name}" model')
+            tm = self.log.prc(f'Loading "{self.model_name}" model')
         try:
-            self.model = Model(name, self.data, self.device)
-            self.model.set_target(**AM_TARGET)
+            self.model = Model(self.model_name, self.data, self.device)
+            self.model.set_target(self.c, self.l, self.f)
             if log:
                 self.log.res(tpc()-tm)
         except Exception as e:
-            self.log.wrn('Can not load Model')
+            self.log.wrn(f'Can not load Model')
         if log:
             self.log('')
 
-    def run_train_vae_vq_cifar10(self, lr=1.E-3, iters=15000, log_step=500):
+    def run_train_cifar10_vae_vq(self, lr=1.E-3, iters=15000, log_step=500):
         from gen.vae_vq_cifar10 import VAEVqCifar10
         tm = self.log.prc(f'Training "vae_vq_cifar10" model')
 
@@ -129,8 +120,6 @@ class Manager:
         vae.to(self.device)
 
         optimizer = optim.Adam(vae.parameters(), lr=lr, amsgrad=False)
-
-        data_variance = np.var(self.data.data_trn.data / 255.0)
 
         train_res_recon_error = []
         train_res_perplexity = []
@@ -142,7 +131,7 @@ class Manager:
         p, l = self.model.run_pred(x_real)
         titles = [f'{v_l} ({v_p:-7.1e})' for (v_p, v_l) in zip(p, l)]
         self.data.plot_many(x_real, titles, cols=5, rows=5,
-            fpath=self.get_path(f'img/imgs_real.png'))
+            fpath=self.get_path(f'img/images_real.png'))
 
         for it in range(iters):
             (data, _) = next(iter(self.data.dataloader_trn))
@@ -193,27 +182,58 @@ class Manager:
             self.device = device
 
     def set_log(self):
-        self.log = Log(self.get_path(f'log_{self.name}.txt'))
-        self.log.title(f'{self.name} ({self.device})')
+        info = ''
+        if self.data_name:
+            info += f'Data                : "{self.data_name}"\n'
+        if self.gen_name:
+            info += f'Gen                 : "{self.gen_name}"\n'
+        if self.model_name:
+            info += f'Model               : "{self.model_name}"\n'
+        if self.task:
+            info += f'Task                : "{self.task}"\n'
+        if self.kind:
+            info += f'Kind of task        : "{self.kind}"\n'
+        if self.c:
+            info += f'Target class        : "{self.c}"\n'
+        if self.l:
+            info += f'Target layer        : "{self.l}"\n'
+        if self.f:
+            info += f'Target filter       : "{self.f}"\n'
 
-    def set_path(self, root_result='result'):
-        self.path_root = os.path.dirname(__file__)
-        self.path_result = os.path.join(self.path_root, root_result, self.name)
+        self.log = Log(self.get_path(f'log.txt'))
+        self.log.title(f'Computations ({self.device})', info)
+
+    def set_path(self, root='result'):
+        fbase = f'{self.data_name}'
+        if self.gen_name:
+            fbase += f'-{self.gen_name}'
+        if self.model_name:
+            fbase += f'-{self.model_name}'
+
+        ftask = f'{self.task}-{self.kind}'
+        if self.c:
+            ftask += f'-c_{self.c}'
+        if self.l:
+            ftask += f'-l_{self.l}'
+        if self.f:
+            ftask += f'-f_{self.f}'
+
+        self.path = os.path.join(root, fbase, ftask)
 
     def set_rand(self, seed=42):
         np.random.seed(seed)
         random.seed(seed)
         torch.manual_seed(seed)
 
-    def task_am_cl(self, m=1.E+4):
-        c = AM_TARGET['cl']
+    def task_am_class(self, m=1.E+2):
+        c = int(self.c)
         l = self.data.labels[c]
         tm = self.log.prc(f'Run AM for out class "{c}" ({l})')
 
         X, titles = [], []
         for meth, opt in OPTS.items():
             self.log(f'\nOptimization with "{meth}" method:')
-            self.model.set_target(cl=c)
+            self.model.set_target(c=c)
 
             t = tpc()
             z_index, _, hist = opt(self.func_ind, self.gen.d, self.gen.n, m,
@@ -236,12 +256,12 @@ class Manager:
                 title_opt = f'{meth} : p={e_opt:-9.3e}; m={m_opt:-7.1e}'
                 X_opt.append(x_opt)
                 titles_opt.append(title_opt)
-            fname = f'gif/am_cl{c}_{meth}.gif'
+            fname = f'gif/am_c{c}_{meth}.gif'
             self.data.animate(X_opt, titles_opt, fpath=self.get_path(fname))
 
-        fname = f'img/am_cl{c}.png'
+        fname = f'img/am_c{c}.png'
         self.data.plot_many(X, titles, fpath=self.get_path(fname),
-            cols=len(X), rows=1)
+            cols=len(X), rows=1, size=4)
 
         self.log.res(tpc()-tm)
 
@@ -254,6 +274,8 @@ class Manager:
         self.log.res(tpc()-tm)
 
     def task_check_gen(self, m1=5, m2=5, rep=5):
+        tm = self.log.prc(f'Generate random images')
+
         for i in range(rep):
             if self.gen.discrete:
                 z = teneva.sample_lhs([self.gen.n]*self.gen.d, m1*m2)
@@ -270,12 +292,16 @@ class Manager:
             titles = [f'{v_l} ({v_p:-7.1e})' for (v_p, v_l) in zip(p, l)]
 
             self.data.plot_many(x, titles, cols=m1, rows=m2,
-                fpath=self.get_path(f'img/{i+1}/gen_rand.png'))
+                fpath=self.get_path(f'img/{i+1}_gen_rand.png'))
+
+        self.log.res(tpc()-tm)
 
         if self.gen.enc is None:
             return
 
         self.log('')
+
+        tm = self.log.prc(f'Reconstruct images from the dataset')
 
         for i in range(rep):
             x = torch.cat([self.data.get()[0][None] for _ in range(m1*m2)])
@@ -283,7 +309,7 @@ class Manager:
             titles = [f'{v_l} ({v_p:-7.1e})' for (v_p, v_l) in zip(p, l)]
 
             self.data.plot_many(x, titles, cols=m1, rows=m2,
-                fpath=self.get_path(f'img/{i+1}/gen_real.png'))
+                fpath=self.get_path(f'img/{i+1}_gen_real.png'))
 
             t = tpc()
             z = self.gen.rev(x)
@@ -296,9 +322,14 @@ class Manager:
             titles = [f'{v_l} ({v_p:-7.1e})' for (v_p, v_l) in zip(p, l)]
 
             self.data.plot_many(x, titles, cols=m1, rows=m2,
-                fpath=self.get_path(f'img/{i+1}/gen_repr.png'))
+                fpath=self.get_path(f'img/{i+1}_gen_repr.png'))
+
+        self.log.res(tpc()-tm)
 
     def task_check_model(self, trn=True, tst=True):
+        if not self.model.has_target():
+            raise ValueError('Target for the model is not set')
+
         for mod in ['trn', 'tst']:
             if mod == 'trn' and not trn or mod == 'tst' and not tst:
                 continue
@@ -322,17 +353,75 @@ class Manager:
             fpath = self.get_path(f'img/check_target_{mod}.png')
             plot_hist_am(a, title, fpath)
 
-            self.log()
+            self.log('')
 
     def task_train_gen(self):
-        if self.name_gen == 'vae_vq':
-            if self.name_data == 'cifar10':
-                return self.run_train_vae_vq_cifar10()
+        if self.gen_name == 'vae_vq':
+            if self.data_name == 'cifar10':
+                return self.run_train_cifar10_vae_vq()
 
         raise NotImplementedError()
 
 
+def args_build():
+    parser = argparse.ArgumentParser(
+        prog='neural_tensor_train',
+        description='Software product for analysis of activations and specialization in artificial neural networks, including spiking neural networks, with the tensor train decomposition.',
+        epilog = '© Andrei Chertkov'
+    )
+    parser.add_argument('-d', '--data',
+        type=str,
+        help='Name of the used dataset',
+        default='cifar10',
+        choices=['mnist', 'mnistf', 'cifar10', 'imagenet']
+    )
+    parser.add_argument('-g', '--gen',
+        type=str,
+        help='Name of the used generator',
+        default=None,
+        choices=['gan_sn', 'vae_vq']
+    )
+    parser.add_argument('-m', '--model',
+        type=str,
+        help='Name of the used model',
+        default=None,
+        choices=['densenet', 'vgg16']
+    )
+    parser.add_argument('-t', '--task',
+        type=str,
+        help='Name of the task',
+        default=None,
+        choices=['check', 'train', 'am']
+    )
+    parser.add_argument('-k', '--kind',
+        type=str,
+        help='Kind of the task',
+        default=None,
+    )
+    parser.add_argument('-c', '--c',
+        type=str,
+        help='Target class',
+        default=None,
+    )
+    parser.add_argument('-l', '--l',
+        type=str,
+        help='Target layer',
+        default=None,
+    )
+    parser.add_argument('-f', '--f',
+        type=str,
+        help='Target filter',
+        default=None,
+    )
+    parser.add_argument('-r', '--root',
+        type=str,
+        help='Path to the folder with results',
+        default='result'
+    )
+
+    args = parser.parse_args()
+    return args.data, args.gen, args.model, args.task, args.kind, args.c, args.l, args.f, args.root
+
+
 if __name__ == '__main__':
-    tasks = sys.argv[1:] if len(sys.argv) > 1 else TASKS
-    for task in tasks:
-        man = Manager(task)
+    Manager(*args_build())
