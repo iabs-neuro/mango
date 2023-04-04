@@ -2,7 +2,7 @@ import numpy as np
 from ttopt import TTOpt
 
 
-def opt_ttopt(func, d, n, m, rank=3, is_max=True):
+def opt_ttopt(func, d, n, m, rank=5, is_max=True):
     """Activation maximization with TTOpt."""
     q = np.log2(n)
     if 2**q != n:
