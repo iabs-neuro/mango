@@ -33,11 +33,27 @@ Software product for analysis of activations and specialization in artificial ne
 
 ## Usage
 
-Run `python manager.py`, then see the outputs in the terminal and results in the `result` folder.
+Run `python manager.py ARGS`, then see the outputs in the terminal and results in the `result` folder. Before starting the new calculation, you can completely delete or rename the `result` folder. A new `result` folder will be created automatically in this case.
 
-> Before starting the new calculation, you can completely delete or rename the `result` folder. A new `result` folder will be created automatically in this case.
+> To run the code on the cluster, we used the `zhores_run.sh` bash script (in this case, the console output will be saved in a file `zhores_out.txt`).
 
-> To run the code on the cluster, we used the `run_zhores.sh` bash script.
+Supported combinations of the `manager.py` script arguments:
+
+- `python manager.py --data cifar10 --task check --kind data`
+
+- `python manager.py --data cifar10 --model densenet --task check --kind model --c 0`
+
+- `python manager.py --data cifar10 --gen vae_vq --model densenet --task train --kind gen`
+
+- `python manager.py --data cifar10 --gen vae_vq --model densenet --task check --kind gen`
+
+- `python manager.py --data cifar10 --gen gan_sn --model densenet --task check --kind gen`
+
+- `python manager.py --data cifar10 --gen vae_vq --model densenet --task am --kind class --c 0`
+    > Classes may be 0, 1, ..., 9
+
+- `python manager.py --data cifar10 --gen gan_sn --model densenet --task am --kind class --c 0`
+    > Classes may be 0, 1, ..., 9
 
 
 ## Authors
