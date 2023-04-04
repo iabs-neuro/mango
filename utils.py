@@ -76,13 +76,14 @@ def plot_opt_conv(data, title='', fpath=None, size=7, m_min=None):
 
     fig = plt.figure(figsize=(size, size))
     for i, (meth, info) in enumerate(data.items()):
-        x, y = info[0], info[2]
+        x, y = np.array(info[0]), np.array(info[2])
         if m_min is not None:
             ind = np.argmax(x > m_min)
             x = x[ind:]
             y = y[ind:]
         plt.plot(info[0], info[2], label=meth,
-            marker=marker[i], markersize=8, linewidth=3, color=colors[i])
+            marker=marker[i], markersize=8,
+            linewidth=4 if i==0 else 3, color=colors[i])
 
     plt.legend(loc='best', frameon=True)
     plt.xlabel('Number of requests to model')

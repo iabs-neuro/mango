@@ -294,8 +294,7 @@ class Manager:
         random.seed(seed)
         torch.manual_seed(seed)
 
-    def task_am_class(self, m=1.E+3, m_short=1.E+1):
-        # def task_am_class(self, m=1.E+4, m_short=1.E+2):
+    def task_am_class(self, m=1.E+4, m_short=1.E+3):
         c = int(self.c)
         l = self.data.labels[c]
         tm = self.log.prc(f'Run AM for out class "{c}" ({l})')
@@ -340,7 +339,6 @@ class Manager:
 
         title = f'Activation maximization for class "{c}" ({l})'
         plot_opt_conv(res, title, self.get_path('img/opt_conv.png'))
-
         try:
             plot_opt_conv(res, title, self.get_path('img/opt_conv_short.png'),
                 m_min=m_short)
