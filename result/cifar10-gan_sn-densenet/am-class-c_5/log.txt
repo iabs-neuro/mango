@@ -1,0 +1,40 @@
+[2023-04-04 15-24-35] Computations (cuda)
+===================== -------------------
+Data                : "cifar10"
+Gen                 : "gan_sn"
+Model               : "densenet"
+Task                : "am"
+Kind of task        : "class"
+Target class        : "5"
+=========================================
+
+
+.... Loading "cifar10" dataset
+DONE (     5.32 sec.) 
+
+
+.... Loading "gan_sn" generator
+DONE (     6.60 sec.) 
+
+
+.... Loading "densenet" model
+DONE (     2.10 sec.) 
+
+
+.... Run AM for out class "5" (dog)
+
+Optimization with "Portfolio" method:
+Result: it 1.0e+02, t 1.6e+01, a 5.13029e-01
+
+Optimization with "PROTES" method:
+Result: it 1.0e+02, t 1.3e+01, a 9.78420e-01
+
+Optimization with "TTOpt" method:
+Result: it 1.0e+02, t 8.8e-01, a 5.32626e-03
+DONE (    31.35 sec.) 
+
+
+===================== -----------------------------------
+[2023-04-04 15-25-20] Work is finished (45.37 sec. total)
+
+

@@ -1,0 +1,40 @@
+[2023-04-04 15-25-38] Computations (cuda)
+===================== -------------------
+Data                : "cifar10"
+Gen                 : "vae_vq"
+Model               : "densenet"
+Task                : "am"
+Kind of task        : "class"
+Target class        : "6"
+=========================================
+
+
+.... Loading "cifar10" dataset
+DONE (     6.04 sec.) 
+
+
+.... Loading "vae_vq" generator
+DONE (     8.07 sec.) 
+
+
+.... Loading "densenet" model
+DONE (     2.03 sec.) 
+
+
+.... Run AM for out class "6" (frog)
+
+Optimization with "Portfolio" method:
+Result: it 1.0e+02, t 3.3e+01, a 9.69152e-01
+
+Optimization with "PROTES" method:
+Result: it 1.0e+02, t 2.7e+01, a 7.82167e-01
+
+Optimization with "TTOpt" method:
+Result: it 1.0e+02, t 6.1e-01, a 3.20901e-03
+DONE (    62.45 sec.) 
+
+
+===================== -----------------------------------
+[2023-04-04 15-26-56] Work is finished (78.61 sec. total)
+
+

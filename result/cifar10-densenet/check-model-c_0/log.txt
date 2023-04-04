@@ -1,0 +1,29 @@
+[2023-04-04 14-45-54] Computations (cuda)
+===================== -------------------
+Data                : "cifar10"
+Model               : "densenet"
+Task                : "check"
+Kind of task        : "model"
+Target class        : "0"
+=========================================
+
+
+.... Loading "cifar10" dataset
+DONE (     5.36 sec.) 
+
+
+.... Loading "densenet" model
+DONE (    27.63 sec.) 
+
+Accuracy   trn : 99.94% (    49968 /     50000) | time =      82.44 sec
+Activation trn : [5.0e-04, 9.8e-01] (avg: 1.0e-01)
+
+Accuracy   tst : 94.07% (     9407 /     10000) | time =      13.21 sec
+Activation tst : [1.0e-03, 9.8e-01] (avg: 1.0e-01)
+
+
+
+===================== ------------------------------------
+[2023-04-04 14-48-04] Work is finished (130.46 sec. total)
+
+
