@@ -1,6 +1,7 @@
 import argparse
 import numpy as np
 import os
+import pickle
 import random
 import teneva
 from time import perf_counter as tpc
@@ -23,6 +24,7 @@ from opt import opt_protes
 from opt import opt_ttopt
 from utils import Log
 from utils import plot_hist_am
+from utils import plot_opt_conv
 
 
 OPTS = {
@@ -230,7 +232,7 @@ class Manager:
         l = self.data.labels[c]
         tm = self.log.prc(f'Run AM for out class "{c}" ({l})')
 
-        X, titles = [], []
+        X, titles, res = [], [], {}
         for meth, opt in OPTS.items():
             self.log(f'\nOptimization with "{meth}" method:')
             self.model.set_target(c=c)
@@ -238,6 +240,7 @@ class Manager:
             t = tpc()
             z_index, _, hist = opt(self.func_ind, self.gen.d, self.gen.n, m,
                 is_max=True)
+            res[meth] = hist
             t = tpc() - t
             z = self.gen.ind_to_poi(z_index)
             x = self.gen.run(z)
@@ -258,6 +261,15 @@ class Manager:
                 titles_opt.append(title_opt)
             fname = f'gif/am_c{c}_{meth}.gif'
             self.data.animate(X_opt, titles_opt, fpath=self.get_path(fname))
+
+        with open(self.get_path('dat/opt_info.pkl'), 'wb') as f:
+            pickle.dump(res, f)
+
+        with open(self.get_path('dat/opt_info.pkl'), 'rb') as f:
+            res = pickle.load(f)
+
+        title = f'Activation maximization for class "{c}" ({l})'
+        plot_opt_conv(res, title, self.get_path('img/opt_conv.png'))
 
         fname = f'img/am_c{c}.png'
         self.data.plot_many(X, titles, fpath=self.get_path(fname),

@@ -63,5 +63,25 @@ def plot_hist_am(a, title='', fpath=None, size=6, bins=100):
     plt.close(fig)
 
 
+def plot_opt_conv(data, title='', fpath=None, size=7):
+    colors = ['#FFB300', '#1144AA', '#00B454', '#FFF800', '#CE0071']
+    marker = ['o', 's', '*', 'D', 'p']
+    
+    fig = plt.figure(figsize=(size, size))
+    for i, (meth, info) in enumerate(data.items()):
+        plt.plot(info[0], info[2], label=meth,
+            marker=marker[i], markersize=8, linewidth=3, color=colors[i])
+
+    plt.legend(loc='best', frameon=True)
+    plt.xlabel('Number of requests to model')
+    plt.ylabel('Activation')
+    plt.title(title)
+    plt.grid(True)
+    plt.semilogx()
+    plt.semilogy()
+    plt.savefig(fpath, bbox_inches='tight') if fpath else plt.show()
+    plt.close(fig)
+
+
 def sort_vector(a, asc=True):
     return sorted(zip(range(len(a)), a), key=lambda item: item[1], reverse=asc)
