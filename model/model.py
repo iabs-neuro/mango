@@ -54,23 +54,6 @@ class Model:
 
         return (n, m, np.array(a)) if with_target else (n, m)
 
-    def check_target(self, tst=True, only_one_batch=False):
-        data = self.data.dataloader_tst if tst else self.data.dataloader_trn
-        n, m = 0, 0
-
-        for x, l_real in data:
-            x = x.to(self.device)
-            a = self.run_target(x)
-            y = self.run(x)
-            l = torch.argmax(y, axis=1).detach().to('cpu')
-            m += (l == l_real).sum()
-            n += len(l)
-
-            if only_one_batch:
-                break
-
-        return n, m
-
     def load(self):
         fpath = os.path.dirname(__file__) + '/_data'
         os.makedirs(fpath, exist_ok=True)
@@ -110,6 +93,9 @@ class Model:
         a = self.hook.a_mean.detach().to('cpu').numpy()
         return float(a)
 
+    def has_target(self):
+        return self.c is not None or (self.l is not None and self.f is not None)
+
     def rmv_target(self, is_init=False):
         if is_init:
             self.hook_hand = []
@@ -118,9 +104,9 @@ class Model:
                 self.hook_hand.pop().remove()
             self.hook_hand = []
 
-        self.cl = None
-        self.layer = None
-        self.filter = None
+        self.c = None
+        self.l = None
+        self.f = None
         self.hook = None
 
     def run(self, x):
@@ -154,34 +140,37 @@ class Model:
 
         y = self.run(x)
 
-        if self.cl is not None:
-            res = y[:, self.cl]
+        if self.c is not None:
+            res = y[:, self.c]
         else:
             res = self.hook.a # TODO: check (self.hook.a_mean ?)
 
         return res if is_batch else res[0]
 
-    def set_target(self, layer=None, filter=None, cl=None):
-        if cl is not None and (layer is not None or filter is not None):
-            raise ValueError('Please, set later+filter or class, not both')
+    def set_target(self, c=None, l=None, f=None):
+        self.c = None
+        self.l = None
+        self.f = None
 
-        self.cl = cl
+        if c is not None and (l is not None or f is not None):
+            raise ValueError('Please, set class or later+filter, not both')
 
-        if layer is None or filter is None:
-            self.layer = None
-            self.filter = None
+        if c is not None:
+            self.c = int(c)
             return
 
-        self.layer = self.net.features[layer] # TODO: check
-        if type(self.layer) != torch.nn.modules.conv.Conv2d:
+        self.l = l
+        self.f = f
+
+        layer = self.net.features[l] # TODO: check
+        if type(layer) != torch.nn.modules.conv.Conv2d:
             raise ValueError('We work only with conv layers')
 
-        self.filter = filter
-        if self.filter < 0 or self.filter >= self.layer.out_channels:
+        if self.f < 0 or self.f >= layer.out_channels:
             raise ValueError('Filter does not exist')
 
-        self.hook = AmHook(self.filter)
-        self.hook_hand = [self.layer.register_forward_hook(self.hook.forward)]
+        self.hook = AmHook(self.f)
+        self.hook_hand = [layer.register_forward_hook(self.hook.forward)]
 
 
 class AmHook():

@@ -6,13 +6,6 @@ import torch.nn.functional as F
 
 
 class DensenetCifar10(nn.Module):
-    """Densenet (161) model on Cifar10 dataset.
-
-    Densenet-BC model class, based on the work "Densely Connected Convolutional
-    Networks" (https://arxiv.org/pdf/1608.06993.pdf) and weights from the repo
-    https://github.com/huyvnphan/PyTorch_CIFAR10.
-
-    """
     def __init__(self, growth_rate=48, block_config=(6, 12, 36, 24), num_init_features=96, bn_size=4, drop_rate=0, num_classes=10):
         super().__init__()
 
@@ -23,7 +16,7 @@ class DensenetCifar10(nn.Module):
             OrderedDict(
                 [
                     (
-                        "conv0",
+                        'conv0',
                         nn.Conv2d(
                             3,
                             num_init_features,
@@ -33,13 +26,12 @@ class DensenetCifar10(nn.Module):
                             bias=False,
                         ),
                     ),
-                    ("norm0", nn.BatchNorm2d(num_init_features)),
-                    ("relu0", nn.ReLU(inplace=True)),
-                    ("pool0", nn.MaxPool2d(kernel_size=3, stride=2, padding=1)),
+                    ('norm0', nn.BatchNorm2d(num_init_features)),
+                    ('relu0', nn.ReLU(inplace=True)),
+                    ('pool0', nn.MaxPool2d(kernel_size=3, stride=2, padding=1)),
                 ]
             )
         )
-        # END
 
         # Each denseblock
         num_features = num_init_features
@@ -51,18 +43,18 @@ class DensenetCifar10(nn.Module):
                 growth_rate=growth_rate,
                 drop_rate=drop_rate,
             )
-            self.features.add_module("denseblock%d" % (i + 1), block)
+            self.features.add_module('denseblock%d' % (i + 1), block)
             num_features = num_features + num_layers * growth_rate
             if i != len(block_config) - 1:
                 trans = _Transition(
                     num_input_features=num_features,
                     num_output_features=num_features // 2,
                 )
-                self.features.add_module("transition%d" % (i + 1), trans)
+                self.features.add_module('transition%d' % (i + 1), trans)
                 num_features = num_features // 2
 
         # Final batch norm
-        self.features.add_module("norm5", nn.BatchNorm2d(num_features))
+        self.features.add_module('norm5', nn.BatchNorm2d(num_features))
 
         # Linear layer
         self.classifier = nn.Linear(num_features, num_classes)
@@ -92,16 +84,16 @@ class _DenseBlock(nn.Sequential):
             layer = _DenseLayer(
                 num_input_features + i * growth_rate, growth_rate, bn_size, drop_rate
             )
-            self.add_module("denselayer%d" % (i + 1), layer)
+            self.add_module('denselayer%d' % (i + 1), layer)
 
 
 class _DenseLayer(nn.Sequential):
     def __init__(self, num_input_features, growth_rate, bn_size, drop_rate):
         super(_DenseLayer, self).__init__()
-        self.add_module("norm1", nn.BatchNorm2d(num_input_features)),
-        self.add_module("relu1", nn.ReLU(inplace=True)),
+        self.add_module('norm1', nn.BatchNorm2d(num_input_features)),
+        self.add_module('relu1', nn.ReLU(inplace=True)),
         self.add_module(
-            "conv1",
+            'conv1',
             nn.Conv2d(
                 num_input_features,
                 bn_size * growth_rate,
@@ -110,10 +102,10 @@ class _DenseLayer(nn.Sequential):
                 bias=False,
             ),
         ),
-        self.add_module("norm2", nn.BatchNorm2d(bn_size * growth_rate)),
-        self.add_module("relu2", nn.ReLU(inplace=True)),
+        self.add_module('norm2', nn.BatchNorm2d(bn_size * growth_rate)),
+        self.add_module('relu2', nn.ReLU(inplace=True)),
         self.add_module(
-            "conv2",
+            'conv2',
             nn.Conv2d(
                 bn_size * growth_rate,
                 growth_rate,
@@ -137,10 +129,10 @@ class _DenseLayer(nn.Sequential):
 class _Transition(nn.Sequential):
     def __init__(self, num_input_features, num_output_features):
         super(_Transition, self).__init__()
-        self.add_module("norm", nn.BatchNorm2d(num_input_features))
-        self.add_module("relu", nn.ReLU(inplace=True))
+        self.add_module('norm', nn.BatchNorm2d(num_input_features))
+        self.add_module('relu', nn.ReLU(inplace=True))
         self.add_module(
-            "conv",
+            'conv',
             nn.Conv2d(
                 num_input_features,
                 num_output_features,
@@ -149,4 +141,4 @@ class _Transition(nn.Sequential):
                 bias=False,
             ),
         )
-        self.add_module("pool", nn.AvgPool2d(kernel_size=2, stride=2))
+        self.add_module('pool', nn.AvgPool2d(kernel_size=2, stride=2))
