@@ -1,0 +1,58 @@
+[2023-04-05 02-56-22] Computations (cuda)
+===================== -------------------
+Data                : "cifar10"
+Gen                 : "gan_sn"
+Model               : "densenet"
+Task                : "am"
+Kind of task        : "class"
+Target class        : "1"
+=========================================
+
+
+.... Loading "cifar10" dataset
+DONE (    12.98 sec.) 
+
+
+.... Loading "gan_sn" generator
+DONE (    17.55 sec.) 
+
+
+.... Loading "densenet" model
+DONE (     2.93 sec.) 
+
+
+.... Run AM for out class "1" (automobile)
+
+Optimization with "Portfolio" method:
+Result: it 1.0e+04, t 5.9e+02, a 9.84399e-01
+
+Optimization with "PROTES" method:
+Result: it 1.0e+04, t 1.4e+02, a 9.83674e-01
+
+Optimization with "TTOpt" method:
+Result: it 1.0e+04, t 1.3e+01, a 9.80387e-01
+
+Optimization with "Q-PROTES-small" method:
+Result: it 1.0e+04, t 2.4e+02, a 9.88188e-01
+
+Optimization with "Q-PROTES" method:
+Result: it 1.0e+04, t 1.0e+02, a 9.86447e-01
+
+Optimization with "Q-TTOpt" method:
+Result: it 1.0e+04, t 1.7e+01, a 4.49541e-02
+
+Optimization with "Q-PROTES-small-2" method:
+Result: it 1.0e+04, t 3.6e+02, a 9.83083e-01
+
+Optimization with "PROTES-small" method:
+Result: it 1.0e+04, t 4.6e+02, a 9.83577e-01
+
+Optimization with "PROTES-small-2" method:
+Result: it 1.0e+04, t 5.9e+02, a 9.84525e-01
+DONE (  2519.60 sec.) 
+
+
+===================== -------------------------------------
+[2023-04-05 03-38-55] Work is finished (2553.09 sec. total)
+
+
