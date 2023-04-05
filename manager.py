@@ -35,13 +35,13 @@ OPTS = {
         'func': opt_protes,
         'args': {'k': 10, 'k_top': 1, 'with_qtt': True},
     },
-    'TT-2': {
-        'func': opt_protes,
-        'args': {'k': 10, 'k_top': 2, 'with_qtt': True},
-    },
-    'TT-3': {
+    'TT-s': {
         'func': opt_protes,
         'args': {'k': 5, 'k_top': 1, 'with_qtt': True},
+    },
+    'TT-b': {
+        'func': opt_protes,
+        'args': {'k': 25, 'k_top': 5, 'with_qtt': True},
     },
 }
 
@@ -239,7 +239,7 @@ class Manager:
         random.seed(seed)
         torch.manual_seed(seed)
 
-    def task_am_class(self, m=1.E+2, m_short=1.E+1):
+    def task_am_class(self, m=1.E+4, m_short=1.E+3):
         c = int(self.c)
         l = self.data.labels[c]
         tm = self.log.prc(f'Run AM for out class "{c}" ({l})')
