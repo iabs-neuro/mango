@@ -1,0 +1,26 @@
+[2023-04-05 18-53-55] Computations (cuda)
+===================== -------------------
+Data                : "cifar10"
+Gen                 : "vae_vq"
+Model               : "densenet"
+Task                : "am"
+Kind of task        : "class"
+Target class        : "6"
+=========================================
+
+
+.... Loading "cifar10" dataset
+DONE (     4.64 sec.) 
+
+
+.... Loading "vae_vq" generator
+DONE (     5.11 sec.) 
+
+
+.... Loading "densenet" model
+DONE (     1.76 sec.) 
+
+
+.... Run AM for out class "6" (frog)
+
+Optimization with "NG" method:
