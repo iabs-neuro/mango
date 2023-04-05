@@ -1974,3 +1974,371 @@ DONE (  1504.61 sec.)
 [2023-04-05 20-05-39] Work is finished (1516.25 sec. total)
 
 
+No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for more info.)
+[2023-04-05 20-05-53] Computations (cuda)
+===================== -------------------
+Data                : "cifar10"
+Gen                 : "vae_vq"
+Model               : "densenet"
+Task                : "am"
+Kind of task        : "class"
+Target class        : "7"
+=========================================
+
+
+.... Loading "cifar10" dataset
+DONE (     4.61 sec.) 
+
+
+.... Loading "vae_vq" generator
+DONE (     4.87 sec.) 
+
+
+.... Loading "densenet" model
+DONE (     1.76 sec.) 
+
+
+.... Run AM for out class "7" (horse)
+
+Optimization with "NG" method:
+portfolio > m 1.0e+00 | t 7.423e+00 | y  8.9778e-03
+portfolio > m 7.0e+00 | t 8.562e+00 | y  7.3901e-02
+portfolio > m 2.0e+01 | t 1.092e+01 | y  4.3861e-01
+portfolio > m 3.5e+01 | t 1.379e+01 | y  5.5680e-01
+portfolio > m 3.9e+01 | t 1.447e+01 | y  6.8850e-01
+portfolio > m 4.7e+01 | t 1.598e+01 | y  9.3340e-01
+portfolio > m 2.1e+02 | t 4.869e+01 | y  9.5520e-01
+portfolio > m 4.2e+02 | t 8.934e+01 | y  9.6056e-01
+portfolio > m 6.5e+02 | t 1.343e+02 | y  9.6535e-01
+portfolio > m 9.0e+02 | t 1.840e+02 | y  9.7061e-01
+portfolio > m 1.1e+03 | t 2.195e+02 | y  9.7413e-01
+portfolio > m 1.8e+03 | t 3.583e+02 | y  9.7428e-01
+portfolio > m 3.0e+03 | t 6.069e+02 | y  9.7470e-01
+portfolio > m 3.9e+03 | t 7.712e+02 | y  9.7621e-01
+portfolio > m 8.1e+03 | t 1.621e+03 | y  9.7664e-01
+portfolio > m 9.5e+03 | t 1.903e+03 | y  9.7710e-01
+portfolio > m 1.0e+04 | t 1.996e+03 | y  9.7710e-01 <<< DONE
+Result: it 1.0e+04, t 2.0e+03, a 9.77097e-01
+
+Optimization with "TT" method:
+protes > m 1.0e+01 | t 6.194e+00 | y  4.4709e-01
+protes > m 6.0e+01 | t 7.271e+00 | y  5.1767e-01
+protes > m 7.0e+01 | t 7.479e+00 | y  9.5058e-01
+protes > m 6.2e+02 | t 1.901e+01 | y  9.6837e-01
+protes > m 1.1e+03 | t 2.923e+01 | y  9.6855e-01
+protes > m 1.3e+03 | t 3.409e+01 | y  9.7404e-01
+protes > m 5.5e+03 | t 1.205e+02 | y  9.7529e-01
+protes > m 6.6e+03 | t 1.444e+02 | y  9.7587e-01
+protes > m 6.8e+03 | t 1.492e+02 | y  9.7836e-01
+protes > m 7.4e+03 | t 1.602e+02 | y  9.7894e-01
+protes > m 7.8e+03 | t 1.690e+02 | y  9.8041e-01
+protes > m 8.5e+03 | t 1.852e+02 | y  9.8239e-01
+protes > m 9.3e+03 | t 2.016e+02 | y  9.8269e-01
+protes > m 9.5e+03 | t 2.057e+02 | y  9.8274e-01
+protes > m 9.6e+03 | t 2.071e+02 | y  9.8275e-01
+protes > m 9.6e+03 | t 2.074e+02 | y  9.8306e-01
+protes > m 9.8e+03 | t 2.114e+02 | y  9.8316e-01
+protes > m 1.0e+04 | t 2.162e+02 | y  9.8316e-01 <<< DONE
+Result: it 1.0e+04, t 2.2e+02, a 9.83163e-01
+
+Optimization with "TT-s" method:
+protes > m 5.0e+00 | t 2.892e+00 | y  4.6435e-02
+protes > m 1.5e+01 | t 3.318e+00 | y  8.3551e-01
+protes > m 5.5e+01 | t 5.001e+00 | y  8.9256e-01
+protes > m 7.5e+01 | t 5.831e+00 | y  9.3121e-01
+protes > m 3.7e+02 | t 1.805e+01 | y  9.6624e-01
+protes > m 1.1e+03 | t 4.888e+01 | y  9.6816e-01
+protes > m 2.3e+03 | t 9.784e+01 | y  9.6962e-01
+protes > m 2.5e+03 | t 1.084e+02 | y  9.7012e-01
+protes > m 2.6e+03 | t 1.101e+02 | y  9.7238e-01
+protes > m 2.9e+03 | t 1.253e+02 | y  9.7298e-01
+protes > m 3.1e+03 | t 1.326e+02 | y  9.7310e-01
+protes > m 3.1e+03 | t 1.337e+02 | y  9.7730e-01
+protes > m 3.8e+03 | t 1.598e+02 | y  9.7744e-01
+protes > m 4.2e+03 | t 1.788e+02 | y  9.7802e-01
+protes > m 4.3e+03 | t 1.807e+02 | y  9.7863e-01
+protes > m 4.3e+03 | t 1.813e+02 | y  9.7866e-01
+protes > m 4.4e+03 | t 1.861e+02 | y  9.7876e-01
+protes > m 4.6e+03 | t 1.932e+02 | y  9.8070e-01
+protes > m 4.6e+03 | t 1.951e+02 | y  9.8110e-01
+protes > m 4.9e+03 | t 2.065e+02 | y  9.8122e-01
+protes > m 4.9e+03 | t 2.086e+02 | y  9.8141e-01
+protes > m 7.2e+03 | t 3.008e+02 | y  9.8277e-01
+protes > m 1.0e+04 | t 4.193e+02 | y  9.8277e-01 <<< DONE
+Result: it 1.0e+04, t 4.2e+02, a 9.82768e-01
+
+Optimization with "TT-b" method:
+protes > m 2.5e+01 | t 3.490e+00 | y  8.7673e-01
+protes > m 2.2e+02 | t 6.630e+00 | y  9.5769e-01
+protes > m 1.4e+03 | t 2.475e+01 | y  9.5770e-01
+protes > m 1.7e+03 | t 2.949e+01 | y  9.6333e-01
+protes > m 4.2e+03 | t 6.839e+01 | y  9.6956e-01
+protes > m 7.0e+03 | t 1.136e+02 | y  9.6959e-01
+protes > m 8.2e+03 | t 1.319e+02 | y  9.7164e-01
+protes > m 1.0e+04 | t 1.600e+02 | y  9.7164e-01 <<< DONE
+Result: it 1.0e+04, t 1.6e+02, a 9.71641e-01
+DONE (  2797.57 sec.) 
+
+
+===================== -------------------------------------
+[2023-04-05 20-52-42] Work is finished (2808.82 sec. total)
+
+
+No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for more info.)
+[2023-04-05 20-53-00] Computations (cuda)
+===================== -------------------
+Data                : "cifar10"
+Gen                 : "gan_sn"
+Model               : "densenet"
+Task                : "am"
+Kind of task        : "class"
+Target class        : "7"
+=========================================
+
+
+.... Loading "cifar10" dataset
+DONE (     4.60 sec.) 
+
+
+.... Loading "gan_sn" generator
+DONE (     5.33 sec.) 
+
+
+.... Loading "densenet" model
+DONE (     1.76 sec.) 
+
+
+.... Run AM for out class "7" (horse)
+
+Optimization with "NG" method:
+portfolio > m 1.0e+00 | t 7.205e+00 | y  5.1070e-03
+portfolio > m 2.0e+00 | t 7.257e+00 | y  8.2493e-03
+portfolio > m 3.0e+00 | t 7.318e+00 | y  4.9000e-01
+portfolio > m 8.0e+00 | t 7.583e+00 | y  6.3341e-01
+portfolio > m 2.0e+01 | t 8.252e+00 | y  8.2556e-01
+portfolio > m 3.5e+01 | t 9.078e+00 | y  9.7391e-01
+portfolio > m 7.0e+02 | t 5.009e+01 | y  9.7533e-01
+portfolio > m 7.2e+02 | t 5.114e+01 | y  9.7631e-01
+portfolio > m 9.2e+02 | t 6.287e+01 | y  9.7667e-01
+portfolio > m 1.1e+03 | t 7.282e+01 | y  9.7706e-01
+portfolio > m 1.1e+03 | t 7.574e+01 | y  9.7852e-01
+portfolio > m 1.2e+03 | t 8.074e+01 | y  9.7868e-01
+portfolio > m 1.3e+03 | t 8.445e+01 | y  9.8115e-01
+portfolio > m 2.7e+03 | t 1.686e+02 | y  9.8123e-01
+portfolio > m 2.9e+03 | t 1.784e+02 | y  9.8280e-01
+portfolio > m 3.2e+03 | t 1.965e+02 | y  9.8295e-01
+portfolio > m 3.4e+03 | t 2.112e+02 | y  9.8314e-01
+portfolio > m 3.5e+03 | t 2.164e+02 | y  9.8474e-01
+portfolio > m 6.1e+03 | t 3.753e+02 | y  9.8500e-01
+portfolio > m 8.5e+03 | t 5.157e+02 | y  9.8529e-01
+portfolio > m 8.8e+03 | t 5.358e+02 | y  9.8531e-01
+portfolio > m 9.1e+03 | t 5.510e+02 | y  9.8554e-01
+portfolio > m 9.1e+03 | t 5.516e+02 | y  9.8559e-01
+portfolio > m 9.5e+03 | t 5.756e+02 | y  9.8599e-01
+portfolio > m 9.7e+03 | t 5.857e+02 | y  9.8612e-01
+portfolio > m 1.0e+04 | t 6.057e+02 | y  9.8612e-01 <<< DONE
+Result: it 1.0e+04, t 6.1e+02, a 9.86121e-01
+
+Optimization with "TT" method:
+protes > m 1.0e+01 | t 6.097e+00 | y  6.6419e-02
+protes > m 2.0e+01 | t 6.371e+00 | y  9.6969e-01
+protes > m 4.0e+01 | t 6.856e+00 | y  9.6994e-01
+protes > m 6.0e+01 | t 7.338e+00 | y  9.7133e-01
+protes > m 2.4e+02 | t 1.171e+01 | y  9.7232e-01
+protes > m 2.9e+02 | t 1.292e+01 | y  9.7298e-01
+protes > m 6.2e+02 | t 2.094e+01 | y  9.7390e-01
+protes > m 7.0e+02 | t 2.287e+01 | y  9.7705e-01
+protes > m 1.0e+03 | t 3.082e+01 | y  9.7780e-01
+protes > m 1.4e+03 | t 3.849e+01 | y  9.7917e-01
+protes > m 1.7e+03 | t 4.716e+01 | y  9.8286e-01
+protes > m 3.6e+03 | t 9.400e+01 | y  9.8329e-01
+protes > m 4.4e+03 | t 1.120e+02 | y  9.8386e-01
+protes > m 5.0e+03 | t 1.262e+02 | y  9.8396e-01
+protes > m 5.2e+03 | t 1.317e+02 | y  9.8398e-01
+protes > m 5.3e+03 | t 1.348e+02 | y  9.8409e-01
+protes > m 5.9e+03 | t 1.475e+02 | y  9.8474e-01
+protes > m 6.3e+03 | t 1.591e+02 | y  9.8532e-01
+protes > m 7.9e+03 | t 1.958e+02 | y  9.8549e-01
+protes > m 8.5e+03 | t 2.110e+02 | y  9.8553e-01
+protes > m 8.5e+03 | t 2.118e+02 | y  9.8555e-01
+protes > m 8.6e+03 | t 2.127e+02 | y  9.8564e-01
+protes > m 8.9e+03 | t 2.201e+02 | y  9.8566e-01
+protes > m 9.1e+03 | t 2.264e+02 | y  9.8576e-01
+protes > m 9.2e+03 | t 2.294e+02 | y  9.8585e-01
+protes > m 9.5e+03 | t 2.359e+02 | y  9.8589e-01
+protes > m 9.8e+03 | t 2.419e+02 | y  9.8597e-01
+protes > m 1.0e+04 | t 2.473e+02 | y  9.8597e-01 <<< DONE
+Result: it 1.0e+04, t 2.5e+02, a 9.85968e-01
+
+Optimization with "TT-s" method:
+protes > m 5.0e+00 | t 2.943e+00 | y  2.8440e-02
+protes > m 2.0e+01 | t 3.658e+00 | y  7.6318e-01
+protes > m 5.5e+01 | t 5.323e+00 | y  7.8577e-01
+protes > m 7.5e+01 | t 6.261e+00 | y  9.4559e-01
+protes > m 1.4e+02 | t 9.073e+00 | y  9.5437e-01
+protes > m 1.8e+02 | t 1.119e+01 | y  9.7143e-01
+protes > m 3.7e+02 | t 2.011e+01 | y  9.7406e-01
+protes > m 6.8e+02 | t 3.507e+01 | y  9.7493e-01
+protes > m 7.2e+02 | t 3.700e+01 | y  9.7594e-01
+protes > m 7.8e+02 | t 3.960e+01 | y  9.7692e-01
+protes > m 1.0e+03 | t 5.193e+01 | y  9.7828e-01
+protes > m 1.3e+03 | t 6.607e+01 | y  9.7828e-01
+protes > m 1.7e+03 | t 8.126e+01 | y  9.7945e-01
+protes > m 1.7e+03 | t 8.388e+01 | y  9.8109e-01
+protes > m 1.8e+03 | t 8.863e+01 | y  9.8148e-01
+protes > m 2.2e+03 | t 1.061e+02 | y  9.8164e-01
+protes > m 2.3e+03 | t 1.126e+02 | y  9.8258e-01
+protes > m 2.7e+03 | t 1.299e+02 | y  9.8264e-01
+protes > m 3.4e+03 | t 1.632e+02 | y  9.8279e-01
+protes > m 3.9e+03 | t 1.881e+02 | y  9.8292e-01
+protes > m 4.2e+03 | t 2.039e+02 | y  9.8299e-01
+protes > m 4.3e+03 | t 2.095e+02 | y  9.8328e-01
+protes > m 4.5e+03 | t 2.160e+02 | y  9.8336e-01
+protes > m 4.5e+03 | t 2.172e+02 | y  9.8345e-01
+protes > m 4.5e+03 | t 2.184e+02 | y  9.8349e-01
+protes > m 4.6e+03 | t 2.234e+02 | y  9.8367e-01
+protes > m 4.6e+03 | t 2.244e+02 | y  9.8375e-01
+protes > m 4.8e+03 | t 2.315e+02 | y  9.8385e-01
+protes > m 4.9e+03 | t 2.369e+02 | y  9.8403e-01
+protes > m 5.0e+03 | t 2.399e+02 | y  9.8428e-01
+protes > m 8.1e+03 | t 3.890e+02 | y  9.8438e-01
+protes > m 8.7e+03 | t 4.172e+02 | y  9.8439e-01
+protes > m 8.7e+03 | t 4.187e+02 | y  9.8447e-01
+protes > m 1.0e+04 | t 4.802e+02 | y  9.8447e-01 <<< DONE
+Result: it 1.0e+04, t 4.8e+02, a 9.84466e-01
+
+Optimization with "TT-b" method:
+protes > m 2.5e+01 | t 3.672e+00 | y  2.7263e-01
+protes > m 5.0e+01 | t 4.188e+00 | y  9.6980e-01
+protes > m 1.0e+02 | t 5.180e+00 | y  9.6986e-01
+protes > m 1.5e+02 | t 6.162e+00 | y  9.7063e-01
+protes > m 1.8e+02 | t 6.647e+00 | y  9.7178e-01
+protes > m 3.5e+02 | t 1.010e+01 | y  9.7783e-01
+protes > m 1.8e+03 | t 3.811e+01 | y  9.7882e-01
+protes > m 2.3e+03 | t 4.890e+01 | y  9.8040e-01
+protes > m 3.9e+03 | t 7.956e+01 | y  9.8070e-01
+protes > m 4.2e+03 | t 8.692e+01 | y  9.8164e-01
+protes > m 7.2e+03 | t 1.458e+02 | y  9.8215e-01
+protes > m 9.1e+03 | t 1.827e+02 | y  9.8317e-01
+protes > m 9.2e+03 | t 1.852e+02 | y  9.8340e-01
+protes > m 1.0e+04 | t 1.995e+02 | y  9.8340e-01 <<< DONE
+Result: it 1.0e+04, t 2.0e+02, a 9.83402e-01
+DONE (  1540.30 sec.) 
+
+
+===================== -------------------------------------
+[2023-04-05 21-18-52] Work is finished (1552.00 sec. total)
+
+
+No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for more info.)
+[2023-04-05 21-19-07] Computations (cuda)
+===================== -------------------
+Data                : "cifar10"
+Gen                 : "vae_vq"
+Model               : "densenet"
+Task                : "am"
+Kind of task        : "class"
+Target class        : "8"
+=========================================
+
+
+.... Loading "cifar10" dataset
+DONE (     4.56 sec.) 
+
+
+.... Loading "vae_vq" generator
+DONE (     5.00 sec.) 
+
+
+.... Loading "densenet" model
+DONE (     1.76 sec.) 
+
+
+.... Run AM for out class "8" (ship)
+
+Optimization with "NG" method:
+portfolio > m 1.0e+00 | t 7.757e+00 | y  9.3866e-03
+portfolio > m 7.0e+00 | t 8.892e+00 | y  1.0658e-02
+portfolio > m 1.9e+01 | t 1.110e+01 | y  1.2441e-02
+portfolio > m 2.5e+01 | t 1.225e+01 | y  1.6441e-02
+portfolio > m 3.5e+01 | t 1.413e+01 | y  3.2446e-02
+portfolio > m 1.1e+02 | t 2.887e+01 | y  1.1215e-01
+portfolio > m 7.0e+02 | t 1.449e+02 | y  8.3240e-01
+portfolio > m 3.8e+03 | t 7.575e+02 | y  8.8173e-01
+portfolio > m 4.2e+03 | t 8.267e+02 | y  9.2075e-01
+portfolio > m 5.1e+03 | t 1.014e+03 | y  9.6556e-01
+portfolio > m 5.8e+03 | t 1.157e+03 | y  9.7063e-01
+portfolio > m 1.0e+04 | t 1.976e+03 | y  9.7063e-01 <<< DONE
+Result: it 1.0e+04, t 2.0e+03, a 9.70627e-01
+
+Optimization with "TT" method:
+protes > m 1.0e+01 | t 8.800e+00 | y  1.3971e-02
+protes > m 2.0e+01 | t 9.026e+00 | y  2.5299e-02
+protes > m 3.0e+01 | t 9.237e+00 | y  3.9834e-02
+protes > m 9.0e+01 | t 1.051e+01 | y  4.0295e-02
+protes > m 4.1e+02 | t 1.718e+01 | y  4.4880e-02
+protes > m 5.0e+02 | t 1.906e+01 | y  4.8335e-02
+protes > m 9.8e+02 | t 2.924e+01 | y  7.2190e-02
+protes > m 1.2e+03 | t 3.406e+01 | y  9.5723e-02
+protes > m 4.6e+03 | t 1.054e+02 | y  4.3779e-01
+protes > m 1.0e+04 | t 2.182e+02 | y  4.3779e-01 <<< DONE
+Result: it 1.0e+04, t 2.2e+02, a 4.37792e-01
+
+Optimization with "TT-s" method:
+protes > m 5.0e+00 | t 2.849e+00 | y  2.9826e-02
+protes > m 2.0e+01 | t 3.469e+00 | y  5.8069e-02
+protes > m 3.5e+01 | t 4.116e+00 | y  6.3624e-02
+protes > m 5.8e+02 | t 2.643e+01 | y  6.8156e-02
+protes > m 1.0e+03 | t 4.439e+01 | y  9.6050e-02
+protes > m 3.0e+03 | t 1.269e+02 | y  2.0563e-01
+protes > m 3.4e+03 | t 1.430e+02 | y  5.0814e-01
+protes > m 3.7e+03 | t 1.577e+02 | y  5.5882e-01
+protes > m 3.8e+03 | t 1.618e+02 | y  8.5605e-01
+protes > m 4.0e+03 | t 1.701e+02 | y  8.5670e-01
+protes > m 4.1e+03 | t 1.745e+02 | y  9.0472e-01
+protes > m 4.2e+03 | t 1.770e+02 | y  9.6144e-01
+protes > m 4.3e+03 | t 1.803e+02 | y  9.6793e-01
+protes > m 4.3e+03 | t 1.819e+02 | y  9.7033e-01
+protes > m 4.5e+03 | t 1.900e+02 | y  9.7218e-01
+protes > m 4.5e+03 | t 1.903e+02 | y  9.7241e-01
+protes > m 4.6e+03 | t 1.942e+02 | y  9.7243e-01
+protes > m 4.6e+03 | t 1.955e+02 | y  9.7556e-01
+protes > m 4.8e+03 | t 2.019e+02 | y  9.7577e-01
+protes > m 4.9e+03 | t 2.048e+02 | y  9.7586e-01
+protes > m 4.9e+03 | t 2.066e+02 | y  9.7621e-01
+protes > m 4.9e+03 | t 2.072e+02 | y  9.7639e-01
+protes > m 4.9e+03 | t 2.076e+02 | y  9.7707e-01
+protes > m 5.0e+03 | t 2.087e+02 | y  9.7785e-01
+protes > m 5.1e+03 | t 2.144e+02 | y  9.7787e-01
+protes > m 5.2e+03 | t 2.163e+02 | y  9.7935e-01
+protes > m 5.5e+03 | t 2.312e+02 | y  9.7935e-01
+protes > m 5.8e+03 | t 2.414e+02 | y  9.7948e-01
+protes > m 6.3e+03 | t 2.622e+02 | y  9.7968e-01
+protes > m 7.5e+03 | t 3.151e+02 | y  9.7991e-01
+protes > m 7.6e+03 | t 3.157e+02 | y  9.8077e-01
+protes > m 7.6e+03 | t 3.165e+02 | y  9.8090e-01
+protes > m 7.6e+03 | t 3.167e+02 | y  9.8095e-01
+protes > m 9.9e+03 | t 4.120e+02 | y  9.8095e-01
+protes > m 1.0e+04 | t 4.149e+02 | y  9.8098e-01
+protes > m 1.0e+04 | t 4.166e+02 | y  9.8098e-01 <<< DONE
+Result: it 1.0e+04, t 4.2e+02, a 9.80982e-01
+
+Optimization with "TT-b" method:
+protes > m 2.5e+01 | t 3.458e+00 | y  3.5966e-02
+protes > m 5.0e+01 | t 3.844e+00 | y  3.8041e-02
+protes > m 2.8e+02 | t 7.350e+00 | y  4.0115e-02
+protes > m 3.0e+02 | t 7.734e+00 | y  4.0698e-02
+protes > m 7.2e+02 | t 1.431e+01 | y  4.0770e-02
+protes > m 1.4e+03 | t 2.401e+01 | y  5.6532e-02
+protes > m 2.2e+03 | t 3.712e+01 | y  7.6467e-01
+protes > m 3.5e+03 | t 5.778e+01 | y  8.1168e-01
+protes > m 6.6e+03 | t 1.057e+02 | y  8.9822e-01
+protes > m 1.0e+04 | t 1.577e+02 | y  8.9822e-01 <<< DONE
+Result: it 1.0e+04, t 1.6e+02, a 8.98219e-01
+DONE (  2774.72 sec.) 
+
+
+===================== -------------------------------------
+[2023-04-05 22-05-33] Work is finished (2786.07 sec. total)
+
+
