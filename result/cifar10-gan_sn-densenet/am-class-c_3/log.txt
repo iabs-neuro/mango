@@ -24,3 +24,20 @@ DONE (     1.74 sec.)
 .... Run AM for out class "3" (cat)
 
 Optimization with "NG" method:
+Result: it 1.0e+04, t 6.0e+02, a 9.94419e-01
+
+Optimization with "TT" method:
+Result: it 1.0e+04, t 2.5e+02, a 9.94428e-01
+
+Optimization with "TT-s" method:
+Result: it 1.0e+04, t 4.8e+02, a 9.94592e-01
+
+Optimization with "TT-b" method:
+Result: it 1.0e+04, t 2.0e+02, a 9.92247e-01
+DONE (  1536.59 sec.) 
+
+
+===================== -------------------------------------
+[2023-04-05 16-27-54] Work is finished (1548.09 sec. total)
+
+
