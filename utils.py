@@ -66,13 +66,11 @@ def plot_hist_am(a, title='', fpath=None, size=6, bins=100):
 
 def plot_opt_conv(data, title='', fpath=None, size=7, m_min=None):
     colors = [
-        '#040A1F', '#1144AA', '#09EA48',
-        '#FFF800', '#CE0071', '#FFB300',
-        '#6A1C07', '#A30FCB', '#1C5628']
+        '#040A1F', '#1144AA', '#09EA48', '#CE0071',
+        '#FFF800', '#CE0071', '#FFB300', '#6A1C07', '#A30FCB', '#1C5628']
     marker = [
-        'D', 's', '*',
-        'p', 's', 'o',
-        'p', 'p', 'p']
+        'D', 's', '*', 'p',
+        's', 'o', 'p', 'p', 'p']
 
     fig = plt.figure(figsize=(size, size))
     for i, (meth, info) in enumerate(data.items()):
@@ -81,8 +79,7 @@ def plot_opt_conv(data, title='', fpath=None, size=7, m_min=None):
             ind = np.argmax(x > m_min)
             x = x[ind:]
             y = y[ind:]
-        plt.plot(info[0], info[2], label=meth,
-            marker=marker[i], markersize=8,
+        plt.plot(x, y, label=meth, marker=marker[i], markersize=8,
             linewidth=4 if i==0 else 3, color=colors[i])
 
     plt.legend(loc='best', frameon=True)
