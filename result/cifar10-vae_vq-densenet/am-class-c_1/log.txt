@@ -1,0 +1,29 @@
+[2023-04-05 12-49-06] Computations (cuda)
+===================== -------------------
+Data                : "cifar10"
+Gen                 : "vae_vq"
+Model               : "densenet"
+Task                : "am"
+Kind of task        : "class"
+Target class        : "1"
+=========================================
+
+
+.... Loading "cifar10" dataset
+DONE (     4.56 sec.) 
+
+
+.... Loading "vae_vq" generator
+DONE (     5.10 sec.) 
+
+
+.... Loading "densenet" model
+DONE (     1.77 sec.) 
+
+
+.... Run AM for out class "1" (automobile)
+
+Optimization with "NG" method:
+Result: it 1.0e+04, t 2.0e+03, a 9.82758e-01
+
+Optimization with "TT" method:

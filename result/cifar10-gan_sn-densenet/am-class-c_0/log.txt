@@ -1,0 +1,43 @@
+[2023-04-05 12-23-21] Computations (cuda)
+===================== -------------------
+Data                : "cifar10"
+Gen                 : "gan_sn"
+Model               : "densenet"
+Task                : "am"
+Kind of task        : "class"
+Target class        : "0"
+=========================================
+
+
+.... Loading "cifar10" dataset
+DONE (     4.54 sec.) 
+
+
+.... Loading "gan_sn" generator
+DONE (     5.40 sec.) 
+
+
+.... Loading "densenet" model
+DONE (     1.72 sec.) 
+
+
+.... Run AM for out class "0" (airplane)
+
+Optimization with "NG" method:
+Result: it 1.0e+04, t 6.0e+02, a 9.86847e-01
+
+Optimization with "TT" method:
+Result: it 1.0e+04, t 2.5e+02, a 9.87622e-01
+
+Optimization with "TT-s" method:
+Result: it 1.0e+04, t 4.7e+02, a 9.85819e-01
+
+Optimization with "TT-b" method:
+Result: it 1.0e+04, t 2.0e+02, a 9.85366e-01
+DONE (  1519.06 sec.) 
+
+
+===================== -------------------------------------
+[2023-04-05 12-48-51] Work is finished (1530.73 sec. total)
+
+
