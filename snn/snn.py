@@ -17,13 +17,13 @@ import numpy as np
 import itertools
 
 # dataloader arguments
-batch_size = 100
+batch_size = 256
 data_path = './data'
 
 # Define a transform
 transform = transforms.Compose(
     [transforms.ToTensor(),
-     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
+     transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2471, 0.2435, 0.2616))]
 )
 
 trainset = datasets.CIFAR10(root=data_path, train=True,
@@ -50,7 +50,7 @@ num_inputs = 32*32
 num_outputs = 10
 
 # Temporal Dynamics
-num_steps = 25
+num_steps = 50
 beta = 0.99
 spike_grad = surrogate.fast_sigmoid(slope=2)
 
@@ -121,7 +121,7 @@ print(f"The accuracy of a single batch using an untrained network is {acc*100:.3
 
 
 optimizer = torch.optim.Adam(net.parameters(), lr=0.5e-3, betas=(0.9, 0.999))
-num_epochs = 0
+num_epochs = 40
 loss_hist = []
 test_acc_hist = []
 counter = 0
@@ -173,3 +173,5 @@ for epoch in range(num_epochs):
                 running_loss = 0.0
 
         counter += 1
+        
+torch.save(net.state_dict(), 'trained-snn_bs='+str(batch_size)+'_n-epochs='+str(num_epochs)+'_n-t-steps='+str(num_steps)+'.pt')
