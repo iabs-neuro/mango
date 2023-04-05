@@ -1,0 +1,26 @@
+[2023-04-05 20-05-53] Computations (cuda)
+===================== -------------------
+Data                : "cifar10"
+Gen                 : "vae_vq"
+Model               : "densenet"
+Task                : "am"
+Kind of task        : "class"
+Target class        : "7"
+=========================================
+
+
+.... Loading "cifar10" dataset
+DONE (     4.61 sec.) 
+
+
+.... Loading "vae_vq" generator
+DONE (     4.87 sec.) 
+
+
+.... Loading "densenet" model
+DONE (     1.76 sec.) 
+
+
+.... Run AM for out class "7" (horse)
+
+Optimization with "NG" method:
