@@ -28,75 +28,20 @@ from utils import plot_opt_conv
 
 
 OPTS = {
-    'Portfolio': {
+    'NG': {
         'func': opt_ng_portfolio,
     },
-    'PROTES': {
-        'func': opt_protes,
-    },
-    'TTOpt': {
-        'func': opt_ttopt,
-    },
-    'Q-PROTES-small': {
+    'TT': {
         'func': opt_protes,
         'args': {'k': 10, 'k_top': 1, 'with_qtt': True},
     },
-    'Q-PROTES': {
+    'TT-s': {
         'func': opt_protes,
-        'args': {'with_qtt': True},
+        'args': {'k': 5, 'k_top': 1, 'with_qtt': True},
     },
-    'Q-TTOpt': {
-        'func': opt_ttopt,
-        'args': {'with_qtt': True},
-    },
-    'Q-PROTES-small-2': {
+    'TT-b': {
         'func': opt_protes,
-        'args': {'k': 10, 'k_top': 2, 'with_qtt': True},
-    },
-    'PROTES-small': {
-        'func': opt_protes,
-        'args': {'k': 10, 'k_top': 1},
-    },
-    'PROTES-small-2': {
-        'func': opt_protes,
-        'args': {'k': 10, 'k_top': 2},
-    },
-}
-
-
-OPTS = {
-    'Portfolio': {
-        'func': opt_ng_portfolio,
-    },
-    'PROTES': {
-        'func': opt_protes,
-    },
-    'TTOpt': {
-        'func': opt_ttopt,
-    },
-    'Q-PROTES-small': {
-        'func': opt_protes,
-        'args': {'k': 10, 'k_top': 1, 'with_qtt': True},
-    },
-    'Q-PROTES': {
-        'func': opt_protes,
-        'args': {'with_qtt': True},
-    },
-    'Q-TTOpt': {
-        'func': opt_ttopt,
-        'args': {'with_qtt': True},
-    },
-    'Q-PROTES-small-2': {
-        'func': opt_protes,
-        'args': {'k': 10, 'k_top': 2, 'with_qtt': True},
-    },
-    'PROTES-small': {
-        'func': opt_protes,
-        'args': {'k': 10, 'k_top': 1},
-    },
-    'PROTES-small-2': {
-        'func': opt_protes,
-        'args': {'k': 10, 'k_top': 2},
+        'args': {'k': 25, 'k_top': 5, 'with_qtt': True},
     },
 }
 
@@ -347,7 +292,7 @@ class Manager:
 
         fname = f'img/am_c{c}.png'
         self.data.plot_many(X, titles, fpath=self.get_path(fname),
-            cols=len(X), rows=1, size=4)
+            cols=2, rows=2, size=4)
 
         self.log.res(tpc()-tm)
 

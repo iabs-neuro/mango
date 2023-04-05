@@ -1,4 +1,4 @@
-[2023-04-05 08-44-34] Computations (cuda)
+[2023-04-05 16-28-13] Computations (cuda)
 ===================== -------------------
 Data                : "cifar10"
 Gen                 : "vae_vq"
@@ -10,41 +10,17 @@ Target class        : "4"
 
 
 .... Loading "cifar10" dataset
-DONE (     4.55 sec.) 
+DONE (     4.83 sec.) 
 
 
 .... Loading "vae_vq" generator
-DONE (     5.92 sec.) 
+DONE (     5.30 sec.) 
 
 
 .... Loading "densenet" model
-DONE (     1.74 sec.) 
+DONE (     1.82 sec.) 
 
 
 .... Run AM for out class "4" (deer)
 
-Optimization with "Portfolio" method:
-Result: it 1.0e+04, t 2.0e+03, a 9.80856e-01
-
-Optimization with "PROTES" method:
-Result: it 1.0e+04, t 4.3e+02, a 9.80900e-01
-
-Optimization with "TTOpt" method:
-Result: it 1.0e+04, t 5.5e+00, a 5.74550e-02
-
-Optimization with "Q-PROTES-small" method:
-Result: it 1.0e+04, t 2.1e+02, a 9.85249e-01
-
-Optimization with "Q-PROTES" method:
-Result: it 1.0e+04, t 8.1e+01, a 9.80307e-01
-
-Optimization with "Q-TTOpt" method:
-Result: it 1.0e+04, t 1.0e+01, a 9.85942e-01
-
-Optimization with "Q-PROTES-small-2" method:
-Result: it 1.0e+04, t 3.0e+02, a 9.84894e-01
-
-Optimization with "PROTES-small" method:
-Result: it 1.0e+04, t 1.6e+03, a 9.75532e-01
-
-Optimization with "PROTES-small-2" method:
+Optimization with "NG" method:

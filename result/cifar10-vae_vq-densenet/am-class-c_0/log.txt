@@ -1,4 +1,4 @@
-[2023-04-04 22-24-14] Computations (cuda)
+[2023-04-05 11-37-22] Computations (cuda)
 ===================== -------------------
 Data                : "cifar10"
 Gen                 : "vae_vq"
@@ -10,49 +10,34 @@ Target class        : "0"
 
 
 .... Loading "cifar10" dataset
-DONE (     4.60 sec.) 
+DONE (     4.56 sec.) 
 
 
 .... Loading "vae_vq" generator
-DONE (     4.84 sec.) 
+DONE (     5.09 sec.) 
 
 
 .... Loading "densenet" model
-DONE (     1.77 sec.) 
+DONE (     1.76 sec.) 
 
 
 .... Run AM for out class "0" (airplane)
 
-Optimization with "Portfolio" method:
-Result: it 1.0e+04, t 2.0e+03, a 9.80377e-01
+Optimization with "NG" method:
+Result: it 1.0e+04, t 1.9e+03, a 9.80377e-01
 
-Optimization with "PROTES" method:
-Result: it 1.0e+04, t 4.2e+02, a 9.79812e-01
+Optimization with "TT" method:
+Result: it 1.0e+04, t 2.1e+02, a 9.87170e-01
 
-Optimization with "TTOpt" method:
-Result: it 1.0e+04, t 5.6e+00, a 8.98820e-01
+Optimization with "TT-s" method:
+Result: it 1.0e+04, t 4.1e+02, a 9.83898e-01
 
-Optimization with "Q-PROTES-small" method:
-Result: it 1.0e+04, t 2.2e+02, a 9.87170e-01
-
-Optimization with "Q-PROTES" method:
-Result: it 1.0e+04, t 8.3e+01, a 9.68363e-01
-
-Optimization with "Q-TTOpt" method:
-Result: it 1.0e+04, t 1.1e+01, a 9.80623e-01
-
-Optimization with "Q-PROTES-small-2" method:
-Result: it 1.0e+04, t 3.1e+02, a 9.83352e-01
-
-Optimization with "PROTES-small" method:
-Result: it 1.0e+04, t 1.8e+03, a 9.56558e-01
-
-Optimization with "PROTES-small-2" method:
-Result: it 1.0e+04, t 2.2e+03, a 9.76623e-01
-DONE (  7053.59 sec.) 
+Optimization with "TT-b" method:
+Result: it 1.0e+04, t 1.6e+02, a 9.77815e-01
+DONE (  2729.30 sec.) 
 
 
 ===================== -------------------------------------
-[2023-04-05 00-21-59] Work is finished (7064.81 sec. total)
+[2023-04-05 12-23-03] Work is finished (2740.73 sec. total)
 
 
