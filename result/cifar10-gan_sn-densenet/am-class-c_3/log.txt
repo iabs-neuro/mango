@@ -1,0 +1,26 @@
+[2023-04-05 16-02-06] Computations (cuda)
+===================== -------------------
+Data                : "cifar10"
+Gen                 : "gan_sn"
+Model               : "densenet"
+Task                : "am"
+Kind of task        : "class"
+Target class        : "3"
+=========================================
+
+
+.... Loading "cifar10" dataset
+DONE (     4.68 sec.) 
+
+
+.... Loading "gan_sn" generator
+DONE (     5.06 sec.) 
+
+
+.... Loading "densenet" model
+DONE (     1.74 sec.) 
+
+
+.... Run AM for out class "3" (cat)
+
+Optimization with "NG" method:

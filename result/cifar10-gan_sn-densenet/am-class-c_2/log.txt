@@ -1,7 +1,7 @@
-[2023-04-05 14-02-12] Computations (cuda)
+[2023-04-05 14-49-26] Computations (cuda)
 ===================== -------------------
 Data                : "cifar10"
-Gen                 : "vae_vq"
+Gen                 : "gan_sn"
 Model               : "densenet"
 Task                : "am"
 Kind of task        : "class"
@@ -10,34 +10,34 @@ Target class        : "2"
 
 
 .... Loading "cifar10" dataset
-DONE (     4.55 sec.) 
+DONE (     4.59 sec.) 
 
 
-.... Loading "vae_vq" generator
-DONE (     5.11 sec.) 
+.... Loading "gan_sn" generator
+DONE (     5.08 sec.) 
 
 
 .... Loading "densenet" model
-DONE (     1.77 sec.) 
+DONE (     1.75 sec.) 
 
 
 .... Run AM for out class "2" (bird)
 
 Optimization with "NG" method:
-Result: it 1.0e+04, t 2.0e+03, a 9.76469e-01
+Result: it 1.0e+04, t 5.9e+02, a 9.84455e-01
 
 Optimization with "TT" method:
-Result: it 1.0e+04, t 2.2e+02, a 9.80705e-01
+Result: it 1.0e+04, t 2.5e+02, a 9.83336e-01
 
 Optimization with "TT-s" method:
-Result: it 1.0e+04, t 4.2e+02, a 9.80984e-01
+Result: it 1.0e+04, t 4.8e+02, a 9.83456e-01
 
 Optimization with "TT-b" method:
-Result: it 1.0e+04, t 1.6e+02, a 9.59772e-01
-DONE (  2807.55 sec.) 
+Result: it 1.0e+04, t 2.0e+02, a 9.82577e-01
+DONE (  1526.69 sec.) 
 
 
 ===================== -------------------------------------
-[2023-04-05 14-49-11] Work is finished (2818.99 sec. total)
+[2023-04-05 15-15-04] Work is finished (1538.12 sec. total)
 
 
