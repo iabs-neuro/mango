@@ -110,6 +110,7 @@ class Data:
             x = x.detach().to('cpu').squeeze().numpy()
         if len(x.shape) == 3:
             x = x.transpose(1, 2, 0)
+        x = np.clip(x, 0, 1) if np.mean(x) < 2 else np.clip(x, 0, 255)
 
         if is_new:
             fig = plt.figure(figsize=(size, size))
@@ -131,7 +132,7 @@ class Data:
             if X is None:
                 i = torch.randint(len(self.data_tst), size=(1,)).item()
                 x, c, l = self.get(i, tst=True)
-                title = l
+                title = l[:17] + '...' if len(l) > 20 else l
             else:
                 x = X[j-1].detach().to('cpu')
                 title = titles[j-1] if titles else ''
