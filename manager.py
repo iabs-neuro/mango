@@ -64,8 +64,6 @@ class Manager:
         self.load_data()
         self.load_gen()
         self.load_model()
-        eval(f'self.task_{self.task}_{self.kind}()')
-        self.end()
 
     def end(self):
         self.log.end()
@@ -120,6 +118,10 @@ class Manager:
             self.log.wrn(f'Can not load Model')
         if log:
             self.log('')
+
+    def run(self):
+        eval(f'self.task_{self.task}_{self.kind}()')
+        self.end()
 
     def run_train_cifar10_vae_vq(self, lr=1.E-3, iters=15000, log_step=500):
         from gen.vae_vq_cifar10 import VAEVqCifar10
@@ -453,4 +455,4 @@ def args_build():
 
 
 if __name__ == '__main__':
-    Manager(*args_build())
+    Manager(*args_build()).run()
