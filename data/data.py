@@ -6,25 +6,26 @@ import os
 import torch
 from torch.utils.data import DataLoader
 import torchvision
-import urllib
-import yaml
 
 
-NAMES = ['mnist', 'mnistf', 'cifar10', 'imagenet']
+from .data_opts import DATA_OPTS
 
 
 class Data:
-    def __init__(self, name, batch_trn=256, batch_tst=32, m=None, v=None):
-        if not name in NAMES:
+    def __init__(self, name, batch_trn=256, batch_tst=32, norm_m=None, norm_v=None):
+        if not name in DATA_OPTS.keys():
             raise ValueError(f'Dataset name "{name}" is not supported')
         self.name = name
 
         self.batch_trn = batch_trn
         self.batch_tst = batch_tst
 
-        self.load_shape()
-        self.load_labels()
-        self.load_transform(m, v)
+        self.opts = DATA_OPTS[self.name]
+        self.labels = self.opts['labels']
+        self.sz = self.opts['sz']
+        self.ch = self.opts['ch']
+
+        self.load_transform(norm_m, norm_v)
         self.load_data()
 
     def animate(self, X, titles, fpath=None):
@@ -86,46 +87,34 @@ class Data:
         text += f'Dataset             : {self.name}\n'
         text += f'Number of classes   : {len(self.labels):-10d}\n'
 
-        if self.name != 'imagenet':
+        if self.data_trn is not None:
             text += f'Size of trn dataset : {len(self.data_trn):-10d}\n'
+        if self.data_tst is not None:
             text += f'Size of tst dataset : {len(self.data_tst):-10d}\n'
+        if self.var_trn is not None:
             text += f'Var  of trn dataset : {self.var_trn:-10.4e}\n'
+        if self.var_tst is not None:
             text += f'Var  of tst dataset : {self.var_tst:-10.4e}\n'
 
         return text
 
     def load_data(self):
-        fpath = os.path.dirname(__file__) + '/_data'
-
         self.data_trn = None
         self.data_tst = None
-
         self.dataloader_trn = None
         self.dataloader_tst = None
-
         self.var_trn = None
         self.var_tst = None
 
-        if self.name == 'mnist':
-            func = torchvision.datasets.MNIST
-            load = not os.path.isdir(os.path.join(fpath, 'MNIST'))
+        if self.opts['dataset'] is not None:
+            func = eval(f'torchvision.datasets.{self.opts["dataset"]}')
+            fpath = os.path.dirname(__file__) + '/_data'
+            fpath_check = os.path.join(fpath, self.opts['dataset_check'])
+            download = not os.path.isdir(fpath_check)
 
-        if self.name == 'mnistf':
-            func = torchvision.datasets.FashionMNIST
-            load = not os.path.isdir(os.path.join(fpath, 'FashionMNIST'))
-
-        if self.name == 'cifar10':
-            func = torchvision.datasets.CIFAR10
-            load = not os.path.isdir(os.path.join(fpath, 'cifar-10-batches-py'))
-
-        if self.name == 'imagenet':
-            func = None
-
-        if func:
-            self.data_trn = func(root=fpath, train=True, download=load,
+            self.data_trn = func(root=fpath, train=True, download=download,
                 transform=self.transform)
-
-            self.data_tst = func(root=fpath, train=False, download=load,
+            self.data_tst = func(root=fpath, train=False, download=download,
                 transform=self.transform)
 
             self.dataloader_trn = DataLoader(self.data_trn,
@@ -133,131 +122,51 @@ class Data:
             self.dataloader_tst = DataLoader(self.data_tst,
                 batch_size=self.batch_tst, shuffle=True)
 
-        if self.data_trn is not None:
-            self.var_trn = np.var(self.data_trn.data / 255.0)
-
-        if self.data_tst is not None:
+            self.var_trn = np.var(self.data_trn.data / 255.0) # TODO: check
             self.var_tst = np.var(self.data_tst.data / 255.0)
 
-    def load_labels(self):
-        self.labels = {}
+    def load_transform(self, norm_m=None, norm_v=None):
+        norm_m = norm_m or self.opts.get('norm_m')
+        norm_v = norm_v or self.opts.get('norm_v')
+        if norm_m is not None and norm_v is not None:
+            transform_norm = torchvision.transforms.Normalize(norm_m, norm_v)
+            self.transform_norm = torchvision.transforms.Compose([
+                transform_norm,
+            ])
+        else:
+            transform_norm = None
+            self.transform_norm = None
 
-        if self.name == 'mnist':
-            self.labels = {
-                0: '0',
-                1: '1',
-                2: '2',
-                3: '3',
-                4: '4',
-                5: '5',
-                6: '6',
-                7: '7',
-                8: '8',
-                9: '9',
-            }
-
-        if self.name == 'mnistf':
-            self.labels = {
-                0: 't-shirt',
-                1: 'trouser',
-                2: 'pullover',
-                3: 'dress',
-                4: 'coat',
-                5: 'sandal',
-                6: 'shirt',
-                7: 'sneaker',
-                8: 'bag',
-                9: 'ankle boot',
-            }
-
-        if self.name == 'cifar10':
-            self.labels = {
-                0: 'airplane',
-                1: 'automobile',
-                2: 'bird',
-                3: 'cat',
-                4: 'deer',
-                5: 'dog',
-                6: 'frog',
-                7: 'horse',
-                8: 'ship',
-                9: 'truck',
-            }
-
-        if self.name == 'imagenet':
-            IMAGENET_URL = 'https://gist.githubusercontent.com/yrevar/942d3a0ac09ec9e5eb3a/raw/238f720ff059c1f82f368259d1ca4ffa5dd8f9f5/imagenet1000_clsidx_to_labels.txt'
-            labels = ''
-            for f in urllib.request.urlopen(IMAGENET_URL):
-                labels = labels + f.decode('utf-8')
-
-            self.labels = yaml.safe_load(labels)
-
-    def load_shape(self):
-        self.sz = 0
-        self.ch = 0
-
-        if self.name == 'mnist':
-            self.sz = 28
-            self.ch = 1
-
-        if self.name == 'mnistf':
-            self.sz = 28
-            self.ch = 1
-
-        if self.name == 'cifar10':
-            self.sz = 32
-            self.ch = 3
-
-        if self.name == 'imagenet':
-            self.sz = 224
-            self.ch = 3
-
-    def load_transform(self, m=None, v=None):
         self.transform = torchvision.transforms.ToTensor()
-        self.transform_norm = None
         self.transform_wo_norm = torchvision.transforms.ToTensor()
 
         if self.name == 'cifar10':
-            # TODO: add support for SNN selection (0.5)
-            # (the current m/v are for densenet)
-            m = (0.4914, 0.4822, 0.4465) if m is None else m
-            v = (0.2471, 0.2435, 0.2616) if v is None else v
             self.transform = torchvision.transforms.Compose([
                 torchvision.transforms.ToTensor(),
-                torchvision.transforms.Normalize(m, v),
-            ])
-            self.transform_norm = torchvision.transforms.Compose([
-                torchvision.transforms.Normalize(m, v),
+                transform_norm,
             ])
 
         if self.name == 'imagenet':
-            m = [0.485, 0.456, 0.406] if m is None else m
-            v = [0.229, 0.224, 0.225] if v is None else v
             self.transform = torchvision.transforms.Compose([
-                # torchvision.transforms.Resize(256),
-                torchvision.transforms.CenterCrop(self.sz),
+                #torchvision.transforms.Resize(256),
+                #torchvision.transforms.CenterCrop(self.sz),
                 torchvision.transforms.ToTensor(),
-                torchvision.transforms.Normalize(m, v),
-                # torchvision.transforms.Lambda(lambda x: x[None]),
-            ])
-            self.transform_norm = torchvision.transforms.Compose([
-                torchvision.transforms.Normalize(m, v),
+                transform_norm,
             ])
             self.transform_wo_norm = torchvision.transforms.Compose([
-                torchvision.transforms.CenterCrop(self.sz),
+                #torchvision.transforms.Resize(256),
+                #torchvision.transforms.CenterCrop(self.sz),
                 torchvision.transforms.ToTensor(),
             ])
 
     def plot(self, x, title='', fpath=None, is_new=True):
-        size = 8 if self.name == 'imagenet' else 3
-        cmap = 'hot' if self.name in ['mnist', 'mnistf'] else None
-
         if self.name in ['cifar10']:
             x = self.tensor_to_plot_cifar10(x)
         if self.name in ['imagenet']:
             x = self.tensor_to_plot_imagenet(x)
 
-        return self.plot_base(x, title, size, cmap, fpath, is_new)
+        return self.plot_base(x, title,
+            self.opts['plot_size'], self.opts['plot_cmap'], fpath, is_new)
 
     def plot_base(self, x, title, size=3, cmap='hot', fpath=None, is_new=True):
         if not torch.is_tensor(x):
