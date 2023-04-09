@@ -414,7 +414,7 @@ def args_build():
         type=str,
         help='Name of the used model',
         default=None,
-        choices=['densenet', 'vgg16', 'vgg19']
+        choices=['alexnet', 'densenet', 'vgg16', 'vgg19']
     )
     parser.add_argument('-t', '--task',
         type=str,

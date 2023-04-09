@@ -16,7 +16,7 @@ from utils import load_yandex
 warnings.filterwarnings('ignore', category=UserWarning)
 
 
-NAMES = ['densenet', 'vgg16', 'vgg19']
+NAMES = ['alexnet', 'densenet', 'vgg16', 'vgg19']
 
 
 class Model:
@@ -74,19 +74,9 @@ class Model:
             state_dict = torch.load(fpath, map_location='cpu')
             self.net.load_state_dict(state_dict)
 
-        if self.name == 'vgg16':
+        if self.name in ['alexnet', 'vgg16', 'vgg19']:
             if self.data.name != 'imagenet':
-                msg = 'Model "vgg16" is ready only for "imagenet"'
-                raise NotImplementedError(msg)
-
-            # TODO: set path to data
-
-            self.net = torch.hub.load('pytorch/vision:v0.10.0', self.name,
-                weights=True)
-
-        if self.name == 'vgg19':
-            if self.data.name != 'imagenet':
-                msg = 'Model "vgg19" is ready only for "imagenet"'
+                msg = f'Model "{self.name}" is ready only for "imagenet"'
                 raise NotImplementedError(msg)
 
             # TODO: set path to data
