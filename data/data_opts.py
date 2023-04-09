@@ -1066,7 +1066,7 @@ DATA_OPTS = {
             999: 'toilet tissue, toilet paper, bathroom tissue',
         },
         'repo': 'https://github.com/EliSchwartz/imagenet-sample-images.git',
-        'plot_size': 8,
+        'plot_size': 5,
         'plot_cmap': None,
     },
 }

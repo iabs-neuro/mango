@@ -37,22 +37,16 @@ class Data:
         self._set_transform()
         self._load()
 
-    def animate(self, X, titles, fpath=None):
-        if self.name != 'cifar10':
-            raise NotImplementedError('It works now only for cifar10')
-
+    def animate(self, X, titles, size=3, interval=6, fps=0.7, fpath=None):
         if X is None or len(X) == 0 or len(X) != len(titles):
             print('WRN: invalid data for animation')
             return
 
         def prep(x):
-            x = x.detach().to('cpu')
-            x = torchvision.utils.make_grid(x, nrow=1, normalize=True)
-            x = x.transpose(0, 2).transpose(0, 1)
-            x = x.numpy()
-            return x
+            x = self.tr_norm_inv(x).detach().to('cpu').squeeze().numpy()
+            return x.transpose(1, 2, 0) if len(x.shape) == 3 else x
 
-        fig = plt.figure(figsize=(3, 3))
+        fig = plt.figure(figsize=(size, size))
         ax = fig.add_subplot(111)
         ax.axis('off')
 
@@ -63,10 +57,10 @@ class Data:
             img.set_data(prep(X[k]))
             return (img,)
 
-        anim = FuncAnimation(fig, update, interval=6,
+        anim = FuncAnimation(fig, update, interval=interval,
             frames=len(X), blit=True, repeat=False)
 
-        anim.save(fpath, writer='pillow', fps=0.7) if fpath else anim.show()
+        anim.save(fpath, writer='pillow', fps=fps) if fpath else anim.show()
         plt.close(fig)
 
     def get(self, i=None, tst=False):
@@ -80,16 +74,20 @@ class Data:
 
         return x, c, l
 
-    def img_load(self, fpath, device='cpu', wo_norm=False):
-        img = Image.open(fpath)
-        transform = self.transform_wo_norm if wo_norm else self.transform
-        return transform(img).to(device)
+    def img_load(self, fpath, device='cpu', resize=False, norm=True):
+        x = torchvision.io.read_image(fpath)
+        x = torchvision.transforms.ConvertImageDtype(torch.float32)(x)
+        x = x.expand(self.ch, *x.shape[1:]) if x.shape[0] < self.ch else x
+        x = self.tr_size(x) if resize else x
+        x = self.tr_norm(x) if norm else x
+        return x.to(device)
 
-    def img_rand(self, device='cpu', wo_norm=False):
+    def img_rand(self, device='cpu', norm=True):
         pix = np.random.rand(self.sz, self.sz, self.ch) * 255
         img = Image.fromarray(pix.astype('uint8')).convert('RGB')
-        transform = self.transform_wo_norm if wo_norm else self.transform
-        return transform(img).to(device)
+        x = self.tr_tens(x)
+        x = self.tr_norm(x) if norm else x
+        return x.to(device)
 
     def info(self):
         text = ''
@@ -104,18 +102,14 @@ class Data:
         return text
 
     def plot(self, x, title='', fpath=None, is_new=True):
-        if self.name in ['cifar10']:
-            x = self.tensor_to_plot_cifar10(x)
-        if self.name in ['imagenet']:
-            x = self.tensor_to_plot_imagenet(x)
-
-        return self.plot_base(x, title,
+        return self.plot_base(self.tr_norm_inv(x), title,
             self.opts['plot_size'], self.opts['plot_cmap'], fpath, is_new)
 
     def plot_base(self, x, title, size=3, cmap='hot', fpath=None, is_new=True):
-        if not torch.is_tensor(x):
-            x = torch.tensor(x)
-        x = x.detach().to('cpu').squeeze()
+        if torch.is_tensor(x):
+            x = x.detach().to('cpu').squeeze().numpy()
+        if len(x.shape) == 3:
+            x = x.transpose(1, 2, 0)
 
         if is_new:
             fig = plt.figure(figsize=(size, size))
@@ -191,6 +185,7 @@ class Data:
                 batch_size=self.batch_tst, shuffle=True)
 
         if self.opts.get('repo'):
+            # TODO: add support for trn/tst repo
             if load:
                 load_repo(self.opts['repo'], fpath)
             repo = self.opts['repo'].split('.git')[0].split('/')[-1]
@@ -234,22 +229,30 @@ class Data:
                     x = self.transform(x)
                     return x, self.classes[i]
 
-            self.data_tst = Dataset(self.labels,
-                transform=torchvision.transforms.Compose([
-                    self.tr_sh, self.tr_sz, self.tr_norm]))
+            tr = torchvision.transforms.Compose([self.tr_size, self.tr_norm])
+            self.data_tst = Dataset(self.labels, transform=tr)
 
             self.dataloader_tst = DataLoader(self.data_tst,
                 batch_size=self.batch_tst, shuffle=True)
 
     def _set_transform(self):
-        self.tr_sh = torchvision.transforms.Resize(self.sz)
-        self.tr_sz = torchvision.transforms.CenterCrop(self.sz)
         self.tr_tens = torchvision.transforms.ToTensor()
+        self.tr_size = torchvision.transforms.Compose([
+            torchvision.transforms.Resize(self.sz),
+            torchvision.transforms.CenterCrop(self.sz),
+        ])
 
         if self.norm_m is not None and self.norm_v is not None:
             self.tr_norm = torchvision.transforms.Normalize(
                 self.norm_m, self.norm_v)
+            self.tr_norm_inv = torchvision.transforms.Compose([
+                torchvision.transforms.Normalize(
+                    [0., 0., 0.], 1./np.array(self.norm_v)),
+                torchvision.transforms.Normalize(
+                    -np.array(self.norm_m), [1., 1., 1.]),
+            ])
         else:
             self.tr_norm = lambda x: x
+            self.tr_norm_inv = lambda x: x
 
         self.tr = torchvision.transforms.Compose([self.tr_tens, self.tr_norm])
