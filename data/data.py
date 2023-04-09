@@ -143,26 +143,6 @@ class Data:
         plt.savefig(fpath, bbox_inches='tight') if fpath else plt.show()
         plt.close(fig)
 
-    def tensor_to_plot_cifar10(self, x):
-        """Transform tensor to image for cifar10-like data."""
-        if not torch.is_tensor(x):
-            x = torch.tensor(x)
-        x = x.detach().to('cpu')
-        x = torchvision.utils.make_grid(x, nrow=1, normalize=True)
-        x = x.transpose(0, 2).transpose(0, 1)
-        return x
-
-    def tensor_to_plot_imagenet(self, x):
-        """Transform tensor to image for imagenet-like data."""
-        if torch.is_tensor(x):
-            x = x.detach().to('cpu').numpy()
-        x = x.transpose((1, 2, 0))
-        m = np.array([0.4451, 0.4262, 0.3959])
-        s = np.array([0.2411, 0.2403, 0.2466])
-        x = s * x + m
-        x = np.clip(x, 0, 1)
-        return torch.tensor(x)
-
     def _load(self):
         self.data_trn = None
         self.data_tst = None
