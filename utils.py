@@ -2,6 +2,7 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 import numpy as np
 import requests
+import subprocess
 from time import perf_counter as tpc
 from urllib.parse import urlencode
 
@@ -43,6 +44,12 @@ class Log:
 
     def wrn(self, content=''):
         self(f'WRN ! {content}')
+
+
+def load_repo(url, fpath):
+    # Run web robot:
+    prc = subprocess.getoutput(f'cd {fpath} && git clone {url}')
+    print(prc)
 
 
 def load_yandex(url, fpath):

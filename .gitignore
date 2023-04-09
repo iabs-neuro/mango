@@ -14,3 +14,4 @@ model/_data/
 snn/data/*
 _tmp/
 doc/
+result/_data

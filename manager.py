@@ -88,12 +88,7 @@ class Manager:
             raise ValueError('Name of the dataset is not set')
         if log:
             tm = self.log.prc(f'Loading "{self.data_name}" dataset')
-        try:
-            self.data = Data(self.data_name)
-            if log:
-                self.log.res(tpc()-tm)
-        except Exception as e:
-            self.log.wrn('Can not load Data')
+        self.data = Data(self.data_name)
         if log:
             self.log('')
 
@@ -142,7 +137,7 @@ class Manager:
 
         # Batch of real images to visualize accuracy while training:
         x_real = torch.cat([self.data.get()[0][None] for _ in range(25)])
-        p, l = self.model.run_pred(x_real)
+        p, _, l = self.model.run_pred(x_real)
         titles = [f'{v_l} ({v_p:-7.1e})' for (v_p, v_l) in zip(p, l)]
         self.data.plot_many(x_real, titles, cols=5, rows=5,
             fpath=self.get_path(f'img/images_real.png'))
@@ -179,7 +174,7 @@ class Manager:
                 self.load_gen(log=False)
                 z = self.gen.rev(x_real)
                 x = self.gen.run(z)
-                p, l = self.model.run_pred(x)
+                p, _, l = self.model.run_pred(x)
                 titles = [f'{v_l} ({v_p:-7.1e})' for (v_p, v_l) in zip(p, l)]
                 self.data.plot_many(x, titles, cols=5, rows=5,
                     fpath=self.get_path(f'img/it_{it+1}_gen.png'))
@@ -300,8 +295,7 @@ class Manager:
         name = self.data.name
         tm = self.log.prc(f'Check data for "{name}" dataset')
         self.log(self.data.info())
-        if name != 'imagenet':
-            self.data.plot_many(fpath=self.get_path(f'img/{name}.png'))
+        self.data.plot_many(fpath=self.get_path(f'img/{name}.png'))
         self.log.res(tpc()-tm)
 
     def task_check_gen(self, m1=5, m2=5, rep=5):
@@ -319,7 +313,7 @@ class Manager:
 
             self.log(f'Gen {len(x)} random samples (time/sample {t:-8.2e} sec)')
 
-            p, l = self.model.run_pred(x)
+            p, _, l = self.model.run_pred(x)
             titles = [f'{v_l} ({v_p:-7.1e})' for (v_p, v_l) in zip(p, l)]
 
             self.data.plot_many(x, titles, cols=m1, rows=m2,
@@ -336,7 +330,7 @@ class Manager:
 
         for i in range(rep):
             x = torch.cat([self.data.get()[0][None] for _ in range(m1*m2)])
-            p, l = self.model.run_pred(x)
+            p, _, l = self.model.run_pred(x)
             titles = [f'{v_l} ({v_p:-7.1e})' for (v_p, v_l) in zip(p, l)]
 
             self.data.plot_many(x, titles, cols=m1, rows=m2,
@@ -349,7 +343,7 @@ class Manager:
             self.log(f'Gen {len(x)} embeddings     (time/sample {t:-8.2e} sec)')
 
             x = self.gen.run(z)
-            p, l = self.model.run_pred(x)
+            p, _, l = self.model.run_pred(x)
             titles = [f'{v_l} ({v_p:-7.1e})' for (v_p, v_l) in zip(p, l)]
 
             self.data.plot_many(x, titles, cols=m1, rows=m2,

@@ -3,6 +3,7 @@ from matplotlib.animation import FuncAnimation
 import matplotlib.pyplot as plt
 import numpy as np
 import os
+import sys
 import torch
 from torch.utils.data import DataLoader
 import torchvision
@@ -11,22 +12,30 @@ import torchvision
 from .data_opts import DATA_OPTS
 
 
+sys.path.append('..')
+from utils import load_repo
+
+
 class Data:
-    def __init__(self, name, batch_trn=256, batch_tst=32, norm_m=None, norm_v=None):
+    def __init__(self, name, batch_trn=256, batch_tst=32, norm_m=None, norm_v=None, root='result'):
         if not name in DATA_OPTS.keys():
             raise ValueError(f'Dataset name "{name}" is not supported')
         self.name = name
+        self.opts = DATA_OPTS[self.name]
+        self.root = root
 
         self.batch_trn = batch_trn
         self.batch_tst = batch_tst
 
-        self.opts = DATA_OPTS[self.name]
-        self.labels = self.opts['labels']
+        self.norm_m = norm_m or self.opts.get('norm_m')
+        self.norm_v = norm_v or self.opts.get('norm_v')
+
+        self.labels = self.opts.get('labels', {})
         self.sz = self.opts['sz']
         self.ch = self.opts['ch']
 
-        self.load_transform(norm_m, norm_v)
-        self.load_data()
+        self._set_transform()
+        self._load()
 
     def animate(self, X, titles, fpath=None):
         if self.name != 'cifar10':
@@ -91,73 +100,8 @@ class Data:
             text += f'Size of trn dataset : {len(self.data_trn):-10d}\n'
         if self.data_tst is not None:
             text += f'Size of tst dataset : {len(self.data_tst):-10d}\n'
-        if self.var_trn is not None:
-            text += f'Var  of trn dataset : {self.var_trn:-10.4e}\n'
-        if self.var_tst is not None:
-            text += f'Var  of tst dataset : {self.var_tst:-10.4e}\n'
 
         return text
-
-    def load_data(self):
-        self.data_trn = None
-        self.data_tst = None
-        self.dataloader_trn = None
-        self.dataloader_tst = None
-        self.var_trn = None
-        self.var_tst = None
-
-        if self.opts['dataset'] is not None:
-            func = eval(f'torchvision.datasets.{self.opts["dataset"]}')
-            fpath = os.path.dirname(__file__) + '/_data'
-            fpath_check = os.path.join(fpath, self.opts['dataset_check'])
-            download = not os.path.isdir(fpath_check)
-
-            self.data_trn = func(root=fpath, train=True, download=download,
-                transform=self.transform)
-            self.data_tst = func(root=fpath, train=False, download=download,
-                transform=self.transform)
-
-            self.dataloader_trn = DataLoader(self.data_trn,
-                batch_size=self.batch_trn, shuffle=True)
-            self.dataloader_tst = DataLoader(self.data_tst,
-                batch_size=self.batch_tst, shuffle=True)
-
-            self.var_trn = np.var(self.data_trn.data / 255.0) # TODO: check
-            self.var_tst = np.var(self.data_tst.data / 255.0)
-
-    def load_transform(self, norm_m=None, norm_v=None):
-        norm_m = norm_m or self.opts.get('norm_m')
-        norm_v = norm_v or self.opts.get('norm_v')
-        if norm_m is not None and norm_v is not None:
-            transform_norm = torchvision.transforms.Normalize(norm_m, norm_v)
-            self.transform_norm = torchvision.transforms.Compose([
-                transform_norm,
-            ])
-        else:
-            transform_norm = None
-            self.transform_norm = None
-
-        self.transform = torchvision.transforms.ToTensor()
-        self.transform_wo_norm = torchvision.transforms.ToTensor()
-
-        if self.name == 'cifar10':
-            self.transform = torchvision.transforms.Compose([
-                torchvision.transforms.ToTensor(),
-                transform_norm,
-            ])
-
-        if self.name == 'imagenet':
-            self.transform = torchvision.transforms.Compose([
-                #torchvision.transforms.Resize(256),
-                #torchvision.transforms.CenterCrop(self.sz),
-                torchvision.transforms.ToTensor(),
-                transform_norm,
-            ])
-            self.transform_wo_norm = torchvision.transforms.Compose([
-                #torchvision.transforms.Resize(256),
-                #torchvision.transforms.CenterCrop(self.sz),
-                torchvision.transforms.ToTensor(),
-            ])
 
     def plot(self, x, title='', fpath=None, is_new=True):
         if self.name in ['cifar10']:
@@ -191,8 +135,8 @@ class Data:
 
         for j in range(1, cols * rows + 1):
             if X is None:
-                i = torch.randint(len(self.data_trn), size=(1,)).item()
-                x, c, l = self.get(i)
+                i = torch.randint(len(self.data_tst), size=(1,)).item()
+                x, c, l = self.get(i, tst=True)
                 title = l
             else:
                 x = X[j-1].detach().to('cpu')
@@ -223,3 +167,87 @@ class Data:
         x = s * x + m
         x = np.clip(x, 0, 1)
         return torch.tensor(x)
+
+    def _load(self):
+        self.data_trn = None
+        self.data_tst = None
+        self.dataloader_trn = None
+        self.dataloader_tst = None
+
+        fpath = os.path.join(self.root, '_data', self.name)
+        load = not os.path.isdir(fpath)
+        os.makedirs(fpath, exist_ok=True)
+
+        if self.opts.get('dataset'):
+            func = eval(f'torchvision.datasets.{self.opts["dataset"]}')
+            self.data_trn = func(root=fpath, train=True, download=load,
+                transform=self.tr)
+            self.data_tst = func(root=fpath, train=False, download=load,
+                transform=self.tr)
+
+            self.dataloader_trn = DataLoader(self.data_trn,
+                batch_size=self.batch_trn, shuffle=True)
+            self.dataloader_tst = DataLoader(self.data_tst,
+                batch_size=self.batch_tst, shuffle=True)
+
+        if self.opts.get('repo'):
+            if load:
+                load_repo(self.opts['repo'], fpath)
+            repo = self.opts['repo'].split('.git')[0].split('/')[-1]
+            fpath = os.path.join(fpath, repo)
+
+            class Dataset(torch.utils.data.Dataset):
+                def __init__(self, labels, transform):
+                    self.transform = transform
+                    self.files = []
+                    self.classes = []
+                    l_rep = {}
+                    for f in os.listdir(fpath):
+                        if f.endswith('JPEG'):
+                            l = ' '.join(f.split('.JPEG')[0].split('_')[1:])
+                            l = l.lower().replace("'", '`')
+                            c = None
+                            is_found = False
+                            for c_real, l_real in labels.items():
+                                if l == l_real.split(',')[0]:
+                                    if is_found:
+                                        l_rep[l] = 0
+                                    else:
+                                        if not l in l_rep or l_rep[l] == 1:
+                                            c = c_real
+                                            is_found = True
+                                        else:
+                                            l_rep[l] = 1
+
+                            self.files.append(os.path.join(fpath, f))
+                            self.classes.append(l)
+
+                def __len__(self):
+                    return len(self.classes)
+
+                def __getitem__(self, i):
+                    x = torchvision.io.read_image(self.files[i])
+                    print(self.files[i], x.shape)
+                    x = torchvision.transforms.ConvertImageDtype(
+                        torch.float32)(x)
+                    if x.shape[0] == 1:
+                        x = x.expand(3, *x.shape[1:])
+                    x = self.transform(x)
+                    return x, self.classes[i]
+
+            self.data_tst = Dataset(self.labels,
+                transform=torchvision.transforms.Compose([
+                    self.tr_sh, self.tr_sz, self.tr_norm]))
+
+    def _set_transform(self):
+        self.tr_sh = torchvision.transforms.Resize(self.sz)
+        self.tr_sz = torchvision.transforms.CenterCrop(self.sz)
+        self.tr_tens = torchvision.transforms.ToTensor()
+
+        if self.norm_m is not None and self.norm_v is not None:
+            self.tr_norm = torchvision.transforms.Normalize(
+                self.norm_m, self.norm_v)
+        else:
+            self.tr_norm = lambda x: x
+
+        self.tr = torchvision.transforms.Compose([self.tr_tens, self.tr_norm])

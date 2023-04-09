@@ -22,7 +22,7 @@ Software product for analysis of activations and specialization in artificial ne
 
 4. Install dependencies:
     ```bash
-    pip install jupyterlab "jax[cpu]==0.4.3" optax teneva==0.13.2 ttopt==0.5.0 protes==0.2.3 torch torchvision snntorch scikit-image matplotlib PyYAML nevergrad requests urllib3
+    pip install jupyterlab "jax[cpu]==0.4.3" optax teneva==0.13.2 ttopt==0.5.0 protes==0.2.3 torch torchvision snntorch scikit-image matplotlib nevergrad requests urllib3
     ```
 
 5. Delete virtual environment at the end of the work (optional):
