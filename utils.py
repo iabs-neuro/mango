@@ -100,5 +100,11 @@ def plot_opt_conv(data, title='', fpath=None, size=7, m_min=None):
     plt.close(fig)
 
 
+def sort_matrix(A, asc=True):
+    I = np.unravel_index(np.argsort(A, axis=None), A.shape)
+    I = [(I[0][k], I[1][k]) for k in range(A.size)]
+    return I[::-1] if asc else I
+
+
 def sort_vector(a, asc=True):
     return sorted(zip(range(len(a)), a), key=lambda item: item[1], reverse=asc)
