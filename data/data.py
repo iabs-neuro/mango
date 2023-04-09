@@ -220,14 +220,13 @@ class Data:
                                             l_rep[l] = 1
 
                             self.files.append(os.path.join(fpath, f))
-                            self.classes.append(l)
+                            self.classes.append(c)
 
                 def __len__(self):
                     return len(self.classes)
 
                 def __getitem__(self, i):
                     x = torchvision.io.read_image(self.files[i])
-                    print(self.files[i], x.shape)
                     x = torchvision.transforms.ConvertImageDtype(
                         torch.float32)(x)
                     if x.shape[0] == 1:
@@ -238,6 +237,9 @@ class Data:
             self.data_tst = Dataset(self.labels,
                 transform=torchvision.transforms.Compose([
                     self.tr_sh, self.tr_sz, self.tr_norm]))
+
+            self.dataloader_tst = DataLoader(self.data_tst,
+                batch_size=self.batch_tst, shuffle=True)
 
     def _set_transform(self):
         self.tr_sh = torchvision.transforms.Resize(self.sz)

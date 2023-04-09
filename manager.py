@@ -358,6 +358,10 @@ class Manager:
         for mod in ['trn', 'tst']:
             if mod == 'trn' and not trn or mod == 'tst' and not tst:
                 continue
+            if mod == 'trn' and self.data.data_trn is None:
+                continue
+            if mod == 'tst' and self.data.data_tst is None:
+                continue
 
             t = tpc()
             n, m, a = self.model.check(tst=(mod == 'tst'),
@@ -410,7 +414,7 @@ def args_build():
         type=str,
         help='Name of the used model',
         default=None,
-        choices=['densenet', 'vgg16']
+        choices=['densenet', 'vgg16', 'vgg19']
     )
     parser.add_argument('-t', '--task',
         type=str,

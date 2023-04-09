@@ -41,7 +41,11 @@ Supported combinations of the `manager.py` script arguments:
 
 - `python manager.py --data cifar10 --task check --kind data`
 
+- `python manager.py --data imagenet --task check --kind data`
+
 - `python manager.py --data cifar10 --model densenet --task check --kind model --c 0`
+
+- `python manager.py --data imagenet --model vgg19 --task check --kind model --c 0`
 
 - `python manager.py --data cifar10 --gen vae_vq --model densenet --task train --kind gen`
 

@@ -16,7 +16,7 @@ from utils import load_yandex
 warnings.filterwarnings('ignore', category=UserWarning)
 
 
-NAMES = ['densenet', 'vgg16']
+NAMES = ['densenet', 'vgg16', 'vgg19']
 
 
 class Model:
@@ -84,6 +84,16 @@ class Model:
             self.net = torch.hub.load('pytorch/vision:v0.10.0', self.name,
                 weights=True)
 
+        if self.name == 'vgg19':
+            if self.data.name != 'imagenet':
+                msg = 'Model "vgg19" is ready only for "imagenet"'
+                raise NotImplementedError(msg)
+
+            # TODO: set path to data
+
+            self.net = torch.hub.load('pytorch/vision:v0.10.0', self.name,
+                weights=True)
+
         if self.net is not None:
             self.net.to(self.device)
             self.net.eval()
@@ -131,7 +141,7 @@ class Model:
         p = np.array([y[i, c_cur] for i, c_cur in enumerate(c)])
         l = [self.data.labels[c_cur] for c_cur in c]
 
-        return (p, l) if is_batch else (p[0], l[0])
+        return (p, c, l) if is_batch else (p[0], c[0], l[0])
 
     def run_target(self, x):
         is_batch = len(x.shape) == 4
