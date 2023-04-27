@@ -13,12 +13,12 @@ Software product for analysis of activations and specialization in artificial ne
 
 2. Create a virtual environment:
     ```bash
-    conda create --name neural_tensor_train python=3.8 -y
+    conda create --name mango python=3.8 -y
     ```
 
 3. Activate the environment:
     ```bash
-    conda activate neural_tensor_train
+    conda activate mango
     ```
 
 4. Install dependencies:
@@ -28,7 +28,7 @@ Software product for analysis of activations and specialization in artificial ne
 
 5. Delete virtual environment at the end of the work (optional):
     ```bash
-    conda activate && conda remove --name neural_tensor_train --all -y
+    conda activate && conda remove --name mango --all -y
     ```
 
 
