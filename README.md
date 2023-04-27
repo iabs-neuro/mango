@@ -1,9 +1,10 @@
-# neural_tensor_train
+# MANGO - MAximization of Neural activity via non-Gradient Optimization
 
 
 ## Description
 
-Software product for analysis of activations and specialization in artificial neural networks (ANN), including spiking neural networks (SNN), with the tensor train (TT) decomposition.
+Software product for analysis of activations and specialization in artificial neural networks (ANN), including spiking neural networks (SNN), with the tensor train (TT) decomposition and other gradient-free methods.
+
 
 
 ## Installation
