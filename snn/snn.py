@@ -50,21 +50,21 @@ num_inputs = 32*32
 num_outputs = 10
 
 # Temporal Dynamics
-num_steps = 50
+num_steps = 200
 beta = 0.99
-spike_grad = surrogate.fast_sigmoid(slope=2)
+spike_grad = surrogate.fast_sigmoid(slope=5)
 
 net = nn.Sequential(nn.Conv2d(3, 200, 5),
                     nn.MaxPool2d(2, 2),
-                    snn.Leaky(beta=beta, spike_grad=spike_grad, init_hidden=True),
+                    snn.Leaky(beta=beta, spike_grad=spike_grad, init_hidden=True, reset_mechanism="zero"),
                     nn.Conv2d(200, 64, 5),
                     nn.MaxPool2d(2, 2),
-                    snn.Leaky(beta=beta, spike_grad=spike_grad, init_hidden=True),
+                    snn.Leaky(beta=beta, spike_grad=spike_grad, init_hidden=True, reset_mechanism="zero"),
                     nn.Flatten(),
                     nn.Linear(64*5*5, 100),
-                    snn.Leaky(beta=beta, spike_grad=spike_grad, init_hidden=True),
+                    snn.Leaky(beta=beta, spike_grad=spike_grad, init_hidden=True, reset_mechanism="zero"),
                     nn.Linear(100, 10),
-                    snn.Leaky(beta=beta, spike_grad=spike_grad, init_hidden=True, output=True)
+                    snn.Leaky(beta=beta, spike_grad=spike_grad, init_hidden=True, output=True, reset_mechanism="zero")
                     ).to(device)
 
 # Load the network onto CUDA if available
@@ -109,6 +109,7 @@ spk_rec, mem_rec = forward_pass(net, num_steps, data)
 
 loss_fn = SF.ce_rate_loss()
 loss_val = loss_fn(spk_rec, targets)
+regularizer = SF.reg.l1_rate_sparsity(Lambda=1e-05)
 
 print(f"The loss from an untrained network is {loss_val.item():.3f}")
 
@@ -121,7 +122,7 @@ print(f"The accuracy of a single batch using an untrained network is {acc*100:.3
 
 
 optimizer = torch.optim.Adam(net.parameters(), lr=0.5e-3, betas=(0.9, 0.999))
-num_epochs = 40
+num_epochs = 2000
 loss_hist = []
 test_acc_hist = []
 counter = 0
@@ -144,7 +145,7 @@ for epoch in range(num_epochs):
         spk_rec, _ = forward_pass(net, num_steps, data)
 
         # initialize the loss & sum over time
-        loss_val = loss_fn(spk_rec, targets)
+        loss_val = loss_fn(spk_rec, targets) + regularizer(spk_rec)
 
         # Gradient calculation + weight update
         optimizer.zero_grad()
