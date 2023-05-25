@@ -17,7 +17,7 @@ import numpy as np
 import itertools
 
 # dataloader arguments
-batch_size = 80
+batch_size = 64
 data_path = './data'
 
 # Define a transform
@@ -50,8 +50,8 @@ num_inputs = 32*32
 num_outputs = 10
 
 # Temporal Dynamics
-num_steps = 100
-beta = 0.99
+num_steps = 50
+beta = 0.9
 spike_grad = surrogate.fast_sigmoid(slope=5)
 
 net = nn.Sequential(nn.Conv2d(3, 200, 5),
