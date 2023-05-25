@@ -396,6 +396,7 @@ class Manager:
 
 def args_build():
     parser = argparse.ArgumentParser(
+        #TODO: refactor this
         prog='neural_tensor_train',
         description='Software product for analysis of activations and specialization in artificial neural networks, including spiking neural networks, with the tensor train decomposition.',
         epilog = '© Andrei Chertkov'

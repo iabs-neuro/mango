@@ -17,7 +17,7 @@ import numpy as np
 import itertools
 
 # dataloader arguments
-batch_size = 256
+batch_size = 80
 data_path = './data'
 
 # Define a transform
@@ -50,7 +50,7 @@ num_inputs = 32*32
 num_outputs = 10
 
 # Temporal Dynamics
-num_steps = 200
+num_steps = 100
 beta = 0.99
 spike_grad = surrogate.fast_sigmoid(slope=5)
 
@@ -120,9 +120,8 @@ print(f"The total accuracy on the test set is: {test_acc * 100:.2f}%")
 print(f"The accuracy of a single batch using an untrained network is {acc*100:.3f}%")
 
 
-
 optimizer = torch.optim.Adam(net.parameters(), lr=0.5e-3, betas=(0.9, 0.999))
-num_epochs = 2000
+num_epochs = 10
 loss_hist = []
 test_acc_hist = []
 counter = 0
