@@ -20,6 +20,12 @@ import itertools
 batch_size = 64
 data_path = './data'
 
+def print_and_log(inp):
+    print(inp)
+    with open(f'log_bs={batch_size}_num-steps={num_steps}'+'.txt', 'a') as f:
+        f.write(inp+'\n')
+        f.close()
+
 # Define a transform
 transform = transforms.Compose(
     [transforms.ToTensor(),
@@ -111,13 +117,13 @@ loss_fn = SF.ce_rate_loss()
 loss_val = loss_fn(spk_rec, targets)
 regularizer = SF.reg.l1_rate_sparsity(Lambda=1e-05)
 
-print(f"The loss from an untrained network is {loss_val.item():.3f}")
+print_and_log(f"The loss from an untrained network is {loss_val.item():.3f}")
 
 acc = SF.accuracy_rate(spk_rec, targets)
 test_acc = batch_accuracy(testloader, net, num_steps)
 
-print(f"The total accuracy on the test set is: {test_acc * 100:.2f}%")
-print(f"The accuracy of a single batch using an untrained network is {acc*100:.3f}%")
+print_and_log(f"The total accuracy on the test set is: {test_acc * 100:.2f}%")
+print_and_log(f"The accuracy of a single batch using an untrained network is {acc*100:.3f}%")
 
 
 optimizer = torch.optim.Adam(net.parameters(), lr=0.5e-3, betas=(0.9, 0.999))
@@ -131,9 +137,9 @@ checkpoint = 200
 # Outer training loop
 for epoch in range(num_epochs):
 
-    print('*********************************')
-    print(f'             epoch {epoch + 1}         ')
-    print('*********************************')
+    print_and_log('*********************************')
+    print_and_log(f'             epoch {epoch + 1}         ')
+    print_and_log('*********************************')
     # Training loop
     for data, targets in iter(trainloader):
         data = data.to(device)
@@ -164,10 +170,10 @@ for epoch in range(num_epochs):
                 # Test set forward pass
                 test_acc = batch_accuracy(testloader, net, num_steps)
                 # train_acc = batch_accuracy(trainloader, net, num_steps)
-                print(f'Iteration {counter + 1}:')
+                print_and_log(f'Iteration {counter + 1}:')
                 # print(f'Train Acc: {train_acc * 100:.2f}%')
-                print(f'Train loss: {running_loss / checkpoint:.3f}')
-                print(f'Test Acc: {test_acc * 100:.2f}%\n')
+                print_and_log(f'Train loss: {running_loss / checkpoint:.3f}')
+                print_and_log(f'Test Acc: {test_acc * 100:.2f}%\n')
 
                 # test_acc_hist.append(test_acc.item())
                 running_loss = 0.0
