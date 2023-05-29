@@ -17,12 +17,12 @@ import numpy as np
 import itertools
 
 # dataloader arguments
-batch_size = 64
+batch_size = 100
 data_path = './data'
 
 def print_and_log(inp):
     print(inp)
-    with open(f'log_bs={batch_size}_num-steps={num_steps}'+'.txt', 'a') as f:
+    with open(f'log_bs={batch_size}_num-steps={num_steps}_reg={reg_strength}'+'.txt', 'a') as f:
         f.write(inp+'\n')
         f.close()
 
@@ -56,9 +56,12 @@ num_inputs = 32*32
 num_outputs = 10
 
 # Temporal Dynamics
-num_steps = 50
+num_steps = 100
 beta = 0.9
 spike_grad = surrogate.fast_sigmoid(slope=5)
+
+#Regularization
+reg_strength = 5e-06
 
 net = nn.Sequential(nn.Conv2d(3, 200, 5),
                     nn.MaxPool2d(2, 2),
@@ -115,7 +118,7 @@ spk_rec, mem_rec = forward_pass(net, num_steps, data)
 
 loss_fn = SF.ce_rate_loss()
 loss_val = loss_fn(spk_rec, targets)
-regularizer = SF.reg.l1_rate_sparsity(Lambda=1e-05)
+regularizer = SF.reg.l1_rate_sparsity(Lambda=reg_strength)
 
 print_and_log(f"The loss from an untrained network is {loss_val.item():.3f}")
 
