@@ -17,12 +17,12 @@ import numpy as np
 import itertools
 
 # dataloader arguments
-batch_size = 100
+batch_size = 128
 data_path = './data'
 
 def print_and_log(inp):
     print(inp)
-    with open(f'log_bs={batch_size}_num-steps={num_steps}_reg={reg_strength}'+'.txt', 'a') as f:
+    with open(f'log_bs={batch_size}_num-steps={num_steps}_reg-strength={reg_strength}'+'.txt', 'a') as f:
         f.write(inp+'\n')
         f.close()
 
@@ -56,12 +56,12 @@ num_inputs = 32*32
 num_outputs = 10
 
 # Temporal Dynamics
-num_steps = 100
+num_steps = 128
 beta = 0.9
 spike_grad = surrogate.fast_sigmoid(slope=5)
 
 #Regularization
-reg_strength = 5e-06
+reg_strength = 1e-6
 
 net = nn.Sequential(nn.Conv2d(3, 200, 5),
                     nn.MaxPool2d(2, 2),
@@ -183,4 +183,4 @@ for epoch in range(num_epochs):
 
         counter += 1
         
-torch.save(net.state_dict(), 'trained-snn_bs='+str(batch_size)+'_n-epochs='+str(num_epochs)+'_n-t-steps='+str(num_steps)+'.pt')
+torch.save(net.state_dict(), f'trained-snn_bs={batch_size}_n-epochs={num_epochs}_n-t-steps={num_steps}_reg-strength={reg_strength}.pt')
