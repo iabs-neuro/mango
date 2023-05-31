@@ -22,7 +22,7 @@ data_path = './data'
 
 def print_and_log(inp):
     print(inp)
-    with open(f'log_bs={batch_size}_num-steps={num_steps}_reg-strength={reg_strength}'+'.txt', 'a') as f:
+    with open(f'log_bs={batch_size}_num-steps={num_steps}_reg-strength={reg_strength}_n-epochs={num_epochs}'+'.txt', 'a') as f:
         f.write(inp+'\n')
         f.close()
 
@@ -61,7 +61,10 @@ beta = 0.9
 spike_grad = surrogate.fast_sigmoid(slope=5)
 
 #Regularization
-reg_strength = 1e-6
+reg_strength = 2e-6
+
+# Number of training epochs (iterations)
+num_epochs = 40
 
 net = nn.Sequential(nn.Conv2d(3, 200, 5),
                     nn.MaxPool2d(2, 2),
@@ -130,7 +133,6 @@ print_and_log(f"The accuracy of a single batch using an untrained network is {ac
 
 
 optimizer = torch.optim.Adam(net.parameters(), lr=0.5e-3, betas=(0.9, 0.999))
-num_epochs = 10
 loss_hist = []
 test_acc_hist = []
 counter = 0
