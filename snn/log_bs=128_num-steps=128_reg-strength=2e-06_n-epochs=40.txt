@@ -1,0 +1,2 @@
+The loss from an untrained network is 2.308
+The loss from an untrained network is 2.306

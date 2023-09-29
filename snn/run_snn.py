@@ -10,7 +10,7 @@ from snntorch import utils
 from snntorch import surrogate
 
 # dataloader arguments
-batch_size = 10
+batch_size = 30
 data_path = './data'
 
 # Define a transform
@@ -87,18 +87,22 @@ def get_neuron_activity(net, data, spiking_layer_index=-1, neuron_id = 5):
     all_leaky_layers[spiking_layer_index].register_forward_hook(hook_func)
 
     spk_rec, mem_rec, hook_rec = forward_pass(net, num_steps, data)
-    X = hook_rec.cpu().detach().numpy().mean(axis = 0)
+    X = hook_rec.cpu().detach().numpy()#.mean(axis=0)
+
+    print(X.shape)
 
     return X[:, neuron_id]
 
 
 # load pretrained model
-model_state = torch.load(os.path.join('pretrained', 'snn cifar10 70% acc.pt'), map_location = device)
+#mname = 'snn cifar10 70% acc.pt'
+mname = 'trained_snn_bs=128_n_epochs=20_n_t_steps=128_reg_strength=2_1e_06.pt'
+model_state = torch.load(os.path.join('pretrained', mname), map_location = device)
 
 net.load_state_dict(model_state)
 net.eval()
 
 data, targets = next(iter(trainloader))
 data = data.to(device)
-activation_on_batch = get_neuron_activity(net, data, spiking_layer_index=-1, neuron_id = 5)
+activation_on_batch = get_neuron_activity(net, data, spiking_layer_index=-3, neuron_id = 5)
 print(activation_on_batch)

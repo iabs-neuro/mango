@@ -61,7 +61,7 @@ beta = 0.9
 spike_grad = surrogate.fast_sigmoid(slope=5)
 
 #Regularization
-reg_strength = 2e-6
+reg_strength = 2e-10
 
 # Number of training epochs (iterations)
 num_epochs = 40
@@ -119,7 +119,7 @@ data = data.to(device)
 targets = targets.to(device)
 spk_rec, mem_rec = forward_pass(net, num_steps, data)
 
-loss_fn = SF.ce_rate_loss()
+loss_fn = SF.mse_count_loss(correct_rate=0.2, incorrect_rate=0)
 loss_val = loss_fn(spk_rec, targets)
 regularizer = SF.reg.l1_rate_sparsity(Lambda=reg_strength)
 
