@@ -10,10 +10,10 @@ import torch.nn.functional as F
 import torch.optim as optim
 
 
-from data.data_main import Data
-from gen.gen_main import Gen
-from model.model_main import Model
-from opt import opt_ng_portfolio, opt_protes, opt_ttopt
+from .data.data_main import Data
+from .gen.gen_main import Gen
+from .model.model_main import Model
+from .opt import opt_ng_portfolio, opt_protes, opt_ttopt
 from .utils import Log, plot_hist_am, plot_opt_conv
 
 
