@@ -16,12 +16,12 @@ config.update('jax_enable_x64', True)
 os.environ['JAX_PLATFORM_NAME'] = 'cpu'
 
 
-from .data import Data
-from .gen import Gen
-from .model import Model
+from data.data import Data
+from gen.gen import Gen
+from model.model import Model
 from .opt import opt_ng_portfolio, opt_protes
 from opt import opt_ttopt
-from utils import Log, plot_hist_am, plot_opt_conv
+from .utils import Log, plot_hist_am, plot_opt_conv
 
 
 OPTS = {
