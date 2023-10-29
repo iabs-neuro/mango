@@ -2,10 +2,10 @@ import torch
 import torch.nn as nn
 
 
-from .stuff.modules.layers import SNLinear
-from .stuff.modules.resblocks import DBlock
-from .stuff.modules.resblocks import DBlockOptimized
-from .stuff import sngan_base
+from .components.modules.layers import SNLinear
+from .components.modules.resblocks import DBlock
+from .components.modules.resblocks import DBlockOptimized
+from .components import sngan_base
 
 
 class GANSnDscCifar10(sngan_base.SNGANBaseDiscriminator):

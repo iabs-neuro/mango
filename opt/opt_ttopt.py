@@ -32,11 +32,17 @@ def opt_ttopt(func, d, n, m, rank=5, with_qtt=False, is_max=True):
 
         return y
 
-    tto = TTOpt(func_wrap, d=d,
-        n=None if with_qtt else n,
-        p=2 if with_qtt else None,
-        q=q if with_qtt else None,
-        evals=m, name='ttopt', is_func=False, with_cache=True, with_log=True)
+    tto = TTOpt(func_wrap,
+                d=d,
+                n=None if with_qtt else n,
+                p=2 if with_qtt else None,
+                q=q if with_qtt else None,
+                evals=m,
+                name='ttopt',
+                is_func=False,
+                with_cache=True,
+                with_log=True)
+
     if is_max:
         tto.maximize(rmax=rank)
     else:

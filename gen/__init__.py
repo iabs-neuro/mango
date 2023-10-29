@@ -1,1 +1,1 @@
-from .gen import Gen
+from .gen_main import Gen

@@ -1,7 +1,6 @@
 import nevergrad as ng
 import numpy as np
 from time import perf_counter as tpc
-import torch
 
 
 def opt_ng_portfolio(func, d, n, m, is_max=True):

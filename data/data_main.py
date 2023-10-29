@@ -11,9 +11,8 @@ import torchvision
 
 from .data_opts import DATA_OPTS
 
-
 sys.path.append('..')
-from utils import load_repo
+from ..utils import load_repo
 
 
 class Data:
@@ -37,7 +36,7 @@ class Data:
         self._set_transform()
         self._load()
 
-    def animate(self, X, titles, size=3, interval=6, fps=0.7, fpath=None):
+    def animate(self, X, titles, size=3, interval=6, fps=10, fpath=None):
         if X is None or len(X) == 0 or len(X) != len(titles):
             print('WRN: invalid data for animation')
             return
@@ -60,7 +59,7 @@ class Data:
         anim = FuncAnimation(fig, update, interval=interval,
             frames=len(X), blit=True, repeat=False)
 
-        anim.save(fpath, writer='pillow', fps=fps) if fpath else anim.show()
+        anim.save(fpath, writer='pillow', fps=fps) if fpath else anim.new_frame_seq()
         plt.close(fig)
 
     def get(self, i=None, tst=False):
@@ -85,7 +84,7 @@ class Data:
     def img_rand(self, device='cpu', norm=True):
         pix = np.random.rand(self.sz, self.sz, self.ch) * 255
         img = Image.fromarray(pix.astype('uint8')).convert('RGB')
-        x = self.tr_tens(x)
+        x = self.tr_tens(img)
         x = self.tr_norm(x) if norm else x
         return x.to(device)
 

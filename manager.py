@@ -10,19 +10,17 @@ import torch.nn.functional as F
 import torch.optim as optim
 
 
+from data.data_main import Data
+from gen.gen_main import Gen
+from model.model_main import Model
+from opt import opt_ng_portfolio, opt_protes, opt_ttopt
+from .utils import Log, plot_hist_am, plot_opt_conv
+
+
 # For faster and more accurate PROTES optimizer:
 from jax.config import config
 config.update('jax_enable_x64', True)
 os.environ['JAX_PLATFORM_NAME'] = 'cpu'
-
-
-from .data.data import Data
-from .gen.gen import Gen
-from .model.model import Model
-from .opt import opt_ng_portfolio, opt_protes
-from opt import opt_ttopt
-from .utils import Log, plot_hist_am, plot_opt_conv
-
 
 OPTS = {
     'NG': {

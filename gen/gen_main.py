@@ -3,9 +3,9 @@ import os
 import torch
 
 
-from .gan_sn_cifar10 import GANSnCifar10
-from .gan_sn_cifar10 import GANSnDscCifar10
-from .vae_vq_cifar10 import VAEVqCifar10
+from .gan_sn_cifar10.gan_sn_cifar10 import GANSnCifar10
+from .gan_sn_cifar10.gan_sn_dsc_cifar10 import GANSnDscCifar10
+from .vae_vq_cifar10.vae_vq_cifar10 import VAEVqCifar10
 
 
 NAMES = ['gan_sn', 'vae_vq']
@@ -13,7 +13,7 @@ NAMES = ['gan_sn', 'vae_vq']
 
 class Gen:
     def __init__(self, name, data, device='cpu'):
-        if not name in NAMES:
+        if name not in NAMES:
             raise ValueError(f'Gen name "{name}" is not supported')
         self.name = name
 
@@ -23,7 +23,7 @@ class Gen:
         self.load()
 
     def ind_to_poi(self, z_index):
-        z = np.array(z_index) # From jax to numpy
+        z = np.array(z_index)  # From jax to numpy
         if not self.discrete:
             z = z / (self.n - 1) * (self.lim_b - self.lim_a) + self.lim_a
         z = torch.tensor(z, dtype=torch.float32, device=self.device)

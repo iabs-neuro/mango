@@ -1,34 +1,25 @@
 from contextlib import nullcontext
 import numpy as np
 import os
-import sys
 import torch
 import warnings
 
-
 from .densenet_cifar10 import DensenetCifar10
-
-
-sys.path.append('..')
-from utils import load_yandex
-
+from ..utils import load_yandex
 
 # To remove the warning of torchvision:
 warnings.filterwarnings('ignore', category=UserWarning)
-
 
 NAMES = ['alexnet', 'densenet', 'vgg16', 'vgg19']
 
 
 class Model:
     def __init__(self, name, data, device='cpu'):
-        if not name in NAMES:
+        if name not in NAMES:
             raise ValueError(f'Model name "{name}" is not supported')
         self.name = name
-
         self.data = data
         self.device = device
-
         self.probs = torch.nn.Softmax(dim=1)
 
         self.load()
@@ -49,8 +40,8 @@ class Model:
             x = np.transpose(x, (2, 0, 1)) / 255
             x = torch.tensor(x, dtype=torch.float32, device=self.device)
             x = self.data.tr_norm(x).unsqueeze(0)
-            #x = np.expand_dims(x, 0)
-            #x = np.array(x)
+            # x = np.expand_dims(x, 0)
+            # x = np.array(x)
             x = torch.tensor(x, dtype=torch.float32, device=self.device)
             return x
 
@@ -73,7 +64,7 @@ class Model:
         ig = []
         for _ in range(iters):
             x0 = 255. * np.random.random(x.shape)
-            xs = [x0 + 1.*i/steps * (x-x0) for i in range(steps)]
+            xs = [x0 + 1. * i / steps * (x - x0) for i in range(steps)]
 
             g = [_iter(x_) for x_ in xs]
             g_avg = np.average(g, axis=0)
@@ -106,7 +97,7 @@ class Model:
         for x, l_real in data:
             x = x.to(self.device)
             y = self.run(x)
-            l = torch.argmax(y, axis=1).detach().to('cpu')
+            l = torch.argmax(y, dim=1).detach().to('cpu')
             m += (l == l_real).sum()
             n += len(l)
 
@@ -147,7 +138,7 @@ class Model:
             # TODO: set path to data
 
             self.net = torch.hub.load('pytorch/vision:v0.10.0', self.name,
-                weights=True)
+                                      weights=True)
 
         if self.net is not None:
             self.net.to(self.device)
@@ -208,7 +199,7 @@ class Model:
         if self.c is not None:
             res = y[:, self.c]
         else:
-            res = self.hook.a # TODO: check (self.hook.a_mean ?)
+            res = self.hook.a  # TODO: check (self.hook.a_mean ?)
 
         return res if is_batch else res[0]
 
@@ -229,7 +220,7 @@ class Model:
         self.l = l
         self.f = int(f)
 
-        layer = self.net.features[l] # TODO: check
+        layer = self.net.features[l]  # TODO: check
         if type(layer) != torch.nn.modules.conv.Conv2d:
             raise ValueError('We work only with conv layers')
         if self.f < 0 or self.f >= layer.out_channels:

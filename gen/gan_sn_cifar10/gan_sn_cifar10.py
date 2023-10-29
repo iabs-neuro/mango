@@ -2,8 +2,8 @@ import torch
 import torch.nn as nn
 
 
-from .stuff.modules.resblocks import GBlock
-from .stuff import sngan_base
+from .components.modules.resblocks import GBlock
+from .components import sngan_base
 
 
 class GANSnCifar10(sngan_base.SNGANBaseGenerator):
