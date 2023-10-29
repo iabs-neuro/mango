@@ -95,6 +95,7 @@ class Manager:
             if log:
                 self.log.res(tpc()-tm)
         except Exception as e:
+            self.log(e)
             self.log.wrn('Can not load Gen')
         if log:
             self.log('')
@@ -110,6 +111,7 @@ class Manager:
             if log:
                 self.log.res(tpc()-tm)
         except Exception as e:
+            self.log(e)
             self.log.wrn(f'Can not load Model')
         if log:
             self.log('')
@@ -425,22 +427,22 @@ def args_build():
     parser.add_argument('-k', '--kind',
         type=str,
         help='Kind of the task',
-        default=None,
+        default=None
     )
     parser.add_argument('-c', '--c',
         type=str,
         help='Target class',
-        default=None,
+        default=None
     )
     parser.add_argument('-l', '--l',
         type=str,
         help='Target layer',
-        default=None,
+        default=0
     )
     parser.add_argument('-f', '--f',
         type=str,
         help='Target filter',
-        default=None,
+        default=0
     )
     parser.add_argument('-r', '--root',
         type=str,
