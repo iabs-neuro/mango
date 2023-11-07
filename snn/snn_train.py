@@ -4,27 +4,13 @@ from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 
 import snntorch as snn
-from snntorch import spikeplot as splt
-from snntorch import spikegen
 from snntorch import surrogate
 from snntorch import functional as SF
 from snntorch import utils
 
-import torch.nn.functional as F
-
-import matplotlib.pyplot as plt
-import numpy as np
-import itertools
-
 # dataloader arguments
 batch_size = 128
 data_path = './data'
-
-def print_and_log(inp):
-    print(inp)
-    with open(f'log_bs={batch_size}_num-steps={num_steps}_reg-strength={reg_strength}_n-epochs={num_epochs}'+'.txt', 'a') as f:
-        f.write(inp+'\n')
-        f.close()
 
 # Define a transform
 transform = transforms.Compose(
@@ -32,20 +18,27 @@ transform = transforms.Compose(
      transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2471, 0.2435, 0.2616))]
 )
 
-trainset = datasets.CIFAR10(root=data_path, train=True,
-                            download=True, transform=transform)
-trainloader = DataLoader(trainset, batch_size=batch_size,
-                         shuffle=True, num_workers=0)
+trainset = datasets.CIFAR10(root=data_path,
+                            train=True,
+                            download=True,
+                            transform=transform)
 
-testset = datasets.CIFAR10(root=data_path, train=False,
-                           download=True, transform=transform)
-testloader = DataLoader(testset, batch_size=batch_size,
-                        shuffle=True, num_workers=0)
+trainloader = DataLoader(trainset,
+                         batch_size=batch_size,
+                         shuffle=True,
+                         num_workers=0)
 
-classes = ('plane', 'car', 'bird', 'cat',
-           'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
+testset = datasets.CIFAR10(root=data_path,
+                           train=False,
+                           download=True,
+                           transform=transform)
 
+testloader = DataLoader(testset,
+                        batch_size=batch_size,
+                        shuffle=True,
+                        num_workers=0)
 
+classes = ('plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
 
 dtype = torch.float
 device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
@@ -58,13 +51,32 @@ num_outputs = 10
 # Temporal Dynamics
 num_steps = 128
 beta = 0.9
-spike_grad = surrogate.fast_sigmoid(slope=5)
+sigmoid_slope = 10
+spike_grad = surrogate.fast_sigmoid(slope=sigmoid_slope)
 
-#Regularization
-reg_strength = 2e-10
+# Regularization
+reg_strength = 0.0
+correct_rate = 0.2
 
 # Number of training epochs (iterations)
 num_epochs = 40
+
+hyperparams = {
+    'num_steps': num_steps,
+    'beta': beta,
+    'l1_rate_sparsity': reg_strength,
+    'correct_rate': correct_rate,
+    'num_epochs': num_epochs
+}
+
+def print_and_log(inp, hyperparams=hyperparams):
+    print(inp)
+    logname = "".join([f'{hname}={hparam}_' for (hname, hparam) in hyperparams.items()])
+    logname = 'log_' + logname[:-1] + '.txt'
+    with open(logname, 'a') as f:
+        f.write(inp+'\n')
+        f.close()
+
 
 net = nn.Sequential(nn.Conv2d(3, 200, 5),
                     nn.MaxPool2d(2, 2),
@@ -119,7 +131,7 @@ data = data.to(device)
 targets = targets.to(device)
 spk_rec, mem_rec = forward_pass(net, num_steps, data)
 
-loss_fn = SF.mse_count_loss(correct_rate=0.2, incorrect_rate=0)
+loss_fn = SF.mse_count_loss(correct_rate=correct_rate, incorrect_rate=0)
 loss_val = loss_fn(spk_rec, targets)
 regularizer = SF.reg.l1_rate_sparsity(Lambda=reg_strength)
 
@@ -184,5 +196,6 @@ for epoch in range(num_epochs):
                 running_loss = 0.0
 
         counter += 1
-        
-torch.save(net.state_dict(), f'trained-snn_bs={batch_size}_n-epochs={num_epochs}_n-t-steps={num_steps}_reg-strength={reg_strength}.pt')
+
+netname = "trained-snn_".join([f'{hname}={hparam}_' for (hname, hparam) in hyperparams.items()])
+torch.save(net.state_dict(), netname[:-1] + '.pt')

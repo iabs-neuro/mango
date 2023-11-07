@@ -117,7 +117,9 @@ class Manager:
             self.log('')
 
     def run(self):
-        eval(f'self.task_{self.task}_{self.kind}()')
+        method_name = f'task_{self.task}_{self.kind}'
+        method = getattr(Manager, method_name)
+        method()
         self.end()
 
     def run_train_cifar10_vae_vq(self, lr=1.E-3, iters=15000, log_step=500):
@@ -138,8 +140,11 @@ class Manager:
         x_real = torch.cat([self.data.get()[0][None] for _ in range(25)])
         p, _, l = self.model.run_pred(x_real)
         titles = [f'{v_l} ({v_p:-7.1e})' for (v_p, v_l) in zip(p, l)]
-        self.data.plot_many(x_real, titles, cols=5, rows=5,
-            fpath=self.get_path(f'img/images_real.png'))
+        self.data.plot_many(x_real,
+                            titles,
+                            cols=5,
+                            rows=5,
+                            fpath=self.get_path(f'img/images_real.png'))
 
         for it in range(iters):
             (data, _) = next(iter(self.data.dataloader_trn))
@@ -175,8 +180,11 @@ class Manager:
                 x = self.gen.run(z)
                 p, _, l = self.model.run_pred(x)
                 titles = [f'{v_l} ({v_p:-7.1e})' for (v_p, v_l) in zip(p, l)]
-                self.data.plot_many(x, titles, cols=5, rows=5,
-                    fpath=self.get_path(f'img/it_{it+1}_gen.png'))
+                self.data.plot_many(x,
+                                    titles,
+                                    cols=5,
+                                    rows=5,
+                                    fpath=self.get_path(f'img/it_{it+1}_gen.png'))
 
         self.log.res(tpc()-tm)
 
@@ -246,8 +254,8 @@ class Manager:
             t = tpc()
             func = opt.get('func')
             args = opt.get('args', {})
-            z_index, _, hist = func(self.func_ind, self.gen.d, self.gen.n, m,
-                is_max=True, **args)
+            z_index, _, hist = func(self.func_ind, self.gen.d, self.gen.n, m, is_max=True, **args)
+
             res[meth] = hist
             t = tpc() - t
             z = self.gen.ind_to_poi(z_index)
@@ -267,6 +275,7 @@ class Manager:
                 title_opt = f'{meth} : p={e_opt:-9.3e}; m={m_opt:-7.1e}'
                 X_opt.append(x_opt)
                 titles_opt.append(title_opt)
+
             fname = f'gif/am_c{c}_{meth}.gif'
             self.data.animate(X_opt, titles_opt, fpath=self.get_path(fname))
 
@@ -279,14 +288,17 @@ class Manager:
         title = f'Activation maximization for class "{c}" ({l})'
         plot_opt_conv(res, title, self.get_path('img/opt_conv.png'))
         try:
-            plot_opt_conv(res, title, self.get_path('img/opt_conv_short.png'),
-                m_min=m_short)
+            plot_opt_conv(res, title, self.get_path('img/opt_conv_short.png'), m_min=m_short)
         except Exception as e:
             pass
 
         fname = f'img/am_c{c}.png'
-        self.data.plot_many(X, titles, fpath=self.get_path(fname),
-            cols=2, rows=2, size=4)
+        self.data.plot_many(X,
+                            titles,
+                            fpath=self.get_path(fname),
+                            cols=2,
+                            rows=2,
+                            size=4)
 
         self.log.res(tpc()-tm)
 
@@ -315,8 +327,11 @@ class Manager:
             p, _, l = self.model.run_pred(x)
             titles = [f'{v_l} ({v_p:-7.1e})' for (v_p, v_l) in zip(p, l)]
 
-            self.data.plot_many(x, titles, cols=m1, rows=m2,
-                fpath=self.get_path(f'img/{i+1}_gen_rand.png'))
+            self.data.plot_many(x,
+                                titles,
+                                cols=m1,
+                                rows=m2,
+                                fpath=self.get_path(f'img/{i+1}_gen_rand.png'))
 
         self.log.res(tpc()-tm)
 
@@ -332,8 +347,11 @@ class Manager:
             p, _, l = self.model.run_pred(x)
             titles = [f'{v_l} ({v_p:-7.1e})' for (v_p, v_l) in zip(p, l)]
 
-            self.data.plot_many(x, titles, cols=m1, rows=m2,
-                fpath=self.get_path(f'img/{i+1}_gen_real.png'))
+            self.data.plot_many(x,
+                                titles,
+                                cols=m1,
+                                rows=m2,
+                                fpath=self.get_path(f'img/{i+1}_gen_real.png'))
 
             t = tpc()
             z = self.gen.rev(x)
@@ -345,8 +363,11 @@ class Manager:
             p, _, l = self.model.run_pred(x)
             titles = [f'{v_l} ({v_p:-7.1e})' for (v_p, v_l) in zip(p, l)]
 
-            self.data.plot_many(x, titles, cols=m1, rows=m2,
-                fpath=self.get_path(f'img/{i+1}_gen_repr.png'))
+            self.data.plot_many(x,
+                                titles,
+                                cols=m1,
+                                rows=m2,
+                                fpath=self.get_path(f'img/{i+1}_gen_repr.png'))
 
         self.log.res(tpc()-tm)
 
@@ -364,7 +385,8 @@ class Manager:
 
             t = tpc()
             n, m, a = self.model.check(tst=(mod == 'tst'),
-                only_one_batch=(str(self.device)=='cpu'), with_target=True)
+                                       only_one_batch=(str(self.device) == 'cpu'),
+                                       with_target=True)
             t = tpc() - t
 
             text = f'Accuracy   {mod}'
@@ -416,7 +438,7 @@ def args_build():
         type=str,
         help='Name of the used model',
         default=None,
-        choices=['alexnet', 'densenet', 'vgg16', 'vgg19']
+        choices=['alexnet', 'densenet', 'vgg16', 'vgg19', 'snn']
     )
     parser.add_argument('-t', '--task',
         type=str,
