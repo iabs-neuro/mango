@@ -4,8 +4,8 @@ import os
 import torch
 import warnings
 
-from model.densenet_cifar10.densenet_cifar10 import DensenetCifar10
-from model.snn_cifar10.snn_cifar10 import SNNCifar10
+from ..model.densenet_cifar10.densenet_cifar10 import DensenetCifar10
+from ..model.snn_cifar10.snn_cifar10 import SNNCifar10
 from ..utils import load_yandex
 
 # To remove the warning of torchvision:
