@@ -4,14 +4,14 @@ import os
 import torch
 import warnings
 
-from .densenet_cifar10 import DensenetCifar10
+from model.densenet_cifar10.densenet_cifar10 import DensenetCifar10
+from model.snn_cifar10.snn_cifar10 import SNNCifar10
 from ..utils import load_yandex
 
 # To remove the warning of torchvision:
 warnings.filterwarnings('ignore', category=UserWarning)
 
-NAMES = ['alexnet', 'densenet', 'vgg16', 'vgg19']
-
+NAMES = ['alexnet', 'densenet', 'vgg16', 'vgg19', 'snn']
 
 class Model:
     def __init__(self, name, data, device='cpu'):
@@ -111,7 +111,7 @@ class Model:
         return (n, m, np.array(a)) if with_target else (n, m)
 
     def load(self):
-        fpath = os.path.dirname(__file__) + '/_data'
+        fpath = os.path.dirname(__file__)
         os.makedirs(fpath, exist_ok=True)
 
         self.net = None
@@ -121,7 +121,7 @@ class Model:
                 msg = 'Model "densenet" is ready only for "cifar10"'
                 raise NotImplementedError(msg)
 
-            fpath += '/densenet_cifar10.pt'
+            fpath = os.path.join(fpath, 'densenet_cifar10', 'densenet_cifar10.pt')
 
             if not os.path.isfile(fpath):
                 load_yandex('https://disk.yandex.ru/d/ndE0NjV2G72skw', fpath)
@@ -139,6 +139,17 @@ class Model:
 
             self.net = torch.hub.load('pytorch/vision:v0.10.0', self.name,
                                       weights=True)
+
+        if self.name == 'snn':
+            if self.data.name != 'cifar10':
+                msg = f'Model "{self.name}" is ready only for "cifar10"'
+                raise NotImplementedError(msg)
+
+            fpath = os.path.join(fpath, 'snn_cifar10', 'snn_cifar10.pt')
+
+            self.net = SNNCifar10()
+            state_dict = torch.load(fpath, map_location='cpu')
+            self.net.load_state_dict(state_dict)
 
         if self.net is not None:
             self.net.to(self.device)
@@ -221,10 +232,13 @@ class Model:
         self.f = int(f)
 
         layer = self.net.features[l]  # TODO: check
+        '''
         if type(layer) != torch.nn.modules.conv.Conv2d:
             raise ValueError('We work only with conv layers')
+        
         if self.f < 0 or self.f >= layer.out_channels:
             raise ValueError('Filter does not exist')
+        '''
         self.hook = AmHook(self.f)
         self.hook_hand = [layer.register_forward_hook(self.hook.forward)]
 
