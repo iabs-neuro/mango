@@ -96,7 +96,7 @@ class Manager:
                 self.log.res(tpc()-tm)
 
         except Exception as e:
-            self.log(e)
+            self.log(repr(e))
             self.log.wrn('Can not load Gen')
 
         if log:
@@ -114,7 +114,7 @@ class Manager:
                 self.log.res(tpc()-tm)
 
         except Exception as e:
-            self.log(e)
+            self.log(repr(e))
             self.log.wrn(f'Can not load Model')
 
         if log:
@@ -294,6 +294,8 @@ class Manager:
         try:
             plot_opt_conv(res, title, self.get_path('img/opt_conv_short.png'), m_min=m_short)
         except Exception as e:
+            self.log(repr(e))
+            self.log.wrn(f'Activation Maximization failed')
             pass
 
         fname = f'img/am_c{cls}.png'
