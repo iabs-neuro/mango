@@ -1,5 +1,4 @@
 import torch
-import torch.nn as nn
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 
@@ -80,8 +79,8 @@ def print_and_log(inp, hyperparams=hyperparams):
         f.close()
 
 
-snn = SNNCifar10(beta=beta, sigmoid_slope=sigmoid_slope, num_steps=num_steps, num_classes=len(classes))
-net = snn.features()
+msnn = SNNCifar10(beta=beta, sigmoid_slope=sigmoid_slope, num_steps=num_steps, num_classes=len(classes))
+net = msnn.features
 # Load the network onto CUDA if available
 net.to(device)
 
@@ -107,7 +106,7 @@ def batch_accuracy(loader, model):
 data, targets = next(iter(trainloader))
 data = data.to(device)
 targets = targets.to(device)
-spk_rec, mem_rec = snn.forward(data)
+spk_rec, mem_rec = msnn.forward(data)
 
 loss_fn = SF.mse_count_loss(correct_rate=correct_rate, incorrect_rate=0)
 loss_val = loss_fn(spk_rec, targets)
@@ -116,13 +115,13 @@ regularizer = SF.reg.l1_rate_sparsity(Lambda=reg_strength)
 print_and_log(f"The loss from an untrained network is {loss_val.item():.3f}")
 
 acc = SF.accuracy_rate(spk_rec, targets)
-test_acc = batch_accuracy(testloader, snn)
+test_acc = batch_accuracy(testloader, msnn)
 
 print_and_log(f"The total accuracy on the test set is: {test_acc * 100:.2f}%")
 print_and_log(f"The accuracy of a single batch using an untrained network is {acc*100:.3f}%")
 
 
-optimizer = torch.optim.Adam(snn.features.parameters(), lr=0.5e-3, betas=(0.9, 0.999))
+optimizer = torch.optim.Adam(net.parameters(), lr=0.5e-3, betas=(0.9, 0.999))
 loss_hist = []
 test_acc_hist = []
 counter = 0
@@ -142,7 +141,7 @@ for epoch in range(num_epochs):
 
         # forward pass
         net.train()
-        spk_rec, _ = snn.forward(data)
+        spk_rec, _ = msnn.forward(data)
 
         # initialize the loss & sum over time
         loss_val = loss_fn(spk_rec, targets) + regularizer(spk_rec)
@@ -163,8 +162,8 @@ for epoch in range(num_epochs):
                 net.eval()
 
                 # Test set forward pass
-                test_acc = batch_accuracy(testloader, net, num_steps)
-                # train_acc = batch_accuracy(trainloader, net, num_steps)
+                test_acc = batch_accuracy(testloader, msnn)
+                # train_acc = batch_accuracy(trainloader, msnn)
                 print_and_log(f'Iteration {counter + 1}:')
                 # print(f'Train Acc: {train_acc * 100:.2f}%')
                 print_and_log(f'Train loss: {running_loss / checkpoint:.3f}')
