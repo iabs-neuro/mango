@@ -122,8 +122,9 @@ class Manager:
 
     def run(self):
         method_name = f'task_{self.task}_{self.kind}'
-        method = getattr(Manager, method_name)
-        method(self)
+        getattr(self, method_name)()
+        #method = getattr(self, method_name)
+        #method()
         self.end()
 
     def run_train_cifar10_vae_vq(self, lr=1.E-3, iters=15000, log_step=500):
