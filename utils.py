@@ -12,8 +12,14 @@ class Log:
         self.fpath = fpath
         self.is_new = True
 
-    def __call__(self, text):
+    def __call__(self, log_input):
+        if not isinstance(log_input, str):
+            text = repr(log_input)
+        else:
+            text = log_input
+
         print(text)
+
         if self.fpath:
             with open(self.fpath, 'w' if self.is_new else 'a') as f:
                 f.write(text + '\n')
