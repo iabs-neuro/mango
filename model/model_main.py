@@ -161,7 +161,7 @@ class Model:
         return float(a)
 
     def has_target(self):
-        return self.c is not None or (self.l is not None and self.f is not None)
+        return self.cls is not None or (self.layer is not None and self.unit is not None)
 
     def rmv_target(self, is_init=False):
         if is_init:
@@ -171,13 +171,13 @@ class Model:
                 self.hook_hand.pop().remove()
             self.hook_hand = []
 
-        self.c = None
-        self.l = None
-        self.f = None
+        self.cls = None
+        self.layer = None
+        self.unit = None
         self.hook = None
 
     def run(self, x, with_grad=False):
-        is_batch = len(x.shape) == 4
+        is_batch = (len(x.shape) == 4)
         if not is_batch:
             x = x[None]
         x = x.to(self.device)
@@ -207,31 +207,36 @@ class Model:
 
         y = self.run(x)
 
-        if self.c is not None:
-            res = y[:, self.c]
+        if self.cls is not None:
+            res = y[:, self.cls]
         else:
             res = self.hook.a  # TODO: check (self.hook.a_mean ?)
 
         return res if is_batch else res[0]
 
-    def set_target(self, c=None, l=None, f=None):
-        self.c = None
-        self.l = None
-        self.f = None
+    def set_target(self, cls=None, layer=None, unit=None, logger=None):
+        self.cls = None
+        self.layer = None
+        self.unit = None
 
-        if c is not None:
-            if l is not None or f is not None:
-                raise ValueError('Please, set class or later+filter, not both')
-            self.c = int(c)
+        if cls is not None:
+            if layer is not None or unit is not None:
+                raise ValueError('Please, set class or layer + unit, not both')
+
+            self.cls = int(cls)
+            if logger is not None:
+                logger(f'Target set for class {self.cls}')
             return
 
-        if l is None or f is None:
+        if layer is None or unit is None:
             return
 
-        self.l = l
-        self.f = int(f)
+        self.layer = self.net.features[int(layer)]
+        self.unit = int(unit)
 
-        layer = self.net.features[l]  # TODO: check
+        if logger is not None:
+            logger(f'Target set for layer {self.layer} and unit {self.unit}')
+        #layer2 = self.net.features[layer]  # TODO: check
         '''
         if type(layer) != torch.nn.modules.conv.Conv2d:
             raise ValueError('We work only with conv layers')
@@ -239,16 +244,16 @@ class Model:
         if self.f < 0 or self.f >= layer.out_channels:
             raise ValueError('Filter does not exist')
         '''
-        self.hook = AmHook(self.f)
+        self.hook = AmHook(self.unit)
         self.hook_hand = [layer.register_forward_hook(self.hook.forward)]
 
 
 class AmHook():
-    def __init__(self, filter):
-        self.filter = filter
+    def __init__(self, unit):
+        self.unit = unit
         self.a = None
         self.a_mean = None
 
     def forward(self, module, inp, out):
-        self.a = torch.mean(out[:, self.filter, :, :], dim=(1, 2))
-        self.a_mean = torch.mean(out[:, self.filter, :, :])
+        self.a = torch.mean(out[:, self.unit, :, :], dim=(1, 2))
+        self.a_mean = torch.mean(out[:, self.unit, :, :])

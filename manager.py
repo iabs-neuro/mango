@@ -13,7 +13,7 @@ import torch.optim as optim
 from .data.data_main import Data
 from .gen.gen_main import Gen
 from .model.model_main import Model
-from .opt import opt_ng_portfolio, opt_protes, opt_ttopt
+from .opt import opt_ng_portfolio, opt_protes
 from .utils import Log, plot_hist_am, plot_opt_conv
 
 
@@ -42,15 +42,15 @@ OPTS = {
 
 
 class Manager:
-    def __init__(self, data, gen, model, task, kind, c=None, l=None, f=None, root='result', device=None):
+    def __init__(self, data, gen, model, task, kind, cls=None, layer=None, unit=None, root='result', device=None):
         self.data_name = data
         self.gen_name = gen
         self.model_name = model
         self.task = task
         self.kind = kind
-        self.c = c
-        self.l = l
-        self.f = f
+        self.cls = cls
+        self.layer = layer
+        self.unit = unit
 
         self.set_rand()
         self.set_device(device)
@@ -88,31 +88,35 @@ class Manager:
     def load_gen(self, log=True):
         if self.gen_name is None:
             return
-        if log:
-            tm = self.log.prc(f'Loading "{self.gen_name}" generator')
+
         try:
             self.gen = Gen(self.gen_name, self.data, self.device)
             if log:
+                tm = self.log.prc(f'Loading "{self.gen_name}" generator')
                 self.log.res(tpc()-tm)
+
         except Exception as e:
             self.log(e)
             self.log.wrn('Can not load Gen')
+
         if log:
             self.log('')
 
     def load_model(self, log=True):
         if self.model_name is None:
             return
-        if log:
-            tm = self.log.prc(f'Loading "{self.model_name}" model')
+
         try:
             self.model = Model(self.model_name, self.data, self.device)
-            self.model.set_target(self.c, self.l, self.f)
+            self.model.set_target(self.cls, self.layer, self.unit)
             if log:
+                tm = self.log.prc(f'Loading "{self.model_name}" model')
                 self.log.res(tpc()-tm)
+
         except Exception as e:
             self.log(e)
             self.log.wrn(f'Can not load Model')
+
         if log:
             self.log('')
 
@@ -209,12 +213,12 @@ class Manager:
             info += f'Task                : "{self.task}"\n'
         if self.kind:
             info += f'Kind of task        : "{self.kind}"\n'
-        if self.c:
-            info += f'Target class        : "{self.c}"\n'
-        if self.l:
-            info += f'Target layer        : "{self.l}"\n'
-        if self.f:
-            info += f'Target filter       : "{self.f}"\n'
+        if self.cls:
+            info += f'Target class        : "{self.cls}"\n'
+        if self.layer:
+            info += f'Target layer        : "{self.layer}"\n'
+        if self.unit:
+            info += f'Target filter       : "{self.unit}"\n'
 
         self.log = Log(self.get_path(f'log.txt'))
         self.log.title(f'Computations ({self.device})', info)
@@ -227,12 +231,12 @@ class Manager:
             fbase += f'-{self.model_name}'
 
         ftask = f'{self.task}-{self.kind}'
-        if self.c:
-            ftask += f'-c_{self.c}'
-        if self.l:
-            ftask += f'-l_{self.l}'
-        if self.f:
-            ftask += f'-f_{self.f}'
+        if self.cls is not None:
+            ftask += f'-c_{self.cls}'
+        if self.layer is not None:
+            ftask += f'-l_{self.layer}'
+        if self.unit is not None:
+            ftask += f'-f_{self.unit}'
 
         self.path = os.path.join(root, fbase, ftask)
 
@@ -242,14 +246,14 @@ class Manager:
         torch.manual_seed(seed)
 
     def task_am_class(self, m=1.E+4, m_short=1.E+3):
-        c = int(self.c)
-        l = self.data.labels[c]
-        tm = self.log.prc(f'Run AM for out class "{c}" ({l})')
+        cls = int(self.cls)
+        label = self.data.labels[cls]
+        tm = self.log.prc(f'Run AM for out class "{cls}" ({label})')
 
         X, titles, res = [], [], {}
         for meth, opt in OPTS.items():
             self.log(f'\nOptimization with "{meth}" method:')
-            self.model.set_target(c=c)
+            self.model.set_target(cls=cls, logger=self.log)
 
             t = tpc()
             func = opt.get('func')
@@ -264,7 +268,7 @@ class Manager:
 
             self.log(f'Result: it {m:-7.1e}, t {t:-7.1e}, a {a:-11.5e}')
 
-            title = f'{meth} : p={a:-9.3e} ({l})'
+            title = f'{meth} : p={a:-9.3e} ({label})'
             X.append(x)
             titles.append(title)
 
@@ -276,7 +280,7 @@ class Manager:
                 X_opt.append(x_opt)
                 titles_opt.append(title_opt)
 
-            fname = f'gif/am_c{c}_{meth}.gif'
+            fname = f'gif/am_c{cls}_{meth}.gif'
             self.data.animate(X_opt, titles_opt, fpath=self.get_path(fname))
 
         with open(self.get_path('dat/opt_info.pkl'), 'wb') as f:
@@ -285,14 +289,14 @@ class Manager:
         # with open(self.get_path('dat/opt_info.pkl'), 'rb') as f:
         #     res = pickle.load(f)
 
-        title = f'Activation maximization for class "{c}" ({l})'
+        title = f'Activation maximization for class "{cls}" ({label})'
         plot_opt_conv(res, title, self.get_path('img/opt_conv.png'))
         try:
             plot_opt_conv(res, title, self.get_path('img/opt_conv_short.png'), m_min=m_short)
         except Exception as e:
             pass
 
-        fname = f'img/am_c{c}.png'
+        fname = f'img/am_c{cls}.png'
         self.data.plot_many(X,
                             titles,
                             fpath=self.get_path(fname),
@@ -415,7 +419,6 @@ class Manager:
 
 def args_build():
     parser = argparse.ArgumentParser(
-        #TODO: refactor this
         prog='MANGO',
         description='Software product for analysis of activations and specialization in '\
                     'artificial neural networks (ANN), including spiking neural networks (SNN) '\
@@ -451,19 +454,19 @@ def args_build():
         help='Kind of the task',
         default=None
     )
-    parser.add_argument('-c', '--c',
+    parser.add_argument('-c', '--cls',
         type=str,
         help='Target class',
         default=None
     )
-    parser.add_argument('-l', '--l',
+    parser.add_argument('-l', '--layer',
         type=str,
         help='Target layer',
         default=0
     )
-    parser.add_argument('-f', '--f',
+    parser.add_argument('-u', '--unit',
         type=str,
-        help='Target filter',
+        help='Target unit',
         default=0
     )
     parser.add_argument('-r', '--root',
@@ -473,7 +476,7 @@ def args_build():
     )
 
     args = parser.parse_args()
-    return args.data, args.gen, args.model, args.task, args.kind, args.c, args.l, args.f, args.root
+    return args.data, args.gen, args.model, args.task, args.kind, args.cls, args.layer, args.unit, args.root
 
 
 if __name__ == '__main__':
