@@ -236,6 +236,7 @@ class Model:
 
         if logger is not None:
             logger(f'Target set for layer {self.layer} and unit {self.unit}')
+
         #layer2 = self.net.features[layer]  # TODO: check
         '''
         if type(layer) != torch.nn.modules.conv.Conv2d:

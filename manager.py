@@ -108,7 +108,7 @@ class Manager:
 
         try:
             self.model = Model(self.model_name, self.data, self.device)
-            self.model.set_target(self.cls, self.layer, self.unit)
+            self.model.set_target(cls=self.cls, layer=self.layer, unit=self.unit, logger=self.log)
             if log:
                 tm = self.log.prc(f'Loading "{self.model_name}" model')
                 self.log.res(tpc()-tm)
