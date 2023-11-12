@@ -245,7 +245,7 @@ class Model:
             raise ValueError('Filter does not exist')
         '''
         self.hook = AmHook(self.unit)
-        self.hook_hand = [layer.register_forward_hook(self.hook.forward)]
+        self.hook_hand = [self.layer.register_forward_hook(self.hook.forward)]
 
 
 class AmHook():

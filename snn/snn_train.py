@@ -8,6 +8,8 @@ from snntorch import surrogate
 from snntorch import functional as SF
 from snntorch import utils
 
+from ..model.snn_cifar10.snn_cifar10 import SNNCifar10
+
 # dataloader arguments
 batch_size = 128
 data_path = './data'
@@ -78,47 +80,23 @@ def print_and_log(inp, hyperparams=hyperparams):
         f.close()
 
 
-net = nn.Sequential(nn.Conv2d(3, 200, 5),
-                    nn.MaxPool2d(2, 2),
-                    snn.Leaky(beta=beta, spike_grad=spike_grad, init_hidden=True, reset_mechanism="zero"),
-                    nn.Conv2d(200, 64, 5),
-                    nn.MaxPool2d(2, 2),
-                    snn.Leaky(beta=beta, spike_grad=spike_grad, init_hidden=True, reset_mechanism="zero"),
-                    nn.Flatten(),
-                    nn.Linear(64*5*5, 100),
-                    snn.Leaky(beta=beta, spike_grad=spike_grad, init_hidden=True, reset_mechanism="zero"),
-                    nn.Linear(100, 10),
-                    snn.Leaky(beta=beta, spike_grad=spike_grad, init_hidden=True, output=True, reset_mechanism="zero")
-                    ).to(device)
-
+snn = SNNCifar10(beta=beta, sigmoid_slope=sigmoid_slope, num_steps=num_steps, num_classes=len(classes))
+net = snn.features()
 # Load the network onto CUDA if available
 net.to(device)
 
 
-def forward_pass(net, num_steps, data):
-    mem_rec = []
-    spk_rec = []
-    utils.reset(net)  # resets hidden states for all LIF neurons in net
-
-    for step in range(num_steps):
-        spk_out, mem_out = net(data)
-        spk_rec.append(spk_out)
-        mem_rec.append(mem_out)
-
-    return torch.stack(spk_rec), torch.stack(mem_rec)
-
-
-def batch_accuracy(loader, net, num_steps):
+def batch_accuracy(loader, model):
     with torch.no_grad():
         total = 0
         acc = 0
-        net.eval()
+        model.features.eval()
 
     loader = iter(loader)
     for data, targets in loader:
         data = data.to(device)
         targets = targets.to(device)
-        spk_rec, _ = forward_pass(net, num_steps, data)
+        spk_rec, _ = model.forward(data)
 
         acc += SF.accuracy_rate(spk_rec, targets) * spk_rec.size(1)
         total += spk_rec.size(1)
@@ -129,7 +107,7 @@ def batch_accuracy(loader, net, num_steps):
 data, targets = next(iter(trainloader))
 data = data.to(device)
 targets = targets.to(device)
-spk_rec, mem_rec = forward_pass(net, num_steps, data)
+spk_rec, mem_rec = snn.forward(data)
 
 loss_fn = SF.mse_count_loss(correct_rate=correct_rate, incorrect_rate=0)
 loss_val = loss_fn(spk_rec, targets)
@@ -138,13 +116,13 @@ regularizer = SF.reg.l1_rate_sparsity(Lambda=reg_strength)
 print_and_log(f"The loss from an untrained network is {loss_val.item():.3f}")
 
 acc = SF.accuracy_rate(spk_rec, targets)
-test_acc = batch_accuracy(testloader, net, num_steps)
+test_acc = batch_accuracy(testloader, snn)
 
 print_and_log(f"The total accuracy on the test set is: {test_acc * 100:.2f}%")
 print_and_log(f"The accuracy of a single batch using an untrained network is {acc*100:.3f}%")
 
 
-optimizer = torch.optim.Adam(net.parameters(), lr=0.5e-3, betas=(0.9, 0.999))
+optimizer = torch.optim.Adam(snn.features.parameters(), lr=0.5e-3, betas=(0.9, 0.999))
 loss_hist = []
 test_acc_hist = []
 counter = 0
@@ -164,7 +142,7 @@ for epoch in range(num_epochs):
 
         # forward pass
         net.train()
-        spk_rec, _ = forward_pass(net, num_steps, data)
+        spk_rec, _ = snn.forward(data)
 
         # initialize the loss & sum over time
         loss_val = loss_fn(spk_rec, targets) + regularizer(spk_rec)
