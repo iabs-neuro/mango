@@ -127,7 +127,7 @@ class Model:
                 load_yandex('https://disk.yandex.ru/d/ndE0NjV2G72skw', fpath)
 
             self.net = DensenetCifar10()
-            state_dict = torch.load(fpath, map_location='cpu')
+            state_dict = torch.load(fpath, map_location=self.device)
             self.net.load_state_dict(state_dict)
 
         if self.name in ['alexnet', 'vgg16', 'vgg19']:
@@ -137,7 +137,8 @@ class Model:
 
             # TODO: set path to data
 
-            self.net = torch.hub.load('pytorch/vision:v0.10.0', self.name,
+            self.net = torch.hub.load('pytorch/vision:v0.10.0',
+                                      self.name,
                                       weights=True)
 
         if self.name == 'snn':
@@ -148,8 +149,8 @@ class Model:
             fpath = os.path.join(fpath, 'snn_cifar10', 'snn_cifar10.pt')
 
             self.net = SNNCifar10()
-            state_dict = torch.load(fpath, map_location='cpu')
-            self.net.load_state_dict(state_dict)
+            state_dict = torch.load(fpath, map_location=self.device)
+            self.net.load_state_dict(state_dict, strict=False)
 
         if self.net is not None:
             self.net.to(self.device)
