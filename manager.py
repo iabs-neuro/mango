@@ -16,12 +16,12 @@ from .model.model_main import Model
 from .opt import opt_ng_portfolio, opt_protes
 from .utils import Log, plot_hist_am, plot_opt_conv
 
-
+'''
 # For faster and more accurate PROTES optimizer:
 from jax.config import config
 config.update('jax_enable_x64', True)
 os.environ['JAX_PLATFORM_NAME'] = 'cpu'
-
+'''
 OPTS = {
     'NG': {
         'func': opt_ng_portfolio,

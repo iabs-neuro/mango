@@ -19,6 +19,8 @@ class Model:
             raise ValueError(f'Model name "{name}" is not supported')
         self.name = name
         self.data = data
+        self.is_snn = ('snn' in self.name)
+
         self.device = device
         self.probs = torch.nn.Softmax(dim=1)
 
@@ -185,6 +187,8 @@ class Model:
 
         with nullcontext() if with_grad else torch.no_grad():
             y = self.net(x)
+            if self.is_snn:
+                y = torch.mean(y, dim=0)  # averaging over timeframes
             y = self.probs(y)
 
         return y if is_batch else y[0]
