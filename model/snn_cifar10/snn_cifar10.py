@@ -36,7 +36,7 @@ class SNNCifar10(nn.Module):
         self.num_steps = num_steps
         self.num_classes = num_classes
 
-    def forward(self, data):
+    def forward(self, data, return_membrane=False):
         num_steps = self.num_steps
         net = self.features
         mem_rec = []
@@ -48,4 +48,7 @@ class SNNCifar10(nn.Module):
             spk_rec.append(spk_out)
             mem_rec.append(mem_out)
 
-        return torch.stack(spk_rec), torch.stack(mem_rec)
+        if return_membrane:
+            return torch.stack(spk_rec), torch.stack(mem_rec)
+        else:
+            return torch.stack(spk_rec)

@@ -95,7 +95,7 @@ def batch_accuracy(loader, model):
     for data, targets in loader:
         data = data.to(device)
         targets = targets.to(device)
-        spk_rec, _ = model.forward(data)
+        spk_rec = model.forward(data)
 
         acc += SF.accuracy_rate(spk_rec, targets) * spk_rec.size(1)
         total += spk_rec.size(1)
@@ -106,7 +106,7 @@ def batch_accuracy(loader, model):
 data, targets = next(iter(trainloader))
 data = data.to(device)
 targets = targets.to(device)
-spk_rec, mem_rec = msnn.forward(data)
+spk_rec, mem_rec = msnn.forward(data, return_membrane=True)
 
 loss_fn = SF.mse_count_loss(correct_rate=correct_rate, incorrect_rate=0)
 loss_val = loss_fn(spk_rec, targets)
@@ -141,7 +141,7 @@ for epoch in range(num_epochs):
 
         # forward pass
         net.train()
-        spk_rec, _ = msnn.forward(data)
+        spk_rec = msnn.forward(data)
 
         # initialize the loss & sum over time
         loss_val = loss_fn(spk_rec, targets) + regularizer(spk_rec)
