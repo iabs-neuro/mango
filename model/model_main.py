@@ -1,4 +1,6 @@
 from contextlib import nullcontext
+from collections import OrderedDict
+
 import numpy as np
 import os
 import torch
@@ -152,7 +154,11 @@ class Model:
 
             self.net = SNNCifar10()
             state_dict = torch.load(fpath, map_location=self.device)
-            self.net.load_state_dict(state_dict, strict=False)
+            renamed_state_dict = OrderedDict()
+            for i, pair in enumerate(state_dict.items()):
+                new_name = 'features.' + pair[0]
+                renamed_state_dict[new_name] = state_dict[pair[0]]
+            self.net.load_state_dict(renamed_state_dict, strict=True)
 
         if self.net is not None:
             self.net.to(self.device)

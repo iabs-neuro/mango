@@ -59,14 +59,14 @@ class Gen:
         self.gen = GANSnCifar10()
         self.gen.load_state_dict(
             torch.load(f'{fpath}/gan_sn_cifar10.pkl',
-            map_location='cpu'))
+                        map_location='cpu'))
         self.gen.to(self.device)
         self.gen.eval()
 
         self.dsc = GANSnDscCifar10()
         self.dsc.load_state_dict(
             torch.load(f'{fpath}/gan_sn_dsc_cifar10.pkl',
-            map_location='cpu'))
+                       map_location='cpu'))
         self.dsc.to(self.device)
         self.dsc.eval()
 
