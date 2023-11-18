@@ -42,7 +42,9 @@ OPTS = {
 
 
 class Manager:
-    def __init__(self, data, gen, model, task, kind, cls=None, layer=None, unit=None, root='result', device=None):
+    def __init__(self, data, gen, model, task, kind, cls=None, layer=None,
+                 unit=None, root='result', device=None, opt_args=None):
+
         self.data_name = data
         self.gen_name = gen
         self.model_name = model
@@ -51,6 +53,7 @@ class Manager:
         self.cls = cls
         self.layer = layer
         self.unit = unit
+        self.opt_args = opt_args
 
         self.set_rand()
         self.set_device(device)
@@ -417,7 +420,7 @@ class Manager:
             if self.data_name == 'cifar10':
                 return self.run_train_cifar10_vae_vq()
 
-        raise NotImplementedError()
+        raise NotImplementedError(f'task_train_gen not implemented for gen {self.gen_name} and dataset {self.data_name} pair')
 
 
 def args_build():

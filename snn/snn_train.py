@@ -1,3 +1,5 @@
+import sys
+
 import torch
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
@@ -10,7 +12,7 @@ from snntorch import utils
 from ..model.snn_cifar10.snn_cifar10 import SNNCifar10
 
 # dataloader arguments
-batch_size = 128
+batch_size = 100
 data_path = './data'
 
 # Define a transform
@@ -50,14 +52,14 @@ num_inputs = 32*32
 num_outputs = 10
 
 # Temporal Dynamics
-num_steps = 128
+num_steps = 100
 beta = 0.9
-sigmoid_slope = 10
+sigmoid_slope = 5
 spike_grad = surrogate.fast_sigmoid(slope=sigmoid_slope)
 
 # Regularization
 reg_strength = 0.0
-correct_rate = 0.2
+correct_rate = 0.5
 
 # Number of training epochs (iterations)
 num_epochs = 40
