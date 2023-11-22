@@ -54,6 +54,10 @@ class Manager:
         self.layer = layer
         self.unit = unit
         self.opt_args = opt_args
+        if 'am_methods' not in opt_args:
+            self.opt_args['am_methods'] = list(OPTS.keys())
+        if 'opt_budget' not in opt_args:
+            self.opt_args['opt_budget'] = None
 
         self.set_rand()
         self.set_device(device)
@@ -126,8 +130,6 @@ class Manager:
     def run(self):
         method_name = f'task_{self.task}_{self.kind}'
         getattr(self, method_name)()
-        #method = getattr(self, method_name)
-        #method()
         self.end()
 
     def run_train_cifar10_vae_vq(self, lr=1.E-3, iters=15000, log_step=500):
@@ -222,7 +224,7 @@ class Manager:
         if self.layer:
             info += f'Target layer        : "{self.layer}"\n'
         if self.unit:
-            info += f'Target filter       : "{self.unit}"\n'
+            info += f'Target unit       : "{self.unit}"\n'
 
         self.log = Log(self.get_path(f'log.txt'))
         self.log.title(f'Computations ({self.device})', info)
@@ -252,40 +254,46 @@ class Manager:
     def task_am_class(self, m=1.E+4, m_short=1.E+3):
         cls = int(self.cls)
         label = self.data.labels[cls]
+        if self.opt_args['opt_budget'] is not None:
+            m = self.opt_args['opt_budget']
         tm = self.log.prc(f'Run AM for out class "{cls}" ({label})')
 
         X, titles, res = [], [], {}
         for meth, opt in OPTS.items():
             self.log(f'\nOptimization with "{meth}" method:')
-            self.model.set_target(cls=cls, logger=self.log)
+            if meth in self.opt_args['am_methods']:
+                self.model.set_target(cls=cls, logger=self.log)
 
-            t = tpc()
-            func = opt.get('func')
-            args = opt.get('args', {})
-            z_index, _, hist = func(self.func_ind, self.gen.d, self.gen.n, m, is_max=True, **args)
+                t = tpc()
+                func = opt.get('func')
+                args = opt.get('args', {})
+                z_index, _, hist = func(self.func_ind, self.gen.d, self.gen.n, m, is_max=True, **args)
 
-            res[meth] = hist
-            t = tpc() - t
-            z = self.gen.ind_to_poi(z_index)
-            x = self.gen.run(z)
-            a = self.model.run_target(x)
+                res[meth] = hist
+                t = tpc() - t
+                z = self.gen.ind_to_poi(z_index)
+                x = self.gen.run(z)
+                a = self.model.run_target(x)
 
-            self.log(f'Result: it {m:-7.1e}, t {t:-7.1e}, a {a:-11.5e}')
+                self.log(f'Result: it {m:-7.1e}, t {t:-7.1e}, a {a:-11.5e}')
 
-            title = f'{meth} : p={a:-9.3e} ({label})'
-            X.append(x)
-            titles.append(title)
+                title = f'{meth} : p={a:-9.3e} ({label})'
+                X.append(x)
+                titles.append(title)
 
-            X_opt, titles_opt = [], []
-            for (m_opt, z_index_opt, e_opt) in zip(*hist):
-                z_opt = self.gen.ind_to_poi(z_index_opt)
-                x_opt = self.gen.run(z_opt)
-                title_opt = f'{meth} : p={e_opt:-9.3e}; m={m_opt:-7.1e}'
-                X_opt.append(x_opt)
-                titles_opt.append(title_opt)
+                X_opt, titles_opt = [], []
+                for (m_opt, z_index_opt, e_opt) in zip(*hist):
+                    z_opt = self.gen.ind_to_poi(z_index_opt)
+                    x_opt = self.gen.run(z_opt)
+                    title_opt = f'{meth} : p={e_opt:-9.3e}; m={m_opt:-7.1e}'
+                    X_opt.append(x_opt)
+                    titles_opt.append(title_opt)
 
-            fname = f'gif/am_c{cls}_{meth}.gif'
-            self.data.animate(X_opt, titles_opt, fpath=self.get_path(fname))
+                fname = f'gif/am_c{cls}_{meth}.gif'
+                self.data.animate(X_opt, titles_opt, fpath=self.get_path(fname))
+
+            else:
+                self.log(f'\nOptimization with "{meth}" method skipped:')
 
         with open(self.get_path('dat/opt_info.pkl'), 'wb') as f:
             pickle.dump(res, f)

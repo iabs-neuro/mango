@@ -133,8 +133,12 @@ class Data:
                 x, c, l = self.get(i, tst=True)
                 title = l[:17] + '...' if len(l) > 20 else l
             else:
-                x = X[j-1].detach().to('cpu')
-                title = titles[j-1] if titles else ''
+                try:
+                    x = X[j-1].detach().to('cpu')
+                    title = titles[j-1] if titles else ''
+                except IndexError:
+                    x = None
+                    title = None
 
             fig.add_subplot(rows, cols, j)
             self.plot(x, title, is_new=False)

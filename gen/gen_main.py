@@ -134,7 +134,7 @@ class Gen:
             # TODO: check it
             # We should change data transformation for output of this model:
             x = x / 2. + 0.5
-            x = self.data.transform_norm(x)
+            x = self.data.tr_norm(x)
 
         return x if is_batch else x[0]
 
@@ -154,7 +154,7 @@ class Gen:
 
     def score(self, x, with_grad=False):
         if self.dsc is None:
-            raise ValueError('Descriminator is not available')
+            raise ValueError('Discriminator is not available')
 
         x, is_batch = self._inp(x, 4)
 

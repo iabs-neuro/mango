@@ -194,7 +194,9 @@ class Model:
         with nullcontext() if with_grad else torch.no_grad():
             y = self.net(x)
             if self.is_snn:
-                y = torch.mean(y, dim=0)  # averaging over timeframes
+                #print(y.shape)
+                y = torch.mean(y, dim=0)/0.2*2  # sum over timeframes
+                #print(y.shape)
             y = self.probs(y)
 
         return y if is_batch else y[0]

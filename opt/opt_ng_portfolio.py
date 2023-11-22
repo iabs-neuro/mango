@@ -42,6 +42,7 @@ def opt_ng_portfolio(func, d, n, m, is_max=True):
         parametrization=ng.p.TransitionChoice(range(n), repetitions=d),
         budget=int(m), num_workers=1)
     recommendation = optimizer.provide_recommendation()
+    #print(recommendation)
 
     for _ in range(optimizer.budget):
         x = optimizer.ask()
