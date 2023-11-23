@@ -195,7 +195,7 @@ class Model:
             y = self.net(x)
             if self.is_snn:
                 #print(y.shape)
-                y = torch.mean(y, dim=0)/0.2*2  # sum over timeframes
+                y = torch.mean(y, dim=0)/0.2  # sum over timeframes
                 #print(y.shape)
             y = self.probs(y)
 

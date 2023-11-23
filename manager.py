@@ -293,7 +293,7 @@ class Manager:
                 self.data.animate(X_opt, titles_opt, fpath=self.get_path(fname))
 
             else:
-                self.log(f'\nOptimization with "{meth}" method skipped:')
+                self.log(f'\nOptimization skipped')
 
         with open(self.get_path('dat/opt_info.pkl'), 'wb') as f:
             pickle.dump(res, f)

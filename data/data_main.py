@@ -8,10 +8,7 @@ import torch
 from torch.utils.data import DataLoader
 import torchvision
 
-
 from .data_opts import DATA_OPTS
-
-sys.path.append('..')
 from ..utils import load_repo
 
 
@@ -100,11 +97,17 @@ class Data:
 
         return text
 
-    def plot(self, x, title='', fpath=None, is_new=True):
-        return self.plot_base(self.tr_norm_inv(x), title,
-            self.opts['plot_size'], self.opts['plot_cmap'], fpath, is_new)
+    def plot(self, x, title='', fpath=None, is_new=True, ax=None, fig=None):
+        return self.plot_base(self.tr_norm_inv(x),
+                              title,
+                              size=self.opts['plot_size'],
+                              cmap=self.opts['plot_cmap'],
+                              fpath=fpath,
+                              is_new=is_new,
+                              ax=ax,
+                              fig=fig)
 
-    def plot_base(self, x, title, size=3, cmap='hot', fpath=None, is_new=True):
+    def plot_base(self, x, title, size=3, cmap='hot', fpath=None, is_new=True, ax=None, fig=None):
         if torch.is_tensor(x):
             x = x.detach().to('cpu').squeeze().numpy()
         if len(x.shape) == 3:
@@ -112,11 +115,11 @@ class Data:
         x = np.clip(x, 0, 1) if np.mean(x) < 2 else np.clip(x, 0, 255)
 
         if is_new:
-            fig = plt.figure(figsize=(size, size))
+            fig, ax = plt.subplots(figsize=(size, size))
 
-        plt.imshow(x, cmap=cmap)
-        plt.title(title, fontsize=9)
-        plt.axis('off')
+        ax.imshow(x, cmap=cmap)
+        ax.set_title(title, fontsize=9)
+        ax.set_axis('off')
 
         if fpath:
             plt.savefig(fpath, bbox_inches='tight')
@@ -125,23 +128,25 @@ class Data:
             plt.close(fig)
 
     def plot_many(self, X=None, titles=None, cols=5, rows=5, size=3, fpath=None):
-        fig = plt.figure(figsize=(size*cols, size*rows))
+        fig, axs = plt.subplots(rows, cols, figsize=(size*cols, size*rows))
 
-        for j in range(1, cols * rows + 1):
-            if X is None:
-                i = torch.randint(len(self.data_tst), size=(1,)).item()
-                x, c, l = self.get(i, tst=True)
-                title = l[:17] + '...' if len(l) > 20 else l
-            else:
-                try:
-                    x = X[j-1].detach().to('cpu')
-                    title = titles[j-1] if titles else ''
-                except IndexError:
-                    x = None
-                    title = None
+        for i in range(rows):
+            for j in range(cols):
+                num = i*cols+j
+                if X is None:
+                    i = torch.randint(len(self.data_tst), size=(1,)).item()
+                    x, c, l = self.get(i, tst=True)
+                    title = l[:17] + '...' if len(l) > 20 else l
+                else:
+                    try:
+                        x = X[num].detach().to('cpu')
+                        title = titles[num] if titles else ''
+                    except IndexError:
+                        x = None
+                        title = None
 
-            fig.add_subplot(rows, cols, j)
-            self.plot(x, title, is_new=False)
+                ax = axs[i,j]
+                self.plot(x, title, is_new=False, fig=fig, ax=ax)
 
         plt.savefig(fpath, bbox_inches='tight') if fpath else plt.show()
         plt.close(fig)
