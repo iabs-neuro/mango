@@ -40,7 +40,7 @@ class Gen:
         self.discrete = False  # Is True if discrete latent space is used
 
         self.gen = None        # Generator
-        self.dsc = None        # Decriminator (only for GAN-like models)
+        self.dsc = None        # Discriminator (only for GAN-like models)
         self.enc = None        # Encoder (only for VAE-like models)
 
         if self.name == 'gan_sn':

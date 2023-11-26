@@ -13,9 +13,10 @@ from ..utils import load_repo
 
 
 class Data:
-    def __init__(self, name, batch_trn=256, batch_tst=32, norm_m=None, norm_v=None, root='result'):
-        if not name in DATA_OPTS.keys():
+    def __init__(self, name, batch_trn=256, batch_tst=32, norm_m=None, norm_v=None, root='result', force_reload=False):
+        if name not in DATA_OPTS.keys():
             raise ValueError(f'Dataset name "{name}" is not supported')
+
         self.name = name
         self.opts = DATA_OPTS[self.name]
         self.root = root
@@ -31,9 +32,9 @@ class Data:
         self.ch = self.opts['ch']
 
         self._set_transform()
-        self._load()
+        self._load(force_reload=force_reload)
 
-    def animate(self, X, titles, size=3, interval=6, fps=10, fpath=None):
+    def animate(self, X, titles, size=3, interval=6, fps=2, fpath=None):
         if X is None or len(X) == 0 or len(X) != len(titles):
             print('WRN: invalid data for animation')
             return
@@ -98,16 +99,17 @@ class Data:
         return text
 
     def plot(self, x, title='', fpath=None, is_new=True, ax=None, fig=None):
-        return self.plot_base(self.tr_norm_inv(x),
-                              title,
-                              size=self.opts['plot_size'],
-                              cmap=self.opts['plot_cmap'],
-                              fpath=fpath,
-                              is_new=is_new,
-                              ax=ax,
-                              fig=fig)
+        if x is not None:
+             self.plot_base(self.tr_norm_inv(x),
+                            title,
+                            size=self.opts['plot_size'],
+                            cmap=self.opts['plot_cmap'],
+                            fpath=fpath,
+                            is_new=is_new,
+                            ax=ax,
+                            fig=fig)
 
-    def plot_base(self, x, title, size=3, cmap='hot', fpath=None, is_new=True, ax=None, fig=None):
+    def plot_base(self, x, title, size=10, cmap='hot', fpath=None, is_new=True, ax=None, fig=None):
         if torch.is_tensor(x):
             x = x.detach().to('cpu').squeeze().numpy()
         if len(x.shape) == 3:
@@ -119,7 +121,7 @@ class Data:
 
         ax.imshow(x, cmap=cmap)
         ax.set_title(title, fontsize=9)
-        ax.set_axis('off')
+        ax.axis('off')
 
         if fpath:
             plt.savefig(fpath, bbox_inches='tight')
@@ -127,7 +129,7 @@ class Data:
             plt.show()
             plt.close(fig)
 
-    def plot_many(self, X=None, titles=None, cols=5, rows=5, size=3, fpath=None):
+    def plot_many(self, X=None, titles=None, cols=5, rows=5, size=10, fpath=None):
         fig, axs = plt.subplots(rows, cols, figsize=(size*cols, size*rows))
 
         for i in range(rows):
@@ -151,27 +153,36 @@ class Data:
         plt.savefig(fpath, bbox_inches='tight') if fpath else plt.show()
         plt.close(fig)
 
-    def _load(self):
+    def _load(self, force_reload=False):
         self.data_trn = None
         self.data_tst = None
         self.dataloader_trn = None
         self.dataloader_tst = None
 
         fpath = os.path.join(self.root, '_data', self.name)
-        load = not os.path.isdir(fpath)
+        load = (not os.path.isdir(fpath)) or force_reload
         os.makedirs(fpath, exist_ok=True)
 
+        # TODO: remove eval
         if self.opts.get('dataset'):
             func = eval(f'torchvision.datasets.{self.opts["dataset"]}')
-            self.data_trn = func(root=fpath, train=True, download=load,
-                transform=self.tr)
-            self.data_tst = func(root=fpath, train=False, download=load,
-                transform=self.tr)
+            self.data_trn = func(root=fpath,
+                                 train=True,
+                                 download=load,
+                                 transform=self.tr)
+
+            self.data_tst = func(root=fpath,
+                                 train=False,
+                                 download=load,
+                                 transform=self.tr)
 
             self.dataloader_trn = DataLoader(self.data_trn,
-                batch_size=self.batch_trn, shuffle=True)
+                                             batch_size=self.batch_trn,
+                                             shuffle=True)
+
             self.dataloader_tst = DataLoader(self.data_tst,
-                batch_size=self.batch_tst, shuffle=True)
+                                             batch_size=self.batch_tst,
+                                             shuffle=True)
 
         if self.opts.get('repo'):
             # TODO: add support for trn/tst repo

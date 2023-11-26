@@ -15,13 +15,26 @@ from .gen.gen_main import Gen
 from .model.model_main import Model
 from .opt import opt_ng_portfolio, opt_protes
 from .utils import Log, plot_hist_am, plot_opt_conv
+import os
+import multiprocessing
 
-'''
+# attempts multiprocessing
+os.environ["XLA_FLAGS"] = "--xla_force_host_platform_device_count={}".format(
+    multiprocessing.cpu_count()
+)
+
+print('cpu count:', multiprocessing.cpu_count())
+
+import jax
 # For faster and more accurate PROTES optimizer:
-from jax.config import config
-config.update('jax_enable_x64', True)
-os.environ['JAX_PLATFORM_NAME'] = 'cpu'
-'''
+#jax.config.update('jax_enable_x64', True)
+#os.environ['JAX_PLATFORM_NAME'] = 'cpu'
+jax.config.update('jax_platform_name', 'cpu')
+
+platform = jax.lib.xla_bridge.get_backend().platform.casefold()
+print("Platform: ", platform)
+
+
 OPTS = {
     'NG': {
         'func': opt_ng_portfolio,
@@ -72,8 +85,8 @@ class Manager:
 
     def func(self, z):
         x = self.gen.run(z)
-        a = self.model.run_target(x).detach().to('cpu').numpy()
-        return a
+        activation = self.model.run_target(x).detach().to('cpu').numpy()
+        return activation
 
     def func_ind(self, z_index):
         return self.func(self.gen.ind_to_poi(z_index))
@@ -254,8 +267,10 @@ class Manager:
     def task_am_class(self, m=1.E+4, m_short=1.E+3):
         cls = int(self.cls)
         label = self.data.labels[cls]
+
         if self.opt_args['opt_budget'] is not None:
             m = self.opt_args['opt_budget']
+
         tm = self.log.prc(f'Run AM for out class "{cls}" ({label})')
 
         X, titles, res = [], [], {}
@@ -265,12 +280,13 @@ class Manager:
                 self.model.set_target(cls=cls, logger=self.log)
 
                 t = tpc()
-                func = opt.get('func')
+                optimizer = opt.get('func')
                 args = opt.get('args', {})
-                z_index, _, hist = func(self.func_ind, self.gen.d, self.gen.n, m, is_max=True, **args)
+                z_index, _, hist = optimizer(self.func_ind, self.gen.d, self.gen.n, m, is_max=True, **args)
 
                 res[meth] = hist
                 t = tpc() - t
+
                 z = self.gen.ind_to_poi(z_index)
                 x = self.gen.run(z)
                 a = self.model.run_target(x)

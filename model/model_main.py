@@ -170,7 +170,7 @@ class Model:
         return float(a)
 
     def has_target(self):
-        return self.cls is not None or (self.layer is not None and self.unit is not None)
+        return (self.cls is not None) or (self.layer is not None and self.unit is not None)
 
     def rmv_target(self, is_init=False):
         if is_init:
@@ -189,16 +189,17 @@ class Model:
         is_batch = (len(x.shape) == 4)
         if not is_batch:
             x = x[None]
+
         x = x.to(self.device)
 
         with nullcontext() if with_grad else torch.no_grad():
             y = self.net(x)
             if self.is_snn:
-                #print(y.shape)
-                y = torch.mean(y, dim=0)/0.2  # sum over timeframes
-                #print(y.shape)
-            y = self.probs(y)
+                y = torch.mean(y, dim=0)  # sum over timeframes
+            else:
+                y = self.probs(y)
 
+        #y = self.probs(y)
         return y if is_batch else y[0]
 
     def run_pred(self, x):
@@ -214,6 +215,9 @@ class Model:
         return (p, c, l) if is_batch else (p[0], c[0], l[0])
 
     def run_target(self, x):
+        '''
+        x has shape [k, ch, sz, sz], k=number of samples from optimization algorithm
+        '''
         is_batch = len(x.shape) == 4
         if not is_batch:
             x = x[None]
