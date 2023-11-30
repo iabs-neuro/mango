@@ -4,9 +4,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 import sys
+import shutil
+
 import torch
 from torch.utils.data import DataLoader
 import torchvision
+
 
 from .data_opts import DATA_OPTS
 from ..utils import load_repo
@@ -161,6 +164,8 @@ class Data:
 
         fpath = os.path.join(self.root, '_data', self.name)
         load = (not os.path.isdir(fpath)) or force_reload
+        if force_reload:
+            shutil.rmtree(fpath, ignore_errors=True)
         os.makedirs(fpath, exist_ok=True)
 
         # TODO: remove eval

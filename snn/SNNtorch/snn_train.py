@@ -9,7 +9,7 @@ from snntorch import surrogate
 from snntorch import functional as SF
 from snntorch import utils
 
-from ..model.snn_cifar10.snn_cifar10 import SNNCifar10
+from model.snn_cifar10.snn_cifar10 import SNNCifar10
 
 dtype = torch.float
 device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")

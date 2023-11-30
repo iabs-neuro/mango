@@ -15,25 +15,10 @@ from .gen.gen_main import Gen
 from .model.model_main import Model
 from .opt import opt_ng_portfolio, opt_protes
 from .utils import Log, plot_hist_am, plot_opt_conv
+from .hardware import configure_hardware
 import os
-import multiprocessing
 
-# attempts multiprocessing
-os.environ["XLA_FLAGS"] = "--xla_force_host_platform_device_count={}".format(
-    multiprocessing.cpu_count()
-)
-
-print('cpu count:', multiprocessing.cpu_count())
-
-import jax
-# For faster and more accurate PROTES optimizer:
-#jax.config.update('jax_enable_x64', True)
-#os.environ['JAX_PLATFORM_NAME'] = 'cpu'
-jax.config.update('jax_platform_name', 'cpu')
-
-platform = jax.lib.xla_bridge.get_backend().platform.casefold()
-print("Platform: ", platform)
-
+configure_hardware(verbose=False)
 
 OPTS = {
     'NG': {
