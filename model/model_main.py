@@ -1,6 +1,9 @@
 from contextlib import nullcontext
 from collections import OrderedDict
 
+from spikingjelly.activation_based import neuron, functional
+from spikingjelly.activation_based.functional import reset_net
+
 import numpy as np
 import os
 import torch
@@ -8,12 +11,13 @@ import warnings
 
 from ..model.densenet_cifar10.densenet_cifar10 import DensenetCifar10
 from ..model.snn_cifar10.snn_cifar10 import SNNCifar10
+from ..model.snn_cifar10.sj_snn_cifar10 import SJSNNCifar10
 from ..utils import load_yandex
 
 # To remove the warning of torchvision:
 warnings.filterwarnings('ignore', category=UserWarning)
 
-NAMES = ['alexnet', 'densenet', 'vgg16', 'vgg19', 'snn']
+NAMES = ['alexnet', 'densenet', 'vgg16', 'vgg19', 'snn', 'sjsnn']
 
 class Model:
     def __init__(self, name, data, device='cpu'):
@@ -160,6 +164,21 @@ class Model:
                 renamed_state_dict[new_name] = state_dict[pair[0]]
             self.net.load_state_dict(renamed_state_dict, strict=True)
 
+        if self.name == 'sjsnn':
+            if self.data.name != 'cifar10':
+                msg = f'Model "{self.name}" is ready only for "cifar10"'
+                raise NotImplementedError(msg)
+
+            fpath = os.path.join(fpath, 'snn_cifar10', 'sj_snn_cifar10.pth')
+
+            self.net = SJSNNCifar10()
+            functional.set_step_mode(self.net, step_mode='m')
+            functional.set_backend(self.net, 'cupy', self.net.spiking_neuron) # sets super-fast cupy backend
+
+            checkpoint = torch.load(fpath, map_location=self.device)
+            state_dict = checkpoint['model']
+            self.net.load_state_dict(state_dict, strict=True)
+
         if self.net is not None:
             self.net.to(self.device)
             self.net.eval()
@@ -185,11 +204,16 @@ class Model:
         self.unit = None
         self.hook = None
 
-    def run(self, x, with_grad=False):
+
+    def _preprocess_input(self, x):
         is_batch = (len(x.shape) == 4)
         if not is_batch:
             x = x[None]
 
+        return x, is_batch
+
+    def run(self, x, with_grad=False):
+        x, is_batch = self._preprocess_input(x)
         x = x.to(self.device)
 
         with nullcontext() if with_grad else torch.no_grad():
@@ -203,9 +227,11 @@ class Model:
         return y if is_batch else y[0]
 
     def run_pred(self, x):
-        is_batch = len(x.shape) == 4
-        if not is_batch:
-            x = x[None]
+        x, is_batch = self._preprocess_input(x)
+
+        if self.name == 'sjsnn':  # reset neuron internal structure for inference
+            reset_net(self.net)
+
         y = self.run(x).detach().to('cpu').numpy()
 
         c = np.argmax(y, axis=1)
@@ -215,12 +241,14 @@ class Model:
         return (p, c, l) if is_batch else (p[0], c[0], l[0])
 
     def run_target(self, x):
+
         '''
         x has shape [k, ch, sz, sz], k=number of samples from optimization algorithm
         '''
-        is_batch = len(x.shape) == 4
-        if not is_batch:
-            x = x[None]
+        x, is_batch = self._preprocess_input(x)
+
+        if self.name == 'sjsnn':  # reset neuron internal structure for inference
+            reset_net(self.net)
 
         y = self.run(x)
 
@@ -248,7 +276,20 @@ class Model:
         if layer is None or unit is None:
             return
 
-        self.layer = self.net.features[int(layer)]
+        if isinstance(layer, str):
+            # name of layer provided
+            try:
+                self.layer = getattr(self.net, f'features.{layer}')
+            except AttributeError: # exception for SJ SNN
+                self.layer = self.net.named_layers_od[layer]
+
+        else:
+            # index of layer provided
+            try:
+                self.layer = self.net.features[int(layer)]
+            except AttributeError: # exception for SJ SNN
+                self.layer = list(self.net.named_layers_od.items())[int(layer)][1]
+
         self.unit = int(unit)
 
         if logger is not None:

@@ -42,10 +42,11 @@ def main():
         'T': 20,
         'train-crop-size': 32,
         'cupy': True,
-        'epochs': 1000,
-        'lr': 0.15,
+        'epochs': 2000,
+        'lr': 0.1,
         'random-erase': 0.1,
-        'label-smoothing': 0.1
+        'label-smoothing': 0.1,
+        'momentum': 0.9
         #'resume': 'latest'
     }
 
@@ -241,6 +242,25 @@ def main():
             train_sampler.set_epoch(epoch)
 
         trainer.before_train_one_epoch(args, model, epoch)
+
+        #==============================
+        header = f"Epoch: [{epoch}]"
+        metric_logger = utils.MetricLogger(delimiter="  ")
+        metric_logger.add_meter("lr", utils.SmoothedValue(window_size=1, fmt="{value}"))
+        metric_logger.add_meter("img/s", utils.SmoothedValue(window_size=10, fmt="{value}"))
+
+        for i, (image, target) in enumerate(metric_logger.log_every(data_loader, -1, header)):
+            start_time = time.time()
+            image, target = image.to(device), target.to(device)
+            with torch.cuda.amp.autocast(enabled=scaler is not None):
+                image = trainer.preprocess_train_sample(args, image)
+                print(image.shape)
+                print(model)
+                print(model(image).shape)
+                output = trainer.process_model_output(args, model(image))
+                loss = criterion(output, target)
+        #==============================
+
         train_loss, train_acc1, train_acc5 = trainer.train_one_epoch(model, criterion, optimizer, data_loader, device,
                                                                      epoch, args, model_ema, scaler)
         if utils.is_main_process():

@@ -35,7 +35,7 @@ class SResNetTrainer(Trainer):
 
             functional.set_step_mode(model, step_mode='m')
             if args.cupy:
-                functional.set_backend(model, 'cupy', neuron.IFNode)
+                functional.set_backend(model, 'cupy', neuron.LIFNode)
 
             return model
         else:
