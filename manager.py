@@ -38,8 +38,15 @@ OPTS = {
     },
 }
 
+PLOT_SHAPE = {
+    1: (1,1),
+    2: (1,2),
+    3: (1,3),
+    4: (2,2)
+}
 
-class Manager:
+
+class MangoManager:
     def __init__(self, data, gen, model, task, kind, cls=None, layer=None,
                  unit=None, root='result', device=None, opt_args=None):
 
@@ -70,8 +77,8 @@ class Manager:
 
     def func(self, z):
         x = self.gen.run(z)
-        activation = self.model.run_target(x).detach().to('cpu').numpy()
-        return activation
+        activation = self.model.run_target(x)
+        return activation.detach().to('cpu').numpy()
 
     def func_ind(self, z_index):
         return self.func(self.gen.ind_to_poi(z_index))
@@ -249,20 +256,27 @@ class Manager:
         random.seed(seed)
         torch.manual_seed(seed)
 
-    def task_am_class(self, m=1.E+4, m_short=1.E+3):
-        cls = int(self.cls)
-        label = self.data.labels[cls]
+    def _task_am(self, m=1.E+4, m_short=1.E+3, mode='class'):
 
         if self.opt_args['opt_budget'] is not None:
             m = self.opt_args['opt_budget']
 
-        tm = self.log.prc(f'Run AM for out class "{cls}" ({label})')
+        if mode == 'class':
+            cls = int(self.cls)
+            label = self.data.labels[cls]
+            self.model.set_target(cls=cls, logger=self.log)
+            tm = self.log.prc(f'Running AM for target class {cls} ({label})...')
+
+        elif mode == 'unit':
+            unit = int(self.unit)
+            layer = self.layer
+            self.model.set_target(layer=layer, unit=unit, logger=self.log)
+            tm = self.log.prc(f'Running AM for unit {unit} of layer {self.layer} ({self.model.layer})...')
 
         X, titles, res = [], [], {}
         for meth, opt in OPTS.items():
             self.log(f'\nOptimization with "{meth}" method:')
             if meth in self.opt_args['am_methods']:
-                self.model.set_target(cls=cls, logger=self.log)
 
                 t = tpc()
                 optimizer = opt.get('func')
@@ -278,7 +292,7 @@ class Manager:
 
                 self.log(f'Result: it {m:-7.1e}, t {t:-7.1e}, a {a:-11.5e}')
 
-                title = f'{meth} : p={a:-9.3e} ({label})'
+                title = f'{meth} : p={a:-9.3e}'
                 X.append(x)
                 titles.append(title)
 
@@ -290,11 +304,15 @@ class Manager:
                     X_opt.append(x_opt)
                     titles_opt.append(title_opt)
 
-                fname = f'gif/am_c{cls}_{meth}.gif'
+                if mode == 'class':
+                    fname = f'gif/am_c{cls}_{meth}.gif'
+                elif mode == 'unit':
+                    fname = f'gif/am_u{unit}_layer_({layer})_{meth}.gif'
+
                 self.data.animate(X_opt, titles_opt, fpath=self.get_path(fname))
 
             else:
-                self.log(f'\nOptimization skipped')
+                self.log(f'Optimization skipped')
 
         with open(self.get_path('dat/opt_info.pkl'), 'wb') as f:
             pickle.dump(res, f)
@@ -302,24 +320,48 @@ class Manager:
         # with open(self.get_path('dat/opt_info.pkl'), 'rb') as f:
         #     res = pickle.load(f)
 
-        title = f'Activation maximization for class "{cls}" ({label})'
-        plot_opt_conv(res, title, self.get_path('img/opt_conv.png'))
+        if mode == 'class':
+            title = f'Activation maximization for class "{cls}" ({label})'
+        elif mode == 'unit':
+            title = f'Activation maximization for unit {unit} of layer {self.layer}'
+
         try:
+            plot_opt_conv(res, title, self.get_path('img/opt_conv.png'))
             plot_opt_conv(res, title, self.get_path('img/opt_conv_short.png'), m_min=m_short)
         except Exception as e:
             self.log(repr(e))
-            self.log.wrn(f'Activation Maximization failed')
-            pass
+            self.log.wrn(f'AM plotting failed')
 
-        fname = f'img/am_c{cls}.png'
+        if mode == 'class':
+            fname = f'img/am_c{cls}.png'
+        elif mode == 'unit':
+            fname = f'img/am_u{unit}_{layer}.png'
+
         self.data.plot_many(X,
                             titles,
                             fpath=self.get_path(fname),
-                            cols=2,
-                            rows=2,
-                            size=4)
+                            rows=PLOT_SHAPE[len(X)][0],
+                            cols=PLOT_SHAPE[len(X)][1],
+                            size=10)
 
         self.log.res(tpc()-tm)
+
+    def task_am_class(self, m=1.E+4, m_short=1.E+3):
+        if self.model.target_mode is None:
+            self.model.set_target_mode(self.cls, self.layer, self.unit)
+        if self.model.target_mode != 'class':
+            raise ValueError(f'Input (class={self.cls}, unit={self.unit}, layer={self.layer}) not compatible with class AM mode')
+
+        self._task_am(m, m_short, mode='class')
+
+    def task_am_unit(self, m=1.E+4, m_short=1.E+3):
+        if self.model.target_mode is None:
+            self.model.set_target_mode(self.cls, self.layer, self.unit)
+        if self.model.target_mode != 'unit':
+            raise ValueError(
+                f'Input (class={self.cls}, unit={self.unit}, layer={self.layer}) not compatible with unit AM mode')
+
+        self._task_am(m, m_short, mode='unit')
 
     def task_check_data(self):
         name = self.data.name
@@ -495,4 +537,4 @@ def args_build():
 
 
 if __name__ == '__main__':
-    Manager(*args_build()).run()
+    MangoManager(*args_build()).run()

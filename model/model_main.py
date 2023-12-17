@@ -1,7 +1,7 @@
 from contextlib import nullcontext
 from collections import OrderedDict
 
-from spikingjelly.activation_based import neuron, functional
+from spikingjelly.activation_based import functional
 from spikingjelly.activation_based.functional import reset_net
 
 import numpy as np
@@ -33,6 +33,7 @@ class Model:
         self.load()
 
         self.rmv_target(is_init=True)
+        self.target_mode = None
 
     def attrib(self, x, c=None, steps=3, iters=10):
         if c is None:
@@ -252,67 +253,115 @@ class Model:
 
         y = self.run(x)
 
+        #print(self.hook.__dict__)
+        #print(self.hook_result)
+
         if self.cls is not None:
             res = y[:, self.cls]
         else:
-            res = self.hook.a  # TODO: check (self.hook.a_mean ?)
+            res = self.hook.a
+            #print(res.shape)
 
         return res if is_batch else res[0]
+
+    def set_target_mode(self, cls=None, layer=None, unit=None):
+        if cls is not None:
+            if layer is not None or unit is not None:
+                raise ValueError('Please, set class or layer + unit, not both')
+            else:
+                self.target_mode = 'class'
+
+        elif layer is None or unit is None:
+            raise ValueError('Class was not set, dispatcher needs both layer + unit to fix target,'\
+                             f'but got layer={layer} and unit={unit}')
+
+        else:
+            self.target_mode = 'unit'
 
     def set_target(self, cls=None, layer=None, unit=None, logger=None):
         self.cls = None
         self.layer = None
         self.unit = None
 
-        if cls is not None:
-            if layer is not None or unit is not None:
-                raise ValueError('Please, set class or layer + unit, not both')
+        if self.target_mode is not None:
+            self.set_target_mode(cls, layer, unit)
 
+        if self.target_mode == 'class':
             self.cls = int(cls)
             if logger is not None:
                 logger(f'Target set for class {self.cls}')
             return
 
-        if layer is None or unit is None:
-            return
+        elif self.target_mode == 'unit':
 
-        if isinstance(layer, str):
-            # name of layer provided
-            try:
-                self.layer = getattr(self.net, f'features.{layer}')
-            except AttributeError: # exception for SJ SNN
-                self.layer = self.net.named_layers_od[layer]
+            if isinstance(layer, str):
+                # name of layer provided
+                if self.name == 'sjsnn':
+                    print(list(self.net.named_layers_od.keys()))
+                    try:
+                        self.layer = self.net.named_layers_od[layer]
+                    except KeyError:
+                        msg = f'{layer} not found in model layers. Select one of: {list(self.net.named_layers_od.keys())}'
+                        if logger is not None:
+                            logger(msg)
+                        raise ValueError(msg)
 
-        else:
-            # index of layer provided
-            try:
-                self.layer = self.net.features[int(layer)]
-            except AttributeError: # exception for SJ SNN
-                self.layer = list(self.net.named_layers_od.items())[int(layer)][1]
+                else:
+                    try:
+                        self.layer = getattr(self.net._modules['features'], f'{layer}')
+                    except KeyError:
+                        msg = f'{layer} not found in model layers. Select one of: {list(self.net.named_modules.keys())}'
+                        if logger is not None:
+                            logger(msg)
+                        raise ValueError(msg)
+            else:
+                # index of layer provided
+                try:
+                    self.layer = self.net.features[int(layer)]
+                except AttributeError:  # exception for SJ SNN
+                    self.layer = list(self.net.named_layers_od.items())[int(layer)][1]
 
-        self.unit = int(unit)
+            self.unit = int(unit)
 
-        if logger is not None:
-            logger(f'Target set for layer {self.layer} and unit {self.unit}')
+            if logger is not None:
+                logger(f'Target set for layer {self.layer} and unit {self.unit}')
 
-        #layer2 = self.net.features[layer]  # TODO: check
-        '''
-        if type(layer) != torch.nn.modules.conv.Conv2d:
-            raise ValueError('We work only with conv layers')
-        
-        if self.f < 0 or self.f >= layer.out_channels:
-            raise ValueError('Filter does not exist')
-        '''
-        self.hook = AmHook(self.unit)
-        self.hook_hand = [self.layer.register_forward_hook(self.hook.forward)]
+            '''
+            if type(layer) != torch.nn.modules.conv.Conv2d:
+                raise ValueError('We work only with conv layers')
+            
+            if self.f < 0 or self.f >= layer.out_channels:
+                raise ValueError('Filter does not exist')
+            '''
+            self.hook = AmHook(self, self.unit)
+            self.hook_hand = [self.layer.register_forward_hook(self.hook.forward)]
+            self.hook_result = []
 
 
 class AmHook():
-    def __init__(self, unit):
+    def __init__(self, parent_model, unit):
+        self.parent_model = parent_model
         self.unit = unit
         self.a = None
         self.a_mean = None
+        self.shown = False
 
     def forward(self, module, inp, out):
-        self.a = torch.mean(out[:, self.unit, :, :], dim=(1, 2))
-        self.a_mean = torch.mean(out[:, self.unit, :, :])
+        if not self.shown:
+            print('hook input:', inp[0].shape)
+            print('hook output:', out.shape)
+            print(inp[0][0, 0, self.unit, :, :])
+            print(out[0, 0, self.unit, :, :])
+            self.shown = True
+
+        if self.parent_model.name == 'sjsnn': # spikingjelly supports [T,N,C,W,H] format (one extra dimension)
+            self.a = torch.mean(out[:, :, self.unit, :, :], dim=(0, 2, 3))
+            self.a_mean = torch.mean(out[:, :, self.unit, :, :])
+            # print('hook:', self.parent_model.hook_result)
+            self.parent_model.hook_result.append(self.a)
+
+        else:
+            self.a = torch.mean(out[:, self.unit, :, :], dim=(1, 2))
+            self.a_mean = torch.mean(out[:, self.unit, :, :])
+            #print('hook:', self.parent_model.hook_result)
+            self.parent_model.hook_result.append(self.a)

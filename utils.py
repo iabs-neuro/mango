@@ -1,6 +1,7 @@
 from datetime import datetime
 import matplotlib.pyplot as plt
 import matplotlib.pylab as pylab
+import matplotlib.ticker
 import numpy as np
 import requests
 import subprocess
@@ -78,7 +79,7 @@ def plot_hist_am(a, title='', fpath=None, size=6, bins=100):
     plt.close(fig)
 
 
-def plot_opt_conv(data, title='', fpath=None, size=7, m_min=None):
+def plot_opt_conv(data, title='', fpath=None, size=18, m_min=None):
     colors = [
         '#040A1F', '#1144AA', '#09EA48', '#CE0071',
         '#FFF800', '#CE0071', '#FFB300', '#6A1C07', '#A30FCB', '#1C5628']
@@ -86,24 +87,30 @@ def plot_opt_conv(data, title='', fpath=None, size=7, m_min=None):
         'D', 's', '*', 'p',
         's', 'o', 'p', 'p', 'p']
 
-    fig = plt.figure(figsize=(size, size))
+    fig, ax = plt.subplots(figsize=(size, size))
+    ax = make_beautiful(ax)
+
+    ax.set_xscale('log')
+    ax.set_yscale('log')
+
     for i, (meth, info) in enumerate(data.items()):
         x, y = np.array(info[0]), np.array(info[2])
         if m_min is not None:
             ind = np.argmax(x > m_min)
             x = x[ind:]
             y = y[ind:]
-        plt.plot(x, y, label=meth, marker=marker[i], markersize=8,
-            linewidth=4 if i==0 else 3, color=colors[i])
 
-    plt.legend(loc='best', frameon=True)
-    plt.xlabel('Number of requests to model')
-    plt.ylabel('Activation')
-    plt.title(title)
-    plt.grid(True)
-    plt.semilogx()
-    plt.semilogy()
-    plt.savefig(fpath, bbox_inches='tight') if fpath else plt.show()
+        ax.plot(x, y, label=meth, marker=marker[i], markersize=20,
+            linewidth=6 if i == 0 else 5, color=colors[i])
+
+    #ax.set_xticks([0.1, 0.2, 0.3, 0.4])
+    #ax.set_yticks([0.1, 0.2, 0.3, 0.4])
+    ax.legend(loc='best', frameon=True)
+    ax.set_xlabel('Number of requests to model')
+    ax.set_ylabel('Activation')
+    ax.set_title(title)
+    ax.grid(visible=True, axis='both')
+    fig.savefig(fpath, bbox_inches='tight') if fpath else plt.show()
     plt.close(fig)
 
 
@@ -123,18 +130,23 @@ def make_beautiful(ax):
         ax.tick_params(width=4, direction='in', length=8, pad=15)
 
     for axis in ['top', 'right']:
-        ax.spines[axis].set_linewidth(0.0)
+        ax.spines[axis].set_linewidth(1.0)
 
-    # ax.locator_params(axis='x', nbins=8)
-    # ax.locator_params(axis='y', nbins=8)
-    ax.tick_params(axis='x', which='major', labelsize=26)
-    ax.tick_params(axis='y', which='major', labelsize=26)
+    #ax.locator_params(axis='x', nbins=8)
+    #ax.locator_params(axis='y', nbins=8)
+    ax.tick_params(axis='both', which='major', labelsize=26)
+    ax.tick_params(axis='both', which='minor', labelsize=26)
+
+    ax.xaxis.set_major_formatter(matplotlib.ticker.ScalarFormatter())
+    ax.yaxis.set_major_formatter(matplotlib.ticker.ScalarFormatter())
+    ax.xaxis.set_major_locator(plt.MaxNLocator(10))
+    ax.yaxis.set_major_locator(plt.MaxNLocator(10))
 
     ax.xaxis.label.set_size(30)
     ax.yaxis.label.set_size(30)
 
-    params = {'legend.fontsize': 18,
-              'axes.titlesize': 30,
+    params = {'legend.fontsize': 30,
+              'axes.titlesize': 40,
               }
 
     pylab.rcParams.update(params)

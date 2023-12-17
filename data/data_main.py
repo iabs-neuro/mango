@@ -37,7 +37,7 @@ class Data:
         self._set_transform()
         self._load(force_reload=force_reload)
 
-    def animate(self, X, titles, size=3, interval=6, fps=2, fpath=None):
+    def animate(self, X, titles, size=15, interval=6, fps=2, fpath=None):
         if X is None or len(X) == 0 or len(X) != len(titles):
             print('WRN: invalid data for animation')
             return
@@ -53,7 +53,7 @@ class Data:
         img = ax.imshow(prep(X[0]))
 
         def update(k, *args):
-            ax.set_title(titles[k], fontsize=9)
+            ax.set_title(titles[k], fontsize=40)
             img.set_data(prep(X[k]))
             return (img,)
 
@@ -123,7 +123,7 @@ class Data:
             fig, ax = plt.subplots(figsize=(size, size))
 
         ax.imshow(x, cmap=cmap)
-        ax.set_title(title, fontsize=9)
+        ax.set_title(title, fontsize=30)
         ax.axis('off')
 
         if fpath:
@@ -132,7 +132,7 @@ class Data:
             plt.show()
             plt.close(fig)
 
-    def plot_many(self, X=None, titles=None, cols=5, rows=5, size=10, fpath=None):
+    def plot_many(self, X=None, titles=None, cols=5, rows=5, size=20, fpath=None):
         fig, axs = plt.subplots(rows, cols, figsize=(size*cols, size*rows))
 
         for i in range(rows):
@@ -150,7 +150,11 @@ class Data:
                         x = None
                         title = None
 
-                ax = axs[i,j]
+                try:
+                    ax = axs[i,j]  # for 2d subplot structure
+                except IndexError:
+                    ax = axs[j]
+
                 self.plot(x, title, is_new=False, fig=fig, ax=ax)
 
         plt.savefig(fpath, bbox_inches='tight') if fpath else plt.show()
