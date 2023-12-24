@@ -4,9 +4,9 @@ from os.path import join
 import shutil
 
 data = 'cifar10'
-gen = 'gan_sn'
+gen = 'vae_vq'
 model = 'sjsnn'
-tlayer = 'layer2.0.sn2'
+tlayer = 'sn1'
 task = 'am'
 kind = 'unit'
 root = f'{model}_result_{tlayer}'

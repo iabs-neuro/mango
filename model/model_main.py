@@ -344,24 +344,38 @@ class AmHook():
         self.unit = unit
         self.a = None
         self.a_mean = None
-        self.shown = False
+        self.shape_shown = False # TODO: technical field for debug, remove later
 
     def forward(self, module, inp, out):
-        if not self.shown:
+        if not self.shape_shown:
             print('hook input:', inp[0].shape)
-            print('hook output:', out.shape)
-            print(inp[0][0, 0, self.unit, :, :])
-            print(out[0, 0, self.unit, :, :])
-            self.shown = True
+            #print('hook output:', out)
+            print('hook shape', out.shape)
+            try:
+                print(inp[0][0, 0, self.unit, :, :])
+                print(out[0, 0, self.unit, :, :])
+            except:
+                pass
+            self.shape_shown = True
 
         if self.parent_model.name == 'sjsnn': # spikingjelly supports [T,N,C,W,H] format (one extra dimension)
-            self.a = torch.mean(out[:, :, self.unit, :, :], dim=(0, 2, 3))
-            self.a_mean = torch.mean(out[:, :, self.unit, :, :])
-            # print('hook:', self.parent_model.hook_result)
-            self.parent_model.hook_result.append(self.a)
+            if len(out.shape) == 5:
+                self.a = torch.mean(out[:, :, self.unit, :, :], dim=(0, 2, 3))
+                self.a_mean = torch.mean(out[:, :, self.unit, :, :])
+                # print('hook:', self.parent_model.hook_result)
+                self.parent_model.hook_result.append(self.a)
+            elif len(out.shape) == 3:
+                self.a = torch.mean(out[:, :, self.unit], dim=0)
+                self.a_mean = torch.mean(out[:, :, self.unit])
+                self.parent_model.hook_result.append(self.a)
 
         else:
-            self.a = torch.mean(out[:, self.unit, :, :], dim=(1, 2))
-            self.a_mean = torch.mean(out[:, self.unit, :, :])
-            #print('hook:', self.parent_model.hook_result)
-            self.parent_model.hook_result.append(self.a)
+            if len(out.shape) == 2:
+                self.a = out[:, self.unit]
+                self.a_mean = None
+                self.parent_model.hook_result.append(self.a)
+            else:
+                self.a = torch.mean(out[:, self.unit, :, :], dim=(1, 2))
+                self.a_mean = torch.mean(out[:, self.unit, :, :])
+                #print('hook:', self.parent_model.hook_result)
+                self.parent_model.hook_result.append(self.a)

@@ -15,6 +15,7 @@ def opt_protes(func, d, n, m, k=50, k_top=5, with_qtt=False, is_max=True):
         return func(teneva.ind_qtt_to_tt(I_qtt, q))
 
     info = {}
+    # TODO: add force stop after reaching max activation
     i, y = protes(func_qtt if with_qtt else func,
                   d * q if with_qtt else d,
                   2 if with_qtt else n,
