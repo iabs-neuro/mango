@@ -1,4 +1,4 @@
-# MANGO - Maximization of neural Activity via Non-Gradient Optimization
+# 🥭MANGO - Maximization of neural Activation via Non-Gradient Optimization
 
 
 ## Description
