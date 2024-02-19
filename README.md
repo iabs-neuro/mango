@@ -21,14 +21,19 @@ Software product for analysis of activations and specialization in artificial ne
     conda activate mango
     ```
 
+4. install pytorch with specific cuda toolkit version
+    ```bash
+    conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia
+   ```
+
+5. (optional) install cupy for cudnn-based GPU acceleration for SNNs
+    ```bash
+   conda install -c conda-forge cupy cudnn cutensor
+   ```
+   
 4. Install dependencies:
     ```bash
-    pip install jupyterlab "jax[cpu]==0.4.3" optax teneva==0.13.2 ttopt==0.5.0 protes==0.2.3 torch torchvision snntorch scikit-image matplotlib nevergrad requests urllib3
-    ```
-
-5. Delete virtual environment at the end of the work (optional):
-    ```bash
-    conda activate && conda remove --name mango --all -y
+    pip install jupyterlab "jax[cpu]" optax teneva ttopt protes snntorch spikingjelly matplotlib nevergrad requests urllib3
     ```
 
 

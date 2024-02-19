@@ -4,7 +4,7 @@ from os.path import join
 import shutil
 
 data = 'cifar10'
-gen = 'vae_vq'
+gen = 'gan-sn'
 model = 'sjsnn'
 tlayer = 'sn1'
 task = 'am'
