@@ -26,7 +26,7 @@ OPTS = {
     },
     'TT': {
         'func': opt_protes,
-        'args': {'k': 11, 'k_top': 1, 'with_qtt': True},
+        'args': {'k': 10, 'k_top': 1, 'with_qtt': True},
     },
     'TT-s': {
         'func': opt_protes,

@@ -4,12 +4,12 @@ from os.path import join
 import shutil
 
 data = 'cifar10'
-gen = 'vae_vq'
+gen = 'gan_sn'
 model = 'sjsnn'
-tlayer = 'sn1'
+tlayer = 'layer3.0.sn1'
 task = 'am'
 kind = 'unit'
-root = f'{model}_result_{tlayer}'
+root = f'D:\\Projects\\MANGO data\\new\\{model}_result_{tlayer}'
 opt_args = {
     'opt_budget': 12000,
     'am_methods': ['TT', 'TT-s', 'TT-b']
@@ -17,6 +17,7 @@ opt_args = {
 
 
 for i in range(64):
+    print(f'NEURON {i} LAYER {tlayer}')
     manager = MangoManager(
         data=data,
         gen=gen,
@@ -36,7 +37,7 @@ def process_results(data, gen, root, model, layer):
     '''
     Copies layer MEI results to a separate folder with more convenient structure
     '''
-    new_folder = f'{model}-{data}-{gen}-{layer}_processed'
+    new_folder = join(os.path.dirname(root), f'{model}-{data}-{gen}-{layer}_processed')
     os.makedirs(new_folder, exist_ok=True)
     for dtype in ['AM_images', 'opt_conv', 'opt_conv_short', 'log', 'gif', 'dat']:
         os.makedirs(join(new_folder, dtype), exist_ok=True)
