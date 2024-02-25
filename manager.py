@@ -48,7 +48,7 @@ PLOT_SHAPE = {
 
 class MangoManager:
     def __init__(self, data, gen, model, task, kind, cls=None, layer=None,
-                 unit=None, root='result', device=None, opt_args=None):
+                 unit=None, root='result', device=None, opt_args=None, model_path=None):
 
         self.data_name = data
         self.gen_name = gen
@@ -70,7 +70,7 @@ class MangoManager:
         self.set_log()
         self.load_data()
         self.load_gen()
-        self.load_model()
+        self.load_model(model_path=model_path)
 
     def end(self):
         self.log.end()
@@ -114,12 +114,12 @@ class MangoManager:
         if log:
             self.log('')
 
-    def load_model(self, log=True):
+    def load_model(self, log=True, model_path=None):
         if self.model_name is None:
             return
 
         try:
-            self.model = Model(self.model_name, self.data, self.device)
+            self.model = Model(self.model_name, self.data, self.device, model_path=model_path)
             self.model.set_target(cls=self.cls, layer=self.layer, unit=self.unit, logger=self.log)
             if log:
                 tm = self.log.prc(f'Loading "{self.model_name}" model')

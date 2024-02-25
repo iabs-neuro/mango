@@ -20,7 +20,7 @@ warnings.filterwarnings('ignore', category=UserWarning)
 NAMES = ['alexnet', 'densenet', 'vgg16', 'vgg19', 'snn', 'sjsnn']
 
 class Model:
-    def __init__(self, name, data, device='cpu'):
+    def __init__(self, name, data, device='cpu', model_path=None):
         if name not in NAMES:
             raise ValueError(f'Model name "{name}" is not supported')
         self.name = name
@@ -34,6 +34,7 @@ class Model:
 
         self.rmv_target(is_init=True)
         self.target_mode = None
+        self.model_path = model_path
 
     def attrib(self, x, c=None, steps=3, iters=10):
         if c is None:
@@ -170,7 +171,10 @@ class Model:
                 msg = f'Model "{self.name}" is ready only for "cifar10"'
                 raise NotImplementedError(msg)
 
-            fpath = os.path.join(fpath, 'snn_cifar10', 'sj_snn_cifar10.pth')
+            if self.model_path is None:
+                fpath = os.path.join(fpath, 'snn_cifar10', 'checkpoint_175.pth')
+            else:
+                fpath = self.model_path
 
             self.net = SJSNNCifar10()
             functional.set_step_mode(self.net, step_mode='m')

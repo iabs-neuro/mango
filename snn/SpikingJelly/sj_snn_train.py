@@ -42,8 +42,8 @@ def main():
         'T': 20,
         'train-crop-size': 32,
         'cupy': True,
-        'epochs': 2000,
-        'lr': 0.1,
+        'epochs': 1000,
+        'lr': 0.2,
         'random-erase': 0.1,
         'label-smoothing': 0.1,
         'momentum': 0.9
@@ -54,6 +54,8 @@ def main():
     parser = trainer.get_args_parser()
     parser.add_argument('--distributed', type=bool, help="distributed")
     #parser.add_argument('--resume', type=bool, help="resume")
+
+    remove_prev_checkpoint = False #
 
     args, _ = parser.parse_known_args()
 
@@ -242,7 +244,7 @@ def main():
             train_sampler.set_epoch(epoch)
 
         trainer.before_train_one_epoch(args, model, epoch)
-
+        '''
         #==============================
         header = f"Epoch: [{epoch}]"
         metric_logger = utils.MetricLogger(delimiter="  ")
@@ -260,7 +262,7 @@ def main():
                 output = trainer.process_model_output(args, model(image))
                 loss = criterion(output, target)
         #==============================
-
+        '''
         train_loss, train_acc1, train_acc5 = trainer.train_one_epoch(model, criterion, optimizer, data_loader, device,
                                                                      epoch, args, model_ema, scaler)
         if utils.is_main_process():
@@ -314,7 +316,7 @@ def main():
             if model_ema and save_max_ema_test_acc1:
                 utils.save_on_master(checkpoint, os.path.join(pt_dir, f"checkpoint_max_ema_test_acc1.pth"))
 
-            if utils.is_main_process() and epoch > 0:
+            if utils.is_main_process() and epoch > 0 and remove_prev_checkpoint:
                 os.remove(os.path.join(pt_dir, f"checkpoint_{epoch - 1}.pth"))
 
         print(f'escape time={(datetime.datetime.now() + datetime.timedelta(seconds=(time.time() - start_time) * (args.epochs - epoch))).strftime("%Y-%m-%d %H:%M:%S")}\n')

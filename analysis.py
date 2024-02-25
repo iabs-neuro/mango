@@ -6,10 +6,10 @@ import shutil
 data = 'cifar10'
 gen = 'gan_sn'
 model = 'sjsnn'
-tlayer = 'layer3.0.sn1'
+tlayer = 'layer4.1.sn1'
 task = 'am'
 kind = 'unit'
-root = f'D:\\Projects\\MANGO data\\new\\{model}_result_{tlayer}'
+root = f'D:\\Projects\\mango_data\\SJ-SNN iter 175\\{model}_result_{tlayer}'
 opt_args = {
     'opt_budget': 12000,
     'am_methods': ['TT', 'TT-s', 'TT-b']
@@ -17,7 +17,6 @@ opt_args = {
 
 
 for i in range(64):
-    print(f'NEURON {i} LAYER {tlayer}')
     manager = MangoManager(
         data=data,
         gen=gen,
