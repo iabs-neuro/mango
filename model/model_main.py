@@ -29,12 +29,11 @@ class Model:
 
         self.device = device
         self.probs = torch.nn.Softmax(dim=1)
-
+        self.model_path = model_path
         self.load()
 
         self.rmv_target(is_init=True)
         self.target_mode = None
-        self.model_path = model_path
 
     def attrib(self, x, c=None, steps=3, iters=10):
         if c is None:
