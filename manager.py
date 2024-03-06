@@ -8,6 +8,7 @@ from time import perf_counter as tpc
 import torch
 import torch.nn.functional as F
 import torch.optim as optim
+from spikingjelly.activation_based.functional import reset_net
 
 
 from .data.data_main import Data
@@ -30,11 +31,15 @@ OPTS = {
     },
     'TT-s': {
         'func': opt_protes,
-        'args': {'k': 5, 'k_top': 1, 'with_qtt': True},
+        'args': {'k': 5, 'k_top': 1, 'with_qtt': True}
     },
     'TT-b': {
         'func': opt_protes,
-        'args': {'k': 25, 'k_top': 5, 'with_qtt': True},
+        'args': {'k': 25, 'k_top': 5, 'with_qtt': True}
+    },
+    'TT-exp': {
+        'func': opt_protes,
+        'args': {'k': 100, 'k_top': 10, 'with_qtt': True, 'lr': 0.1, 'k_gd': 1}
     },
 }
 
@@ -62,7 +67,15 @@ class MangoManager:
         if 'am_methods' not in opt_args:
             self.opt_args['am_methods'] = list(OPTS.keys())
         if 'opt_budget' not in opt_args:
-            self.opt_args['opt_budget'] = None
+            self.opt_args['opt_budget'] = 10000
+        if 'track_opt_progress' not in opt_args:
+            self.opt_args['track_opt_progress'] = True
+        if 'res_mode' not in opt_args:
+            self.opt_args['res_mode'] = 'best'
+        if 'nrep' not in opt_args:
+            self.opt_args['nrep'] = 1
+
+        print(self.opt_args)
 
         self.set_rand()
         self.set_device(device)
@@ -76,9 +89,23 @@ class MangoManager:
         self.log.end()
 
     def func(self, z):
+        from spikingjelly.activation_based.functional import reset_net
+        nrep = self.opt_args['nrep']
         x = self.gen.run(z)
-        activation = self.model.run_target(x)
-        return activation.detach().to('cpu').numpy()
+
+        all_values = []
+        for i in range(nrep):
+            activation = self.model.run_target(x)
+            #activation = self.model.run(x)[:,5]
+            #reset_net(self.model.net)
+            values = activation.detach().to('cpu').numpy()
+            all_values.append(values)
+
+        #print('values:', all_values)
+        agg_values = np.vstack(all_values)
+        #print(agg_values.shape)
+        #print(np.mean(agg_values, axis=0))
+        return np.mean(agg_values, axis=0)
 
     def func_ind(self, z_index):
         return self.func(self.gen.ind_to_poi(z_index))
@@ -256,7 +283,7 @@ class MangoManager:
         random.seed(seed)
         torch.manual_seed(seed)
 
-    def _task_am(self, m=1.E+4, m_short=1.E+3, mode='class'):
+    def _task_am(self, m=1.E+4, m_short=1.E+3, mode='class', track_opt_progress=True):
 
         if self.opt_args['opt_budget'] is not None:
             m = self.opt_args['opt_budget']
@@ -274,21 +301,52 @@ class MangoManager:
             tm = self.log.prc(f'Running AM for unit {unit} of layer {self.layer} ({self.model.layer})...')
 
         X, titles, res = [], [], {}
-        for meth, opt in OPTS.items():
+        for i, meth in enumerate(self.opt_args['am_methods']):
             self.log(f'\nOptimization with "{meth}" method:')
-            if meth in self.opt_args['am_methods']:
 
+            if meth in OPTS:
+                opt = OPTS[meth]
                 t = tpc()
                 optimizer = opt.get('func')
                 args = opt.get('args', {})
-                z_index, _, hist = optimizer(self.func_ind, self.gen.d, self.gen.n, m, is_max=True, **args)
 
-                res[meth] = hist
+                # TODO: add seed fixation
+                seed = np.random.randint(10**6)
+                z_index, _, hist = optimizer(self.func_ind, self.gen.d, self.gen.n, m, seed=seed, is_max=True, **args)
+
+                if len(set(self.opt_args['am_methods'])) == len(self.opt_args['am_methods']):
+                    textmeth = meth
+                else:
+                    textmeth = f'{i}_{meth}'
+
+                res[textmeth] = hist
                 t = tpc() - t
+
+                print(self.opt_args['res_mode'])
+                #print(z_index)
+
+                recomputed_activations = np.zeros(len(hist[1]) + 1)
+                xlist = []
+                for j, z_ind in enumerate(hist[1]):
+                    z = self.gen.ind_to_poi(z_ind)
+                    x = self.gen.run(z)
+                    a = self.model.run_target(x)
+                    recomputed_activations[j] = a
+                    xlist.append(x)
 
                 z = self.gen.ind_to_poi(z_index)
                 x = self.gen.run(z)
                 a = self.model.run_target(x)
+                recomputed_activations[-1] = a
+                xlist.append(x)
+
+                print('recomputed history of activations:')
+                print(recomputed_activations)
+
+                if self.opt_args['res_mode'] == 'best': # replace latest image with the best one
+                    best_ind = np.argmax(recomputed_activations)
+                    x = xlist[best_ind]
+                    a = recomputed_activations[best_ind]
 
                 self.log(f'Result: it {m:-7.1e}, t {t:-7.1e}, a {a:-11.5e}')
 
@@ -296,23 +354,24 @@ class MangoManager:
                 X.append(x)
                 titles.append(title)
 
-                X_opt, titles_opt = [], []
-                for (m_opt, z_index_opt, e_opt) in zip(*hist):
-                    z_opt = self.gen.ind_to_poi(z_index_opt)
-                    x_opt = self.gen.run(z_opt)
-                    title_opt = f'{meth} : p={e_opt:-9.3e}; m={m_opt:-7.1e}'
-                    X_opt.append(x_opt)
-                    titles_opt.append(title_opt)
+                if track_opt_progress:
+                    X_opt, titles_opt = [], []
+                    for (m_opt, z_index_opt, e_opt) in zip(*hist):
+                        z_opt = self.gen.ind_to_poi(z_index_opt)
+                        x_opt = self.gen.run(z_opt)
+                        title_opt = f'{meth} : p={e_opt:-9.3e}; m={m_opt:-7.1e}'
+                        X_opt.append(x_opt)
+                        titles_opt.append(title_opt)
 
-                if mode == 'class':
-                    fname = f'gif/am_c{cls}_{meth}.gif'
-                elif mode == 'unit':
-                    fname = f'gif/am_u{unit}_layer_({layer})_{meth}.gif'
+                    if mode == 'class':
+                        fname = f'gif/am_c{cls}_{meth}.gif'
+                    elif mode == 'unit':
+                        fname = f'gif/am_u{unit}_layer_({layer})_{meth}.gif'
 
-                self.data.animate(X_opt, titles_opt, fpath=self.get_path(fname))
+                    self.data.animate(X_opt, titles_opt, fpath=self.get_path(fname))
 
             else:
-                self.log(f'Optimization skipped')
+                self.log(f'Unknown method {meth}, optimization skipped')
 
         with open(self.get_path('dat/opt_info.pkl'), 'wb') as f:
             pickle.dump(res, f)
@@ -352,7 +411,7 @@ class MangoManager:
         if self.model.target_mode != 'class':
             raise ValueError(f'Input (class={self.cls}, unit={self.unit}, layer={self.layer}) not compatible with class AM mode')
 
-        self._task_am(m, m_short, mode='class')
+        self._task_am(m, m_short, mode='class', track_opt_progress=self.opt_args['track_opt_progress'])
 
     def task_am_unit(self, m=1.E+4, m_short=1.E+3):
         if self.model.target_mode is None:
@@ -361,7 +420,7 @@ class MangoManager:
             raise ValueError(
                 f'Input (class={self.cls}, unit={self.unit}, layer={self.layer}) not compatible with unit AM mode')
 
-        self._task_am(m, m_short, mode='unit')
+        self._task_am(m, m_short, mode='unit', track_opt_progress=self.opt_args['track_opt_progress'])
 
     def task_check_data(self):
         name = self.data.name

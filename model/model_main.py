@@ -171,7 +171,7 @@ class Model:
                 raise NotImplementedError(msg)
 
             if self.model_path is None:
-                fpath = os.path.join(fpath, 'snn_cifar10', 'checkpoint_175.pth')
+                fpath = os.path.join(fpath, 'snn_cifar10', 'checkpoint_max_test_acc1.pth')
             else:
                 fpath = self.model_path
 
@@ -245,7 +245,6 @@ class Model:
         return (p, c, l) if is_batch else (p[0], c[0], l[0])
 
     def run_target(self, x):
-
         '''
         x has shape [k, ch, sz, sz], k=number of samples from optimization algorithm
         '''
@@ -256,6 +255,7 @@ class Model:
 
         y = self.run(x)
 
+        #print('y:', y)
         #print(self.hook.__dict__)
         #print(self.hook_result)
 

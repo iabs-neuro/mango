@@ -6,17 +6,21 @@ import shutil
 data = 'cifar10'
 gen = 'gan_sn'
 model = 'sjsnn'
-tlayer = 'layer4.1.sn1'
+tlayer = 'layer2.1.sn1'
 task = 'am'
 kind = 'unit'
-root = f'D:\\Projects\\mango_data\\SJ-SNN iter 175\\{model}_result_{tlayer}'
+root = f'D:\\Projects\\mango_data\\SJ-SNN final\\{model}_result_{tlayer}'
 opt_args = {
-    'opt_budget': 12000,
-    'am_methods': ['TT', 'TT-s', 'TT-b']
+    'opt_budget': 10000,
+    #'am_methods': ['TT', 'TT-s', 'TT-b', 'TT-exp'],
+    'am_methods': ['TT-exp', 'TT-exp', 'TT-exp'],
+    'track_opt_progress': False,
+    'res_mode': 'best',
+    'nrep': 1
 }
 
 
-for i in range(64):
+for i in range(1):
     manager = MangoManager(
         data=data,
         gen=gen,
@@ -66,9 +70,10 @@ def process_results(data, gen, root, model, layer):
             if 'am' in im:
                 shutil.copy(join(path, 'img', im), join(new_folder, 'AM_images', new_imname))
 
-        gifs = os.listdir(join(path, 'gif'))
-        for gif in gifs:
-            shutil.copy(join(path, 'gif', gif), join(new_folder, 'gif', gif))
+        if opt_args['track_opt_progress']:
+            gifs = os.listdir(join(path, 'gif'))
+            for gif in gifs:
+                shutil.copy(join(path, 'gif', gif), join(new_folder, 'gif', gif))
 
         dat = os.listdir(join(path, 'dat'))
         for dt in dat:
