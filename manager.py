@@ -53,7 +53,7 @@ PLOT_SHAPE = {
 
 class MangoManager:
     def __init__(self, data, gen, model, task, kind, cls=None, layer=None,
-                 unit=None, root='result', device=None, opt_args=None, model_path=None):
+                 unit=None, root='result', device=None, opt_args=None, model_path=None, **kwargs):
 
         self.data_name = data
         self.gen_name = gen
@@ -74,6 +74,9 @@ class MangoManager:
             self.opt_args['res_mode'] = 'best'
         if 'nrep' not in opt_args:
             self.opt_args['nrep'] = 1
+
+        if 'layer_names' in kwargs:
+            self.layer_names_to_scan = kwargs['layer_names']
 
         print(self.opt_args)
 
@@ -103,9 +106,12 @@ class MangoManager:
 
         #print('values:', all_values)
         agg_values = np.vstack(all_values)
-        #print(agg_values.shape)
         #print(np.mean(agg_values, axis=0))
-        return np.mean(agg_values, axis=0)
+        final_values = np.mean(agg_values, axis=0)
+        if max(final_values) == 1:
+            return None
+        else:
+            return final_values
 
     def func_ind(self, z_index):
         return self.func(self.gen.ind_to_poi(z_index))
@@ -531,6 +537,10 @@ class MangoManager:
                 return self.run_train_cifar10_vae_vq()
 
         raise NotImplementedError(f'task_train_gen not implemented for gen {self.gen_name} and dataset {self.data_name} pair')
+
+    def task_scan_layer(self):
+        layer_names = self.layer_names_to_scan
+        self.model.set_activity_hooks(layers=layer_names, logger=self.log)
 
 
 def args_build():

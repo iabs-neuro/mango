@@ -29,7 +29,7 @@ from ...data.data_main import Data
 from .SJ_snn import SResNetTrainer
 
 def main():
-    batch_size = 360
+    batch_size = 300
     data_ = Data('cifar10', batch_trn=batch_size, batch_tst=batch_size, force_reload=False)
 
     params = {
@@ -39,7 +39,7 @@ def main():
         'cutmix-alpha': 1.0,
         'model': 'spiking_resnet18',
         'workers': 1,
-        'T': 20,
+        'T': 50,
         'train-crop-size': 32,
         'cupy': True,
         'epochs': 1000,

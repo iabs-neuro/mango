@@ -171,7 +171,7 @@ class Model:
                 raise NotImplementedError(msg)
 
             if self.model_path is None:
-                fpath = os.path.join(fpath, 'snn_cifar10', 'checkpoint_max_test_acc1.pth')
+                fpath = os.path.join(fpath, 'snn_cifar10', 'checkpoint_max_test_acc1_t50.pth')
             else:
                 fpath = self.model_path
 
@@ -281,6 +281,36 @@ class Model:
         else:
             self.target_mode = 'unit'
 
+    def _get_layer(self, layer, logger=None):
+        if isinstance(layer, str):
+            # name of layer provided
+            if self.name == 'sjsnn':
+                print(list(self.net.named_layers_od.keys()))
+                try:
+                    model_layer = self.net.named_layers_od[layer]
+                except KeyError:
+                    msg = f'{layer} not found in model layers. Select one of: {list(self.net.named_layers_od.keys())}'
+                    if logger is not None:
+                        logger(msg)
+                    raise ValueError(msg)
+
+            else:
+                try:
+                    layer = getattr(self.net._modules['features'], f'{layer}')
+                except KeyError:
+                    msg = f'{layer} not found in model layers. Select one of: {list(self.net.named_modules.keys())}'
+                    if logger is not None:
+                        logger(msg)
+                    raise ValueError(msg)
+        else:
+            # index of layer provided
+            try:
+                model_layer = self.net.features[int(layer)]
+            except AttributeError:  # exception for SJ SNN
+                model_layer = list(self.net.named_layers_od.items())[int(layer)][1]
+
+        return model_layer
+
     def set_target(self, cls=None, layer=None, unit=None, logger=None):
         self.cls = None
         self.layer = None
@@ -296,34 +326,7 @@ class Model:
             return
 
         elif self.target_mode == 'unit':
-
-            if isinstance(layer, str):
-                # name of layer provided
-                if self.name == 'sjsnn':
-                    print(list(self.net.named_layers_od.keys()))
-                    try:
-                        self.layer = self.net.named_layers_od[layer]
-                    except KeyError:
-                        msg = f'{layer} not found in model layers. Select one of: {list(self.net.named_layers_od.keys())}'
-                        if logger is not None:
-                            logger(msg)
-                        raise ValueError(msg)
-
-                else:
-                    try:
-                        self.layer = getattr(self.net._modules['features'], f'{layer}')
-                    except KeyError:
-                        msg = f'{layer} not found in model layers. Select one of: {list(self.net.named_modules.keys())}'
-                        if logger is not None:
-                            logger(msg)
-                        raise ValueError(msg)
-            else:
-                # index of layer provided
-                try:
-                    self.layer = self.net.features[int(layer)]
-                except AttributeError:  # exception for SJ SNN
-                    self.layer = list(self.net.named_layers_od.items())[int(layer)][1]
-
+            self.layer = self._get_layer(layer, logger=logger)
             self.unit = int(unit)
 
             if logger is not None:
@@ -340,6 +343,56 @@ class Model:
             self.hook_hand = [self.layer.register_forward_hook(self.hook.forward)]
             self.hook_result = []
 
+    def set_activity_hooks(self, layers=None, logger=None):
+        self.hooks = {}
+        for l in layers:
+            hook = LayerHook(self)
+            net_layer = self._get_layer(l, logger=logger)
+            self.hooks[l] = net_layer.register_forward_hook(hook.forward)
+        self.hook_result = []
+
+class LayerHook():
+    def __init__(self, parent_model):
+        self.parent_model = parent_model
+        self.a = None
+        self.a_mean = None
+        self.shape_shown = False  # TODO: technical field for debug, remove later
+
+    def forward(self, module, inp, out):
+        if not self.shape_shown:
+            print('hook input:', inp[0].shape)
+            #print('hook output:', out)
+            print('hook shape', out.shape)
+            try:
+                #print(inp[0][0, 0, :, :, :])
+                #print(out[0, 0, :, :, :])
+                pass
+            except:
+                pass
+            self.shape_shown = True
+
+        if self.parent_model.name == 'sjsnn':  # spikingjelly supports [T,N,U,W,H] format (one extra dimension)
+            if len(out.shape) == 5:
+                self.a = torch.mean(out[:, :, :, :, :], dim=(3, 4))
+                self.a_mean = torch.mean(out[:, :, :, :, :])
+                # print('hook:', self.parent_model.hook_result)
+                self.parent_model.hook_result.append(self.a)
+            elif len(out.shape) == 3:
+                self.a = out[:, :, :]
+                self.a_mean = torch.mean(out[:, :, :])
+                self.parent_model.hook_result.append(self.a)
+
+        else:
+            if len(out.shape) == 2:
+                self.a = out[:, :]
+                self.a_mean = None
+                self.parent_model.hook_result.append(self.a)
+            else:
+                self.a = torch.mean(out[:, :, :, :], dim=(1, 2))
+                self.a_mean = torch.mean(out[:, :, :, :])
+                #print('hook:', self.parent_model.hook_result)
+                self.parent_model.hook_result.append(self.a)
+
 
 class AmHook():
     def __init__(self, parent_model, unit):
@@ -347,7 +400,7 @@ class AmHook():
         self.unit = unit
         self.a = None
         self.a_mean = None
-        self.shape_shown = False # TODO: technical field for debug, remove later
+        self.shape_shown = False  # TODO: technical field for debug, remove later
 
     def forward(self, module, inp, out):
         if not self.shape_shown:
@@ -361,7 +414,7 @@ class AmHook():
                 pass
             self.shape_shown = True
 
-        if self.parent_model.name == 'sjsnn': # spikingjelly supports [T,N,C,W,H] format (one extra dimension)
+        if self.parent_model.name == 'sjsnn':  # spikingjelly supports [T,N,C,W,H] format (one extra dimension)
             if len(out.shape) == 5:
                 self.a = torch.mean(out[:, :, self.unit, :, :], dim=(0, 2, 3))
                 self.a_mean = torch.mean(out[:, :, self.unit, :, :])

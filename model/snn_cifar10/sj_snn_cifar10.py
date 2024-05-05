@@ -19,7 +19,7 @@ class SJSNNCifar10(SpikingResNet):
                  spiking_neuron=neuron.LIFNode,
                  surrogate_function=surrogate.ATan(),
                  detach_reset=True,
-                 T=20):
+                 T=50):
 
         super(SJSNNCifar10, self).__init__(BasicBlock,
                                            [2, 2, 2, 2],
