@@ -1,5 +1,6 @@
 # 🥭MANGO - Maximization of neural Activation via Non-Gradient Optimization
 
+![MANGO framework](./MANGO-image.png)
 
 ## Description
 
