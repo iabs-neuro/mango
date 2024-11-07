@@ -2,40 +2,52 @@ from .manager import MangoManager
 import os
 from os.path import join
 import shutil
+import numpy as np
 
 data = 'cifar10'
 gen = 'gan_sn'
-model = 'sjsnn'
-tlayer = 'layer4.1.sn1'
+model = 'resnet18'
+tlayer = 'layer1.1'
 task = 'am'
 kind = 'unit'
-root = f'D:\\Projects\\mango_data\\SJ-SNN-T50\\SJ-SNN final\\{model}_result_{tlayer}'
-model_path = 'C:\\Users\\admin\\PycharmProjects\\mango\\model\\snn_cifar10\\checkpoint_max_test_acc1_t50.pth'
+iter_ = 97
+#root = f'D:\\Projects\\mango_data\\SJ-SNN-T50\\SJ-SNN iter {iter_}\\{model}_result_{tlayer}'
+#root = f'D:\\Projects\\mango_data\\SJ-SNN-T50\\opt full2\\{model}_result_{tlayer}'
+root = f'D:\\Projects\\mango_data\\ResNet18'
+#model_path = f"D:\Projects\mango_data\logs_t50\checkpoint_{iter_}.pth"
+#model_path = f"D:\\Projects\\mango_data\\resnet18_logs\\checkpoint_{iter_}.pth"
+model_path = None
+
 opt_args = {
-    'opt_budget': 20000,
-    #'am_methods': ['TT', 'TT-s', 'TT-b', 'TT-exp'],
-    'am_methods': ['TT-exp', 'TT-exp', 'TT-exp'],
-    'track_opt_progress': False,
+    'opt_budget': 1000,
+    'am_methods': ['RS', 'NG', 'TT', 'TT-s', 'TT-b', 'TT-exp'],
+    #'am_methods': ['RS', 'NG', 'TT', 'TT-s', 'TT-b', 'TT-exp'],#, 'TT-exp', 'TT-exp'],
+    #'am_methods': ['RS', 'NG', 'TT-exp'], #, 'TT-exp'],
+    'track_opt_progress': True,
     'res_mode': 'best',
     'nrep': 1
 }
 
+units_to_scan = np.arange(10, 11)
+for i in units_to_scan:
+    try:
+        manager = MangoManager(
+            data=data,
+            gen=gen,
+            model=model,
+            task=task,
+            kind=kind,
+            cls=None,
+            unit=i,
+            layer=tlayer,
+            opt_args=opt_args,
+            root=root,
+            model_path=model_path
+        )
+        manager.run()
+    except TypeError: # rare nevergrad failure
+        pass
 
-for i in range(64):
-    manager = MangoManager(
-        data=data,
-        gen=gen,
-        model=model,
-        task=task,
-        kind=kind,
-        cls=None,
-        unit=i,
-        layer=tlayer,
-        opt_args=opt_args,
-        root=root,
-        model_path=model_path
-    )
-    manager.run()
 
 def process_results(data, gen, root, model, layer):
     '''
@@ -85,4 +97,4 @@ def process_results(data, gen, root, model, layer):
         shutil.copy(join(path, 'log.txt'), join(new_folder, 'log', new_logname))
 
 
-process_results(data, gen, root, model, tlayer)
+#process_results(data, gen, root, model, tlayer)

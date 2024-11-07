@@ -3,21 +3,23 @@ from collections import OrderedDict
 
 from spikingjelly.activation_based import functional
 from spikingjelly.activation_based.functional import reset_net
+import torch.nn.functional as F
 
 import numpy as np
 import os
 import torch
 import warnings
 
-from ..model.densenet_cifar10.densenet_cifar10 import DensenetCifar10
-from ..model.snn_cifar10.snn_cifar10 import SNNCifar10
-from ..model.snn_cifar10.sj_snn_cifar10 import SJSNNCifar10
+from .densenet_cifar10.densenet_cifar10 import DensenetCifar10
+from .snn_cifar10.snn_cifar10 import SNNCifar10
+from .snn_cifar10.sj_snn_cifar10 import SJSNNCifar10
+from .resnet_cifar10.resnet import ResNet18
 from ..utils import load_yandex
 
 # To remove the warning of torchvision:
 warnings.filterwarnings('ignore', category=UserWarning)
 
-NAMES = ['alexnet', 'densenet', 'vgg16', 'vgg19', 'snn', 'sjsnn']
+NAMES = ['alexnet', 'densenet', 'vgg16', 'vgg19', 'snn', 'sjsnn', 'resnet18']
 
 class Model:
     def __init__(self, name, data, device='cpu', model_path=None):
@@ -34,6 +36,15 @@ class Model:
 
         self.rmv_target(is_init=True)
         self.target_mode = None
+
+    def x_to_image(self, x):
+        xt = torch.tensor(x)
+        res = self.data.tr_norm_inv(xt).detach().cpu().squeeze().numpy()
+        if len(res.shape) == 3:
+            res = res.transpose(1, 2, 0)
+            res = np.clip(res, 0, 1) if np.mean(res) < 2 else np.clip(res, 0, 255)
+        # res = np.uint8(np.moveaxis(res.detach().squeeze().numpy(), 0, 2) * 256)
+        return res
 
     def attrib(self, x, c=None, steps=3, iters=10):
         if c is None:
@@ -149,6 +160,22 @@ class Model:
             self.net = torch.hub.load('pytorch/vision:v0.10.0',
                                       self.name,
                                       weights=True)
+
+        if 'resnet' in self.name:
+
+            if self.model_path is None:
+                fpath = os.path.join(fpath, 'resnet_cifar10', 'resnet18_cifar10_best.pth')
+            else:
+                fpath = self.model_path
+
+            self.net = ResNet18()
+            state_dict = torch.load(fpath, map_location=self.device)
+            net_dict = state_dict['net']
+            renamed_state_dict = OrderedDict()
+            for i, pair in enumerate(net_dict.items()):
+                new_name = pair[0].split('module.')[1]
+                renamed_state_dict[new_name] = net_dict[pair[0]]
+            self.net.load_state_dict(renamed_state_dict, strict=True)
 
         if self.name == 'snn':
             if self.data.name != 'cifar10':
@@ -296,12 +323,35 @@ class Model:
 
             else:
                 try:
-                    layer = getattr(self.net._modules['features'], f'{layer}')
+                    #print(self.net._modules)
+                    if 'resnet' in self.name: # here we search for the target layer hierarchically
+                        layer_hierarchy = layer.split('.')
+                        current_level = self.net._modules
+                        for lh in layer_hierarchy:
+                            if isinstance(current_level, torch.nn.Sequential):
+                                try:
+                                    lh = int(lh)
+                                except:
+                                    raise ValueError(f'Cannot define the layer position inside nn.Sequential with a string {lh}.\
+                                     The layer id must be convertable to int, consider renaming or check layer structure')
+
+                            try:
+                                current_level = current_level[lh]
+                            except:
+                                current_level = getattr(current_level, lh)
+
+                        model_layer = current_level
+                        print(f'selected layer: {model_layer}')
+
+                    if self.name == 'densenet':
+                        model_layer = getattr(self.net._modules['features'], f'{layer}')
+
                 except KeyError:
                     msg = f'{layer} not found in model layers. Select one of: {list(self.net.named_modules.keys())}'
                     if logger is not None:
                         logger(msg)
                     raise ValueError(msg)
+
         else:
             # index of layer provided
             try:
@@ -363,12 +413,6 @@ class LayerHook():
             print('hook input:', inp[0].shape)
             #print('hook output:', out)
             print('hook shape', out.shape)
-            try:
-                #print(inp[0][0, 0, :, :, :])
-                #print(out[0, 0, :, :, :])
-                pass
-            except:
-                pass
             self.shape_shown = True
 
         if self.parent_model.name == 'sjsnn':  # spikingjelly supports [T,N,U,W,H] format (one extra dimension)
@@ -424,6 +468,14 @@ class AmHook():
                 self.a = torch.mean(out[:, :, self.unit], dim=0)
                 self.a_mean = torch.mean(out[:, :, self.unit])
                 self.parent_model.hook_result.append(self.a)
+
+        elif 'resnet' in self.parent_model.name: # for ANN the activity of units in conv layer is targeted
+            if len(out.shape) == 4:
+                self.a = torch.mean(F.relu(out[:, self.unit, :, :]), dim=(1, 2)) # add Relu as non-linearity manually
+                self.a_mean = torch.mean(F.relu(out[:, self.unit, :, :]))
+                self.parent_model.hook_result.append(self.a)
+            else:
+                raise ValueError('Wrong tensor format')
 
         else:
             if len(out.shape) == 2:

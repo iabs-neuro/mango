@@ -9,7 +9,7 @@ def opt_ttopt(func, d, n, m, rank=5, with_qtt=False, is_max=True):
         if 2**q != n:
             raise ValueError('Invalid grid size. It should be power of 2')
 
-    info = {'m': 0, 'i': None, 'y': None, 'ml': [], 'il': [], 'yl': []}
+    info = {'m': 0, 'i': None, 'y': None, 'tl': [], 'ml': [], 'il': [], 'yl': []}
 
     def func_wrap(I):
         y = func(I)
@@ -48,4 +48,4 @@ def opt_ttopt(func, d, n, m, rank=5, with_qtt=False, is_max=True):
     else:
         tto.minimize(rmax=rank)
 
-    return info['i'], info['y'], (info['ml'], info['il'], info['yl'])
+    return info['i'], info['y'], (info['tl'], info['ml'], info['il'], info['yl'])

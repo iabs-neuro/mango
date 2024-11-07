@@ -14,7 +14,7 @@ from spikingjelly.activation_based.functional import reset_net
 from .data.data_main import Data
 from .gen.gen_main import Gen
 from .model.model_main import Model
-from .opt import opt_ng_portfolio, opt_protes
+from .opt import opt_ng_portfolio, opt_protes, opt_random
 from .utils import Log, plot_hist_am, plot_opt_conv
 from .hardware import configure_hardware
 import os
@@ -22,6 +22,10 @@ import os
 configure_hardware(verbose=False)
 
 OPTS = {
+    'RS': {
+        'func': opt_random,
+        #'args': {'k': 10}
+    },
     'NG': {
         'func': opt_ng_portfolio,
     },
@@ -47,7 +51,9 @@ PLOT_SHAPE = {
     1: (1,1),
     2: (1,2),
     3: (1,3),
-    4: (2,2)
+    4: (2,2),
+    5: (2,3),
+    6: (2,3)
 }
 
 
@@ -328,12 +334,13 @@ class MangoManager:
                 res[textmeth] = hist
                 t = tpc() - t
 
-                print(self.opt_args['res_mode'])
+                #print(self.opt_args['res_mode'])
                 #print(z_index)
 
-                recomputed_activations = np.zeros(len(hist[1]) + 1)
+                historic_z = hist[2]
+                recomputed_activations = np.zeros(len(historic_z) + 1)
                 xlist = []
-                for j, z_ind in enumerate(hist[1]):
+                for j, z_ind in enumerate(historic_z):
                     z = self.gen.ind_to_poi(z_ind)
                     x = self.gen.run(z)
                     a = self.model.run_target(x)
@@ -362,7 +369,8 @@ class MangoManager:
 
                 if track_opt_progress:
                     X_opt, titles_opt = [], []
-                    for (m_opt, z_index_opt, e_opt) in zip(*hist):
+                    print('times', hist[0])
+                    for (t_opt, m_opt, z_index_opt, e_opt) in zip(*hist):
                         z_opt = self.gen.ind_to_poi(z_index_opt)
                         x_opt = self.gen.run(z_opt)
                         title_opt = f'{meth} : p={e_opt:-9.3e}; m={m_opt:-7.1e}'

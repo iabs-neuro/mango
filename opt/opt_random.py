@@ -3,8 +3,8 @@ import numpy as np
 from time import perf_counter as tpc
 
 
-def opt_ng_portfolio(func, d, n, m, seed=42, is_max=True):
-    """Portfolio method from nevergrad."""
+def opt_random(func, d, n, m, seed=42, is_max=True):
+    """Random search in the latent space."""
 
     info = {'m': 0, 'i': None, 'y': None, 'tl': [], 't0': tpc(),
         'ml': [], 'il': [], 'yl': []}
@@ -31,7 +31,7 @@ def opt_ng_portfolio(func, d, n, m, seed=42, is_max=True):
             info['il'].append(i_cur.copy())
             info['yl'].append(y_cur)
 
-            text = f'portfolio > '
+            text = f'random search> '
             text += f'm {info["m"]:-7.1e} | '
             text += f't {info["t"]:-9.3e} | '
             text += f'y {info["y"]:-11.4e}'
@@ -39,17 +39,15 @@ def opt_ng_portfolio(func, d, n, m, seed=42, is_max=True):
 
         return y[0]
 
-    optimizer = ng.optimizers.Portfolio(
+    optimizer = ng.optimizers.RandomSearch(
         parametrization=ng.p.TransitionChoice(range(n), repetitions=d),
         budget=int(m), num_workers=1)
-    recommendation = optimizer.provide_recommendation()
-    #print(recommendation)
 
     for _ in range(optimizer.budget):
         x = optimizer.ask()
         optimizer.tell(x, func_wrap(x.value) * (-1 if is_max else 1))
 
-    text = f'portfolio > '
+    text = f'random search > '
     text += f'm {info["m"]:-7.1e} | '
     text += f't {info["t"]:-9.3e} | '
     text += f'y {info["y"]:-11.4e} <<< DONE'
